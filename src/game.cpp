@@ -39,6 +39,7 @@ void Game::run()
 
         // Rendering.
         current_state->render(dt);
+        window.display();
 
         sf::sleep(sf::milliseconds(10));
     }

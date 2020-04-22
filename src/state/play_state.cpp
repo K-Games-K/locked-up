@@ -8,11 +8,6 @@ PlayState::PlayState(sf::RenderWindow& window)
 
 }
 
-PlayState::~PlayState()
-{
-
-}
-
 std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
 {
     return nullptr;
@@ -25,5 +20,5 @@ std::unique_ptr<GameState> PlayState::update(float dt)
 
 void PlayState::render(float dt)
 {
-
+    window.display();
 }
