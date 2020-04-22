@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <vector>
-
+#include <SFML/Network/Packet.hpp>
 
 /// Base class for all packets.
 class Packet
@@ -19,8 +19,8 @@ public:
     constexpr uint16_t get_id() const { return PACKET_ID; }
 
     /// Serializes packet into vector of raw bytes.
-    virtual std::vector<uint8_t> serialize() const = 0;
+    virtual void serialize(sf::Packet& data) const = 0;
 
     /// Deserializes packet from vector of raw bytes.
-    virtual bool deserialize(std::vector<uint8_t> data) = 0;
+    virtual void deserialize(sf::Packet& data) = 0;
 };

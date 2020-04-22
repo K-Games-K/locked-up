@@ -19,7 +19,7 @@ public:
 
     std::string get_message() const;
 
-    std::vector<uint8_t> serialize() const override;
+    void serialize(sf::Packet& data) const override;
 
-    bool deserialize(std::vector<uint8_t> data) override;
+    void deserialize(sf::Packet& data) override;
 };

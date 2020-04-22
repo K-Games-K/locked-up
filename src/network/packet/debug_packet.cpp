@@ -1,6 +1,4 @@
 #include "network/packet/debug_packet.hpp"
-#include "network/serializer.hpp"
-#include "network/deserializer.hpp"
 
 DebugPacket::DebugPacket()
     : Packet(PACKET_ID)
@@ -15,16 +13,13 @@ std::string DebugPacket::get_message() const
     return debug_msg;
 }
 
-std::vector<uint8_t> DebugPacket::serialize() const
+void DebugPacket::serialize(sf::Packet& data) const
 {
-    Serializer serializer(debug_msg.size() + 2);
-    serializer.serialize(debug_msg);
-
-    return serializer.finish();
+    data << debug_msg;
 }
 
-bool DebugPacket::deserialize(std::vector<uint8_t> data)
+void DebugPacket::deserialize(sf::Packet& data)
 {
-    Deserializer deserializer(data);
-    return deserializer.deserialize(debug_msg);
+    data >> debug_msg;
 }
+
