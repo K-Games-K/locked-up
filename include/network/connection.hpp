@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+#include <memory>
 #include <SFML/Network.hpp>
 
 #include "network/packet/packet.hpp"
@@ -7,10 +9,14 @@
 class Connection
 {
 private:
-    std::unique_ptr<sf::TcpSocket> socket;
+    std::shared_ptr<sf::TcpSocket> socket;
 
 public:
-    explicit Connection(std::unique_ptr<sf::TcpSocket>& socket);
+    explicit Connection(std::shared_ptr<sf::TcpSocket>& socket);
+
+    Connection(sf::IpAddress remote_addr, unsigned short remote_port);
+
+    sf::IpAddress get_addr() const;
 
     bool send(Packet& packet);
 
