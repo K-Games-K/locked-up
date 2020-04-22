@@ -1,0 +1,9 @@
+.idea/
+.vs/
+bin/
+build/
+cmake-*/
+
+*.suo
+*.user
+*.sln.docstates
