@@ -3,8 +3,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "network/deserializer.hpp"
-#include "network/serializer.hpp"
 
 /// Base class for all packets.
 class Packet
@@ -21,8 +19,8 @@ public:
     constexpr uint16_t get_id() const { return PACKET_ID; }
 
     /// Serializes packet into vector of raw bytes.
-    virtual void serialize(Serializer& serializer) const = 0;
+    virtual std::vector<uint8_t> serialize() const = 0;
 
     /// Deserializes packet from vector of raw bytes.
-    virtual bool deserialize(Deserializer& deserializer) = 0;
+    virtual bool deserialize(std::vector<uint8_t> data) = 0;
 };
