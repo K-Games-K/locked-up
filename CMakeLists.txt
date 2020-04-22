@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(locked-up-client)
+project(locked-up)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
@@ -16,5 +16,5 @@ find_package(SFML 2.5 COMPONENTS window graphics network audio REQUIRED)
 
 include_directories(include ${SFML_INCLUDE})
 
-add_executable(locked-up-client ${SOURCES} ${HEADERS})
-target_link_libraries(locked-up-client sfml-window sfml-graphics sfml-network sfml-audio)
+add_executable(locked-up ${SOURCES} ${HEADERS})
+target_link_libraries(locked-up sfml-window sfml-graphics sfml-network sfml-audio)
