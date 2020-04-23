@@ -17,6 +17,7 @@ void Server::update()
         new_connection(Connection(incoming));
     }
 
+    std::vector<std::reference_wrapper<RemotePlayer>> to_remove;
     for(auto& player : players)
     {
         Connection& connection = player.get_connection();
@@ -24,6 +25,7 @@ void Server::update()
         if(!connection.is_connected())
         {
             lost_connection(player);
+            to_remove.push_back(player);
             continue;
         }
 
@@ -33,6 +35,9 @@ void Server::update()
 
         packet_received(player, std::move(packet));
     }
+
+    for(auto& player : to_remove)
+        players.erase(std::find(players.begin(), players.end(), player));
 }
 
 void Server::broadcast(const Packet& packet)
@@ -119,18 +124,14 @@ void Server::lost_connection(RemotePlayer& player)
 {
     Connection& connection = player.get_connection();
     std::cout << "[" << connection.get_addr() << "] Lost connection!" << std::endl;
-
-    players.erase(std::find(players.begin(), players.end(), player));
 }
 
 void Server::disconnected(RemotePlayer& player, const std::string& reason)
 {
     Connection& connection = player.get_connection();
 
-    std::cout << "[" << connection.get_addr() << "] Left: " << player.get_nickname()
-              << " because: " << reason << std::endl;
-
-    players.erase(std::find(players.begin(), players.end(), player));
+    std::cout << "[" << connection.get_addr() << "] " << player.get_nickname()
+              << " left because: " << reason << std::endl;
 }
 
 
