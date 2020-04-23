@@ -26,6 +26,14 @@ void Server::update()
     }
 }
 
+void Server::broadcast(const Packet& packet)
+{
+    for(auto& connection : connections)
+    {
+        connection.send(packet);
+    }
+}
+
 void Server::new_connection(Connection connection)
 {
     std::cout << "New connection from: " << connection.get_addr() << std::endl;
@@ -36,6 +44,16 @@ void Server::new_connection(Connection connection)
 void Server::packet_received(Connection& sender, std::unique_ptr<Packet> packet)
 {
     std::cout << "[" << sender.get_addr() << "] sent a packet!" << std::endl;
+}
+
+void Server::lost_connection(Connection& connection)
+{
+
+}
+
+void Server::disconnected(Connection& connection)
+{
+
 }
 
 
