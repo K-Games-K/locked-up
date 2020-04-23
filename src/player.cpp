@@ -4,6 +4,11 @@ Player::Player(const std::string& nickname, int x, int y)
 	: nickname(nickname), x(x), y(y)
 {}
 
+std::string Player::get_nickname() const
+{
+    return nickname;
+}
+
 int Player::get_x() const
 {
 	return this->x;

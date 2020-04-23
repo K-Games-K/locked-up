@@ -12,6 +12,8 @@ private:
 public:
 	Player(const std::string& nickname, int x, int y);
 
+	std::string get_nickname() const;
+
 	int get_x() const;
 	int get_y() const;
 
