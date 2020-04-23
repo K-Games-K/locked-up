@@ -18,3 +18,5 @@ include_directories(include ${SFML_INCLUDE})
 
 add_executable(locked-up ${SOURCES} ${HEADERS})
 target_link_libraries(locked-up sfml-window sfml-graphics sfml-network sfml-audio)
+
+set_property(TARGET locked-up PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
