@@ -25,34 +25,37 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
     if(event.type == sf::Event::Closed)
         window.close();
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
+        sf::Vector2i mosepos = sf::Mouse::getPosition(window);
 
-        sf::Vector2i mosepos = sf::Mouse::getPosition(this->window);
-
-        int posx = (int)(mosepos.x / 40);
-        int posy = (int)(mosepos.y / 40);
+        int posx = (int) (mosepos.x / 40);
+        int posy = (int) (mosepos.y / 40);
 
         std::cout << "room: " << board.get_room(posx, posy).get_name() << std::endl;
         printf("mose at: %d %d\n", posx, posy);
-        players[0].set_position(posx, posy);
 
+        server_connection.send(PlayerMovePacket(posx, posy, false));
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if(event.type == sf::Event::KeyPressed)
     {
-        players[0].set_position(players[0].get_x(), players[0].get_y() - 1);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
-        players[0].set_position(players[0].get_x(), players[0].get_y() + 1);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
-        players[0].set_position(players[0].get_x() - 1, players[0].get_y());
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
-        players[0].set_position(players[0].get_x() + 1, players[0].get_y());
+        switch(event.key.code)
+        {
+            case sf::Keyboard::Up:
+                server_connection.send(PlayerMovePacket(0, -1, true));
+                break;
+            case sf::Keyboard::Down:
+                server_connection.send(PlayerMovePacket(0, 1, true));
+                break;
+            case sf::Keyboard::Left:
+                server_connection.send(PlayerMovePacket(-1, 0, true));
+                break;
+            case sf::Keyboard::Right:
+                server_connection.send(PlayerMovePacket(1, 0, true));
+                break;
+            default:
+                break;
+        }
     }
 
     return nullptr;
@@ -72,22 +75,20 @@ std::unique_ptr<GameState> PlayState::update(float dt)
 
 void PlayState::render(float dt)
 {
-    sf::Sprite temp;
-    temp.setTexture(background_txt);
+    sf::Sprite bg_sprite;
+    bg_sprite.setTexture(background_txt);
 
-    window.draw(temp);
+    window.draw(bg_sprite);
 
     sf::Sprite player_sprite;
+    player_sprite.setTexture(player_txt);
 
-    for (Player player_obj : players)
+    for(Player& player_obj : players)
     {
-        player_sprite.setTexture(player_txt);
-
         player_sprite.setPosition(player_obj.get_x() * 40, player_obj.get_y() * 40);
 
         window.draw(player_sprite);
     }
-
 }
 
 void PlayState::packet_received(std::unique_ptr<Packet> packet)
@@ -120,7 +121,13 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             auto player_move_packet = dynamic_cast<PlayerMovePacket&>(*packet);
             uint16_t player_id = player_move_packet.get_player_id();
             Player& player = players.at(player_id);
-            player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
+
+            if(player_move_packet.is_relative())
+                player.move(player_move_packet.get_x(), player_move_packet.get_y());
+            else
+                player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
+
+            std::cout << "Player " << player.get_nickname() << " moved!" << std::endl;
 
             break;
         }
