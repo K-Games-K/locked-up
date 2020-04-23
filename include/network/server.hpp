@@ -4,24 +4,22 @@
 #include <unordered_map>
 #include <SFML/Network.hpp>
 
-#include "player.hpp"
-#include "connection.hpp"
+#include "remote_player.hpp"
 
 class Server
 {
 private:
     sf::TcpListener listener;
 
-    std::vector<Connection> connections;
-    std::unordered_map<std::string, Player> connected_players;  // <IpAddress, Player>
+    std::vector<RemotePlayer> players;
 
     void new_connection(Connection connection);
 
-    void packet_received(Connection& sender, std::unique_ptr<Packet> packet);
+    void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
 
-    void lost_connection(Connection& connection);
+    void lost_connection(RemotePlayer& player);
 
-    void disconnected(Connection& connection, const std::string& reason);
+    void disconnected(RemotePlayer& player, const std::string& reason);
 
 public:
     Server(unsigned short bind_port, sf::IpAddress bind_addr = sf::IpAddress::Any);

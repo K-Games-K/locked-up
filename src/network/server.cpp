@@ -17,11 +17,13 @@ void Server::update()
         new_connection(Connection(incoming));
     }
 
-    for(auto& connection : connections)
+    for(auto& player : players)
     {
+        Connection& connection = player.get_connection();
+
         if(!connection.is_connected())
         {
-            lost_connection(connection);
+            lost_connection(player);
             continue;
         }
 
@@ -29,15 +31,15 @@ void Server::update()
         if(packet == nullptr)
             continue;
 
-        packet_received(connection, std::move(packet));
+        packet_received(player, std::move(packet));
     }
 }
 
 void Server::broadcast(const Packet& packet)
 {
-    for(auto& connection : connections)
+    for(auto& player : players)
     {
-        connection.send(packet);
+        player.get_connection().send(packet);
     }
 }
 
@@ -45,20 +47,22 @@ void Server::new_connection(Connection connection)
 {
     std::cout << "New connection from: " << connection.get_addr() << std::endl;
 
-    connections.push_back(connection);
+    players.emplace_back(connection);
 }
 
-void Server::packet_received(Connection& sender, std::unique_ptr<Packet> packet)
+void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packet)
 {
-    std::cout << "[" << sender.get_addr() << "] sent a packet of id: " << packet->get_id() << std::endl;
+    Connection& connection = player.get_connection();
+    std::cout << "[" << connection.get_addr() << "] sent a packet of id: "
+              << packet->get_id() << std::endl;
 
     switch(packet->get_id())
     {
         case DebugPacket::PACKET_ID:
         {
             auto debug_packet = dynamic_cast<DebugPacket&>(*packet);
-            std::cout << "[Debug:" << sender.get_addr() << "]: "
-                << debug_packet.get_message() << std::endl;
+            std::cout << "[Debug:" << connection.get_addr() << "]: "
+                      << debug_packet.get_message() << std::endl;
 
             break;
         }
@@ -66,17 +70,14 @@ void Server::packet_received(Connection& sender, std::unique_ptr<Packet> packet)
         {
             auto join_game_packet = dynamic_cast<JoinGamePacket&>(*packet);
 
-            std::string ip_addr = sender.get_addr().toString();
             std::string nickname = join_game_packet.get_nickname();
+            player.set_nickname(nickname);
 
-            Player player(nickname);
-            connected_players.insert({ip_addr, player});
-
-            std::vector<Player> players;
-            players.reserve(connected_players.size());
-            for(auto& entry : connected_players)
-                players.push_back(entry.second);
-            sender.send(PlayersListPacket(players));
+            std::vector<Player> players_list;
+            players_list.reserve(players.size());
+            for(auto& remote_player : players)
+                players_list.emplace_back(remote_player.get_nickname());
+            broadcast(PlayersListPacket(players_list));
 
             break;
         }
@@ -84,7 +85,28 @@ void Server::packet_received(Connection& sender, std::unique_ptr<Packet> packet)
         {
             auto disconnect_packet = dynamic_cast<DisconnectPacket&>(*packet);
 
-            disconnected(sender, disconnect_packet.get_reason());
+            disconnected(player, disconnect_packet.get_reason());
+
+            break;
+        }
+        case PlayerMovePacket::PACKET_ID:
+        {
+            auto player_move_packet = dynamic_cast<PlayerMovePacket&>(*packet);
+
+            if(player_move_packet.is_relative())
+                player.move(player_move_packet.get_x(), player_move_packet.get_y());
+            else
+                player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
+
+            auto player_id = std::distance(
+                    players.begin(),
+                    std::find(players.begin(), players.end(), player)
+            );
+
+            player_move_packet.set_player_id(player_id);
+            broadcast(player_move_packet);
+
+            std::cout << "[" << player_id << "] move" << std::endl;
 
             break;
         }
@@ -93,25 +115,22 @@ void Server::packet_received(Connection& sender, std::unique_ptr<Packet> packet)
     }
 }
 
-void Server::lost_connection(Connection& connection)
+void Server::lost_connection(RemotePlayer& player)
 {
+    Connection& connection = player.get_connection();
     std::cout << "[" << connection.get_addr() << "] Lost connection!" << std::endl;
 
-    auto ip_addr = connection.get_addr().toString();
-    connected_players.erase(ip_addr);
-    connections.erase(std::find(connections.begin(), connections.end(), connection));
+    players.erase(std::find(players.begin(), players.end(), player));
 }
 
-void Server::disconnected(Connection& connection, const std::string& reason)
+void Server::disconnected(RemotePlayer& player, const std::string& reason)
 {
-    auto ip_addr = connection.get_addr().toString();
-    auto player = connected_players.at(ip_addr);
+    Connection& connection = player.get_connection();
 
     std::cout << "[" << connection.get_addr() << "] Left: " << player.get_nickname()
-        << " because: " << reason << std::endl;
+              << " because: " << reason << std::endl;
 
-    connected_players.erase(ip_addr);
-    connections.erase(std::find(connections.begin(), connections.end(), connection));
+    players.erase(std::find(players.begin(), players.end(), player));
 }
 
 
