@@ -22,10 +22,10 @@ private:
 
     Connection server_connection;
 
-    void packet_received(std::unique_ptr<Packet> packet);
-
     sf::Texture background_txt;
     sf::Texture player_txt;
+
+    void packet_received(std::unique_ptr<Packet> packet);
 
 public:
     PlayState(sf::RenderWindow& window);
