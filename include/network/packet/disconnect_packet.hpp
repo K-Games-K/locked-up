@@ -10,9 +10,7 @@ private:
 public:
     static constexpr uint16_t PACKET_ID = 0x3;
 
-    DisconnectPacket();
-
-    explicit DisconnectPacket(const std::string& reason);
+    explicit DisconnectPacket(const std::string& reason = "Disconnected");
 
     std::string get_reason() const;
 

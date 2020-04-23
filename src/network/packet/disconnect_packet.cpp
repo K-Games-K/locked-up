@@ -1,9 +1,5 @@
 #include "network/packet/disconnect_packet.hpp"
 
-DisconnectPacket::DisconnectPacket()
-        : Packet(PACKET_ID)
-{}
-
 DisconnectPacket::DisconnectPacket(const std::string& reason)
         : Packet(PACKET_ID), reason(reason)
 {}
