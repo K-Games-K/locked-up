@@ -11,12 +11,16 @@ class Connection
 private:
     std::shared_ptr<sf::TcpSocket> socket;
 
+    bool connected = false;
+
 public:
     explicit Connection(std::shared_ptr<sf::TcpSocket>& socket);
 
     Connection(sf::IpAddress remote_addr, unsigned short remote_port);
 
     sf::IpAddress get_addr() const;
+
+    bool is_connceted() const;
 
     bool send(const Packet& packet);
 

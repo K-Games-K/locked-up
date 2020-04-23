@@ -6,18 +6,28 @@ Connection::Connection(std::shared_ptr<sf::TcpSocket>& socket)
         : socket(std::move(socket))
 {
     this->socket->setBlocking(false);
+    connected = true;
 }
 
 Connection::Connection(sf::IpAddress remote_addr, unsigned short remote_port)
         : socket(std::make_shared<sf::TcpSocket>())
 {
-    socket->connect(remote_addr, remote_port);
+    auto result = socket->connect(remote_addr, remote_port);
+    if(result != sf::Socket::Done)
+        return;
+
     socket->setBlocking(false);
+    connected = true;
 }
 
 sf::IpAddress Connection::get_addr() const
 {
     return socket->getRemoteAddress();
+}
+
+bool Connection::is_connceted() const
+{
+    return connected;
 }
 
 bool Connection::send(const Packet& packet)
@@ -26,13 +36,20 @@ bool Connection::send(const Packet& packet)
     data << packet.get_id();
     packet.serialize(data);
 
-    return socket->send(data) == sf::Socket::Done;
+    auto result = socket->send(data);
+    if(result == sf::Socket::Disconnected)
+        connected = false;
+
+    return result == sf::Socket::Done;
 }
 
 std::unique_ptr<Packet> Connection::recv()
 {
     sf::Packet data;
-    if(socket->receive(data) != sf::Socket::Done)
+    auto result = socket->receive(data);
+    if(result == sf::Socket::Disconnected)
+        connected = false;
+    if(result != sf::Socket::Done)
         return nullptr;
 
     uint16_t packet_id = 0;
