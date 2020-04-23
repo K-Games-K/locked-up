@@ -20,9 +20,11 @@ public:
 
     sf::IpAddress get_addr() const;
 
-    bool is_connceted() const;
+    bool is_connected() const;
 
     bool send(const Packet& packet);
 
     std::unique_ptr<Packet> recv();
+
+    bool operator==(const Connection& other);
 };

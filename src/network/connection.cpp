@@ -25,7 +25,7 @@ sf::IpAddress Connection::get_addr() const
     return socket->getRemoteAddress();
 }
 
-bool Connection::is_connceted() const
+bool Connection::is_connected() const
 {
     return connected;
 }
@@ -61,5 +61,10 @@ std::unique_ptr<Packet> Connection::recv()
 
     packet->deserialize(data);
     return packet;
+}
+
+bool Connection::operator==(const Connection& other)
+{
+    return socket == other.socket;
 }
 
