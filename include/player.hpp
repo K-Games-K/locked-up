@@ -18,4 +18,6 @@ public:
 	int get_y() const;
 
 	void set_position(int m, int y);
+
+	bool operator==(const Player& other);
 };

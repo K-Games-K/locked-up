@@ -24,3 +24,8 @@ void Player::set_position(int x, int y)
 	this->x = x;
 	this->y = y;
 }
+
+bool Player::operator==(const Player& other)
+{
+    return nickname == other.nickname;
+}
