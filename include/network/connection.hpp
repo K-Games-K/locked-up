@@ -11,6 +11,8 @@ class Connection
 private:
     std::shared_ptr<sf::TcpSocket> socket;
 
+    bool connected = false;
+
 public:
     explicit Connection(std::shared_ptr<sf::TcpSocket>& socket);
 
@@ -18,7 +20,11 @@ public:
 
     sf::IpAddress get_addr() const;
 
+    bool is_connected() const;
+
     bool send(const Packet& packet);
 
     std::unique_ptr<Packet> recv();
+
+    bool operator==(const Connection& other);
 };
