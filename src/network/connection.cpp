@@ -32,6 +32,9 @@ bool Connection::is_connected() const
 
 bool Connection::send(const Packet& packet)
 {
+    if(!connected)
+        return false;
+
     sf::Packet data;
     data << packet.get_id();
     packet.serialize(data);
@@ -45,6 +48,9 @@ bool Connection::send(const Packet& packet)
 
 std::unique_ptr<Packet> Connection::recv()
 {
+    if(!connected)
+        return nullptr;
+
     sf::Packet data;
     auto result = socket->receive(data);
     if(result == sf::Socket::Disconnected)
