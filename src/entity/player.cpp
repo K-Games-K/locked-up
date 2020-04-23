@@ -1,21 +1,21 @@
 #include "entity/player.hpp"
 
-Player::Player(int uniq_id)
-	:m(0) , n(0) , id(uniq_id)
+Player::Player(const std::string& nickname, int x, int y)
+	: nickname(nickname), x(x), y(y)
 {}
 
-int Player::getM()
+int Player::get_x() const
 {
-	return this->m;
+	return this->x;
 }
 
-int Player::getN()
+int Player::get_y() const
 {
-	return this->n;
+	return this->y;
 }
 
-void Player::sePosition(int m, int n)
+void Player::set_position(int x, int y)
 {
-	this->m = m;
-	this->n = n;
+	this->x = x;
+	this->y = y;
 }
