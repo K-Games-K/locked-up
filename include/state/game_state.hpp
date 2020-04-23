@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 class GameState
