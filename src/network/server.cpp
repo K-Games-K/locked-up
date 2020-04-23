@@ -19,7 +19,7 @@ void Server::update()
 
     for(auto& connection : connections)
     {
-        if(!connection.is_connceted())
+        if(!connection.is_connected())
         {
             lost_connection(connection);
             continue;
@@ -50,7 +50,7 @@ void Server::new_connection(Connection connection)
 
 void Server::packet_received(Connection& sender, std::unique_ptr<Packet> packet)
 {
-    std::cout << "[" << sender.get_addr() << "] sent a packet!" << std::endl;
+    std::cout << "[" << sender.get_addr() << "] sent a packet of id: " << packet->get_id() << std::endl;
 
     switch(packet->get_id())
     {
@@ -71,6 +71,12 @@ void Server::packet_received(Connection& sender, std::unique_ptr<Packet> packet)
 
             Player player(nickname);
             connected_players.insert({ip_addr, player});
+
+            std::vector<Player> players;
+            players.reserve(connected_players.size());
+            for(auto& entry : connected_players)
+                players.push_back(entry.second);
+            sender.send(PlayersListPacket(players));
 
             break;
         }
