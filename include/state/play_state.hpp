@@ -3,6 +3,8 @@
 #include "game_state.hpp"
 #include "game_board.hpp"
 
+#include <SFML/Graphics.hpp>
+
 class PlayState : public GameState
 {
 private:
@@ -10,6 +12,10 @@ private:
     const int GAMEBOARD_HEIGHT = 100;
 
     GameBoard board;
+
+    sf::Texture backGroud;
+    sf::Texture player;
+
 
 public:
     PlayState(sf::RenderWindow& window);
