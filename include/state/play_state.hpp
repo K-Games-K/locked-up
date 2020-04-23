@@ -3,7 +3,11 @@
 #include "player.hpp"
 #include "game_state.hpp"
 #include "game_board.hpp"
+#include "player.hpp"
+#include <SFML/Graphics.hpp>
+
 #include "network/connection.hpp"
+
 
 class PlayState : public GameState
 {
@@ -19,6 +23,11 @@ private:
     Connection server_connection;
 
     void packet_received(std::unique_ptr<Packet> packet);
+
+    sf::Texture backGroud;
+    sf::Texture player;
+
+    std::vector<Player> players;
 
 public:
     PlayState(sf::RenderWindow& window);
