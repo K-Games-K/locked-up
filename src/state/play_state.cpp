@@ -33,7 +33,6 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
         players[0].set_position(posx, posy);
     
     }
-
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
         players[0].set_position(players[0].get_x(), players[0].get_y() - 1);
