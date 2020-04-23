@@ -24,10 +24,8 @@ private:
 
     void packet_received(std::unique_ptr<Packet> packet);
 
-    sf::Texture backGroud;
-    sf::Texture player;
-
-    std::vector<Player> players;
+    sf::Texture background_txt;
+    sf::Texture player_txt;
 
 public:
     PlayState(sf::RenderWindow& window);
