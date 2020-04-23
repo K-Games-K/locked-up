@@ -5,21 +5,23 @@
 class PlayerMovePacket : public Packet
 {
 private:
-    std::string nickname;
-    int x, y;
+    uint16_t player_id;
+    uint16_t x, y;
 
 public:
     static constexpr uint16_t PACKET_ID = 0x4;
 
     PlayerMovePacket();
 
-    PlayerMovePacket(const std::string nickname, int x, int y);
+    PlayerMovePacket(uint16_t player_id, uint16_t x, uint16_t y);
 
-    std::string get_nickname() const;
+    void set_player_id(uint16_t player_id);
 
-    int get_x() const;
+    uint16_t get_player_id() const;
 
-    int get_y() const;
+    uint16_t get_x() const;
+
+    uint16_t get_y() const;
 
     void serialize(sf::Packet& data) const override;
 

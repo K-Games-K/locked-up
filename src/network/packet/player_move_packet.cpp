@@ -4,33 +4,38 @@ PlayerMovePacket::PlayerMovePacket()
         : Packet(PACKET_ID)
 {}
 
-PlayerMovePacket::PlayerMovePacket(std::string nickname, int x, int y)
-        : Packet(PACKET_ID), nickname(nickname), x(x), y(x)
+PlayerMovePacket::PlayerMovePacket(uint16_t player_id, uint16_t x, uint16_t y)
+        : Packet(PACKET_ID), x(x), y(x)
 {}
 
-std::string PlayerMovePacket::get_nickname() const
+void PlayerMovePacket::set_player_id(uint16_t player_id)
 {
-    return nickname;
+    this->player_id = player_id;
 }
 
-int PlayerMovePacket::get_x() const
+uint16_t PlayerMovePacket::get_player_id() const
+{
+    return player_id;
+}
+
+uint16_t PlayerMovePacket::get_x() const
 {
     return x;
 }
 
-int PlayerMovePacket::get_y() const
+uint16_t PlayerMovePacket::get_y() const
 {
     return y;
 }
 
 void PlayerMovePacket::serialize(sf::Packet& data) const
 {
-    data << nickname << x << y;
+    data << player_id << x << y;
 }
 
 void PlayerMovePacket::deserialize(sf::Packet& data)
 {
-    data >> nickname >> x >> y;
+    data >> player_id >> x >> y;
 }
 
 
