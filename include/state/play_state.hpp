@@ -1,13 +1,13 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 #include "player.hpp"
 #include "game_state.hpp"
 #include "game_board.hpp"
 #include "player.hpp"
-#include <SFML/Graphics.hpp>
-
+#include "resource_manager.hpp"
 #include "network/connection.hpp"
-
 
 class PlayState : public GameState
 {
@@ -22,8 +22,7 @@ private:
 
     Connection server_connection;
 
-    sf::Texture background_txt;
-    sf::Texture player_txt;
+    ResourceManager<sf::Texture> textures;
 
     void packet_received(std::unique_ptr<Packet> packet);
 

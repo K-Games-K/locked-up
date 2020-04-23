@@ -9,21 +9,20 @@
 PlayState::PlayState(sf::RenderWindow& window)
         : GameState(window),
           board(GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT),
-          server_connection(SERVER_ADDR, SERVER_PORT)
+          server_connection(SERVER_ADDR, SERVER_PORT),
+          textures("assets/sprites", "png")
 {
     JoinGamePacket packet("General Kenobi");
-    std::cout << server_connection.send(packet) << std::endl;
-    background_txt.loadFromFile("assets/sprites/board.png");
-
-    player_txt.loadFromFile("assets/sprites/player.png");
-
-    players.push_back(Player("V_Ader", 10, 14));
+    server_connection.send(packet);
 }
 
 std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
 {
     if(event.type == sf::Event::Closed)
+    {
+        server_connection.send(DisconnectPacket());
         window.close();
+    }
 
     if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
@@ -76,12 +75,12 @@ std::unique_ptr<GameState> PlayState::update(float dt)
 void PlayState::render(float dt)
 {
     sf::Sprite bg_sprite;
-    bg_sprite.setTexture(background_txt);
+    bg_sprite.setTexture(textures.get("board"));
 
     window.draw(bg_sprite);
 
     sf::Sprite player_sprite;
-    player_sprite.setTexture(player_txt);
+    player_sprite.setTexture(textures.get("player"));
 
     for(Player& player_obj : players)
     {
