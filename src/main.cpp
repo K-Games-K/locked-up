@@ -1,10 +1,19 @@
-#include <iostream>
 #include "game.hpp"
+#include "network/server.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-    std::cout << "Hello world!" << std::endl;
+    if(argc == 2)
+    {
+        Server server(2704);
+        for(;;)
+            server.update();
+    }
+    else
+    {
+        Game game;
+        game.run();
+    }
 
-    Game g1 = Game();
-    g1.run();
+    return 0;
 }
