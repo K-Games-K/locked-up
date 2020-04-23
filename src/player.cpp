@@ -1,4 +1,4 @@
-#include "entity/player.hpp"
+#include "player.hpp"
 
 Player::Player(const std::string& nickname, int x, int y)
 	: nickname(nickname), x(x), y(y)

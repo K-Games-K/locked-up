@@ -9,7 +9,6 @@ private:
 	int x;
 	int y;
 
-
 public:
 	Player(const std::string& nickname, int x, int y);
 
