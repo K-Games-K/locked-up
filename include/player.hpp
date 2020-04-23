@@ -10,7 +10,7 @@ private:
 	int y;
 
 public:
-	Player(const std::string& nickname, int x, int y);
+	Player(const std::string& nickname, int x = 0, int y = 0);
 
 	std::string get_nickname() const;
 
