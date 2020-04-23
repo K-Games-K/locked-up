@@ -20,7 +20,7 @@ sf::IpAddress Connection::get_addr() const
     return socket->getRemoteAddress();
 }
 
-bool Connection::send(Packet& packet)
+bool Connection::send(const Packet& packet)
 {
     sf::Packet data;
     data << packet.get_id();

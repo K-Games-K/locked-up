@@ -18,7 +18,7 @@ public:
 
     sf::IpAddress get_addr() const;
 
-    bool send(Packet& packet);
+    bool send(const Packet& packet);
 
     std::unique_ptr<Packet> recv();
 };
