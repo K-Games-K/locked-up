@@ -4,8 +4,8 @@ PlayerMovePacket::PlayerMovePacket()
         : Packet(PACKET_ID)
 {}
 
-PlayerMovePacket::PlayerMovePacket(uint16_t player_id, uint16_t x, uint16_t y)
-        : Packet(PACKET_ID), x(x), y(x)
+PlayerMovePacket::PlayerMovePacket(int16_t x, int16_t y, bool relative, uint16_t player_id)
+        : Packet(PACKET_ID), x(x), y(y), player_id(player_id), relative(relative)
 {}
 
 void PlayerMovePacket::set_player_id(uint16_t player_id)
@@ -18,24 +18,29 @@ uint16_t PlayerMovePacket::get_player_id() const
     return player_id;
 }
 
-uint16_t PlayerMovePacket::get_x() const
+int16_t PlayerMovePacket::get_x() const
 {
     return x;
 }
 
-uint16_t PlayerMovePacket::get_y() const
+int16_t PlayerMovePacket::get_y() const
 {
     return y;
 }
 
+bool PlayerMovePacket::is_relative() const
+{
+    return relative;
+}
+
 void PlayerMovePacket::serialize(sf::Packet& data) const
 {
-    data << player_id << x << y;
+    data << player_id << x << y << relative;
 }
 
 void PlayerMovePacket::deserialize(sf::Packet& data)
 {
-    data >> player_id >> x >> y;
+    data >> player_id >> x >> y >> relative;
 }
 
 
