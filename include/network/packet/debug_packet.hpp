@@ -8,7 +8,7 @@
 class DebugPacket : public Packet
 {
 private:
-        std::string debug_msg;
+    std::string debug_msg;
 
 public:
     static constexpr uint16_t PACKET_ID = 0x0;
