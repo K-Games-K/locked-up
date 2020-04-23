@@ -2,6 +2,7 @@
 
 #include "game_state.hpp"
 #include "game_board.hpp"
+#include "player.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -16,6 +17,7 @@ private:
     sf::Texture backGroud;
     sf::Texture player;
 
+    std::vector<Player> players;
 
 public:
     PlayState(sf::RenderWindow& window);
