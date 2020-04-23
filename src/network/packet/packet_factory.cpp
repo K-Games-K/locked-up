@@ -13,6 +13,8 @@ std::unique_ptr<Packet> PacketFactory::create(uint16_t packet_id)
             return std::make_unique<PlayersListPacket>();
         case DisconnectPacket::PACKET_ID:
             return std::make_unique<DisconnectPacket>();
+        case PlayerMovePacket::PACKET_ID:
+            return std::make_unique<PlayerMovePacket>();
         default:
             return nullptr;
     }

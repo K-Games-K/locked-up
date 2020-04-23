@@ -5,3 +5,4 @@
 #include "join_game_packet.hpp"
 #include "players_list_packet.hpp"
 #include "disconnect_packet.hpp"
+#include "player_move_packet.hpp"
