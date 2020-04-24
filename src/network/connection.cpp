@@ -69,7 +69,7 @@ std::unique_ptr<Packet> Connection::recv()
     return packet;
 }
 
-bool Connection::operator==(const Connection& other)
+bool Connection::operator==(const Connection& other) const
 {
     return socket == other.socket;
 }

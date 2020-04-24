@@ -26,5 +26,5 @@ public:
 
     std::unique_ptr<Packet> recv();
 
-    bool operator==(const Connection& other);
+    bool operator==(const Connection& other) const;
 };
