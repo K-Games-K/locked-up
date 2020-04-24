@@ -36,7 +36,7 @@ void Player::move(int x, int y)
     this->y += y;
 }
 
-bool Player::operator==(const Player& other)
+bool Player::operator==(const Player& other) const
 {
     return nickname == other.nickname;
 }
