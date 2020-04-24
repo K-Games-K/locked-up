@@ -2,8 +2,6 @@
 
 #include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
-#include "network/connection.hpp"
-#include "state/play_state.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window)
         : GameState(window),
