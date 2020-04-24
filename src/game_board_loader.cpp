@@ -1,3 +1,7 @@
+#include <fstream>
+#include <string>
+#include <sstream>
+
 #include "game_board_loader.hpp"
 
 void GameBoardLoader::save_in_memory(const GameBoard& game_board, int& width, int& height,
@@ -38,7 +42,69 @@ GameBoard GameBoardLoader::load_from_memory(int width, int height, const std::ve
     return game_board;
 }
 
-GameBoard GameBoardLoader::load_from_file(const std::string& filepath)
+bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& filepath)
 {
-    return GameBoard();
+    std::ifstream file;
+    file.open(filepath);
+
+    int width, height;
+    file >> width >> height;
+
+    std::string label;
+    file >> label;
+    if(label != "rooms:")
+        return false;
+
+    std::vector<Room> rooms;
+    std::string line_str;
+    for(std::getline(file >> std::ws, line_str); line_str != "tiles:" && !file.eof();
+        std::getline(file >> std::ws, line_str))
+    {
+        std::stringstream line(line_str);
+        std::string room_name;
+        std::getline(line >> std::ws, room_name, ':');
+        // TODO: Handle items
+
+        rooms.emplace_back(room_name);
+    }
+
+    if(file.eof())
+        return false;
+
+    std::vector<int> indices;
+    indices.reserve(width * height);
+    for(std::getline(file >> std::ws, line_str); line_str != "collision:" && !file.eof();
+        std::getline(file >> std::ws, line_str))
+    {
+        std::stringstream line(line_str);
+        int idx;
+        while(!line.eof())
+        {
+            line >> idx;
+            indices.push_back(idx);
+        }
+    }
+
+    if(file.eof() || indices.size() != width * height)
+        return false;
+
+    std::vector<std::array<bool, 2>> collision_map;
+    collision_map.reserve(width * height);
+    for(std::getline(file >> std::ws, line_str); !file.eof();
+        std::getline(file >> std::ws, line_str))
+    {
+        std::stringstream line(line_str);
+        bool east, south;
+        while(!line.eof())
+        {
+            line >> east >> south;
+            collision_map.push_back({east, south});
+        }
+    }
+
+    if(collision_map.size() != width * height)
+        return false;
+
+    game_board = load_from_memory(width, height, rooms, indices, collision_map);
+    return true;
 }

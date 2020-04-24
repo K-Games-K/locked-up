@@ -13,5 +13,5 @@ public:
                                const std::vector<int>& indices,
                                const std::vector<std::array<bool, 2>>& collision_map);
 
-    static GameBoard load_from_file(const std::string& filepath);
+    static bool load_from_file(GameBoard& game_board, const std::string& filepath);
 };
