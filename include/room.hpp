@@ -12,5 +12,5 @@ public:
 
     std::string get_name() const;
 
-    bool operator==(const Room& other);
+    bool operator==(const Room& other) const;
 };

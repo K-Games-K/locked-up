@@ -13,5 +13,5 @@ public:
 
     Connection& get_connection();
 
-    bool operator==(const RemotePlayer& other);
+    bool operator==(const RemotePlayer& other) const;
 };

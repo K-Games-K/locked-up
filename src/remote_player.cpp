@@ -9,7 +9,7 @@ Connection& RemotePlayer::get_connection()
     return connection;
 }
 
-bool RemotePlayer::operator==(const RemotePlayer& other)
+bool RemotePlayer::operator==(const RemotePlayer& other) const
 {
     return connection == other.connection;
 }
