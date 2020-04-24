@@ -14,7 +14,7 @@ public:
 
     PlayerMovePacket();
 
-    PlayerMovePacket(int16_t x, int16_t y, bool relative, uint16_t player_id = 0);
+    PlayerMovePacket(int16_t x, int16_t y, bool relative = true, uint16_t player_id = 0);
 
     void set_player_id(uint16_t player_id);
 
