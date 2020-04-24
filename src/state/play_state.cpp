@@ -40,16 +40,16 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
         switch(event.key.code)
         {
             case sf::Keyboard::Up:
-                server_connection.send(PlayerMovePacket(0, -1));
+                server_connection.send(PlayerMovePacket(0, -1, current_player_id));
                 break;
             case sf::Keyboard::Down:
-                server_connection.send(PlayerMovePacket(0, 1));
+                server_connection.send(PlayerMovePacket(0, 1, current_player_id));
                 break;
             case sf::Keyboard::Left:
-                server_connection.send(PlayerMovePacket(-1, 0));
+                server_connection.send(PlayerMovePacket(-1, 0, current_player_id));
                 break;
             case sf::Keyboard::Right:
-                server_connection.send(PlayerMovePacket(1, 0));
+                server_connection.send(PlayerMovePacket(1, 0, current_player_id));
                 break;
             default:
                 break;
@@ -76,34 +76,29 @@ void PlayState::render(float dt)
     sf::Sprite bg_sprite;
     bg_sprite.setTexture(textures.get("mapa4"));
 
-    int map_render_pos_x = 0;
-    int map_render_pos_y = 0;
-    bool set_x;
-    bool set_y;
+    const int map_render_width = 17;
+    const int map_render_height = 17;
 
-    const int map_render_size_x = 17;
-    const int map_render_size_y = 17;
-
-    if (players.size() != 0)
+    if(players.size() != 0)
     {
-        map_render_pos_x = (players[current_player_id].get_x() - 9);
-        map_render_pos_y = (players[current_player_id].get_y() - 9);
-      
+        camera_pos_x = (players[current_player_id].get_x() - 9);
+        camera_pos_y = (players[current_player_id].get_y() - 9);
 
-        if (map_render_pos_x < 0) map_render_pos_x = 0;
-        else if (map_render_pos_x + map_render_size_x >= game_board.get_width()) map_render_pos_x = game_board.get_width() - map_render_size_x;
+        if(camera_pos_x < 0)
+            camera_pos_x = 0;
+        else if(camera_pos_x + map_render_width >= game_board.get_width())
+            camera_pos_x = game_board.get_width() - map_render_width;
 
+        if(camera_pos_y < 0)
+            camera_pos_y = 0;
+        else if(camera_pos_y + map_render_height >= game_board.get_height())
+            camera_pos_y = game_board.get_height() - map_render_height;
 
-        if (map_render_pos_y < 0) map_render_pos_y = 0;
-        else if (map_render_pos_y + map_render_size_y >= game_board.get_height()) map_render_pos_y = game_board.get_height() - map_render_size_y;
-
-
-
-        bg_sprite.setPosition(-map_render_pos_x * 40, -map_render_pos_y * 40);
+        bg_sprite.setPosition(-camera_pos_x * 40, -camera_pos_y * 40);
     }
     else
     {
-        bg_sprite.setPosition(0,0);
+        bg_sprite.setPosition(0, 0);
     }
 
     window.draw(bg_sprite);
@@ -111,13 +106,14 @@ void PlayState::render(float dt)
     sf::Sprite player_sprite;
     player_sprite.setTexture(textures.get("player"));
 
-    
-
     for(int i = 0; i < players.size(); ++i)
     {
-        if (i == current_player_id)
+        if(i == current_player_id)
         {
-            player_sprite.setPosition((players[current_player_id].get_x() - map_render_pos_x) * 40,( players[current_player_id].get_y() - map_render_pos_y) * 40); //current player
+            player_sprite.setPosition(
+                    (players[current_player_id].get_x() - camera_pos_x) * 40,
+                    (players[current_player_id].get_y() - camera_pos_y) * 40
+            ); //current player
             window.draw(player_sprite);
             continue;
         }
@@ -142,6 +138,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
         case PlayersListPacket::PACKET_ID:
         {
             auto players_list_packet = dynamic_cast<PlayersListPacket&>(*packet);
+            current_player_id = players_list_packet.get_player_id();
             players = players_list_packet.get_players_list();
 
             std::cout << "Received players list: " << std::endl;

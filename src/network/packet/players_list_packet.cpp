@@ -4,9 +4,14 @@ PlayersListPacket::PlayersListPacket()
         : Packet(PACKET_ID)
 {}
 
-PlayersListPacket::PlayersListPacket(const std::vector<Player>& players_list)
-        : Packet(PACKET_ID), players_list(players_list)
+PlayersListPacket::PlayersListPacket(uint16_t player_id, const std::vector<Player>& players_list)
+        : Packet(PACKET_ID), player_id(player_id), players_list(players_list)
 {}
+
+uint16_t PlayersListPacket::get_player_id() const
+{
+    return player_id;
+}
 
 std::vector<Player> PlayersListPacket::get_players_list() const
 {
@@ -16,7 +21,7 @@ std::vector<Player> PlayersListPacket::get_players_list() const
 void PlayersListPacket::serialize(sf::Packet& data) const
 {
     uint16_t players_count = players_list.size();
-    data << players_count;
+    data << player_id << players_count;
     for(auto& player : players_list)
         data << player.get_nickname() << player.get_x() << player.get_y();
 }
@@ -24,7 +29,7 @@ void PlayersListPacket::serialize(sf::Packet& data) const
 void PlayersListPacket::deserialize(sf::Packet& data)
 {
     uint16_t players_count = 0;
-    data >> players_count;
+    data >> player_id >> players_count;
     players_list.reserve(players_count);
     for(int i = 0; i < players_count; ++i)
     {

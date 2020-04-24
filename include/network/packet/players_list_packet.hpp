@@ -6,6 +6,7 @@
 class PlayersListPacket : public Packet
 {
 private:
+    uint16_t player_id;                 // Receivers index in players_list array.
     std::vector<Player> players_list;
 
 public:
@@ -13,7 +14,9 @@ public:
 
     PlayersListPacket();
 
-    explicit PlayersListPacket(const std::vector<Player>& players_list);
+    explicit PlayersListPacket(uint16_t player_id, const std::vector<Player>& players_list);
+
+    uint16_t get_player_id() const;
 
     std::vector<Player> get_players_list() const;
 

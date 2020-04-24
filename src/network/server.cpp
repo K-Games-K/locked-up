@@ -52,7 +52,11 @@ void Server::update()
                     remote_player.get_x(),
                     remote_player.get_y()
             );
-        broadcast(PlayersListPacket(players_list));
+
+        for(int i = 0; i < players.size(); ++i)
+        {
+            players[i].get_connection().send(PlayersListPacket(i, players_list));
+        }
     }
 }
 
@@ -102,7 +106,12 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                         remote_player.get_x(),
                         remote_player.get_y()
                 );
-            broadcast(PlayersListPacket(players_list));
+
+
+            for(int i = 0; i < players.size(); ++i)
+            {
+                players[i].get_connection().send(PlayersListPacket(i, players_list));
+            }
 
             GameBoardPacket game_board_packet(game_board);
             connection.send(game_board_packet);
@@ -134,8 +143,7 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                 if(newx < 0 || newx >= GAMEBOARD_WIDTH || newy < 0 || newy >= GAMEBOARD_HEIGHT)
                     break;
 
-                // Players cannot leave room they're in.
-                if(game_board.get_room(posx, posy) == game_board.get_room(newx, newy))
+                if(game_board.can_move(posx, posy, x, y))
                     player.set_position(newx, newy);
                 else
                     break;
@@ -145,12 +153,11 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                 player.set_position(x, y);
             }
 
-            auto player_id = std::distance(
-                    players.begin(),
-                    std::find(players.begin(), players.end(), player)
-            );
+            // if(player_move_packet.is_relative())
+            //     player.move(player_move_packet.get_x(), player_move_packet.get_y());
+            // else
+            //     player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
 
-            player_move_packet.set_player_id(player_id);
             broadcast(player_move_packet);
 
             break;

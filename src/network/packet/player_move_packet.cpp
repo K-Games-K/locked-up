@@ -4,14 +4,10 @@ PlayerMovePacket::PlayerMovePacket()
         : Packet(PACKET_ID)
 {}
 
-PlayerMovePacket::PlayerMovePacket(int16_t x, int16_t y, bool relative, uint16_t player_id)
+PlayerMovePacket::PlayerMovePacket(int16_t x, int16_t y, uint16_t player_id, bool relative)
         : Packet(PACKET_ID), x(x), y(y), player_id(player_id), relative(relative)
 {}
 
-void PlayerMovePacket::set_player_id(uint16_t player_id)
-{
-    this->player_id = player_id;
-}
 
 uint16_t PlayerMovePacket::get_player_id() const
 {
