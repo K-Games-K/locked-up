@@ -23,8 +23,6 @@ private:
 
     void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
 
-    void lost_connection(RemotePlayer& player);
-
     void disconnected(RemotePlayer& player, const std::string& reason);
 
 public:

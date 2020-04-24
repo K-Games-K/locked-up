@@ -18,6 +18,7 @@ void Server::update()
         new_connection(Connection(incoming));
     }
 
+    bool update_players_list = false;
     std::vector<std::reference_wrapper<RemotePlayer>> to_remove;
     for(auto& player : players)
     {
@@ -25,8 +26,9 @@ void Server::update()
 
         if(!connection.is_connected())
         {
-            lost_connection(player);
+            disconnected(player, "Lost connection");
             to_remove.push_back(player);
+            update_players_list = true;
             continue;
         }
 
@@ -39,6 +41,19 @@ void Server::update()
 
     for(auto& player : to_remove)
         players.erase(std::find(players.begin(), players.end(), player));
+
+    if(update_players_list)
+    {
+        std::vector<Player> players_list;
+        players_list.reserve(players.size());
+        for(auto& remote_player : players)
+            players_list.emplace_back(
+                    remote_player.get_nickname(),
+                    remote_player.get_x(),
+                    remote_player.get_y()
+            );
+        broadcast(PlayersListPacket(players_list));
+    }
 }
 
 void Server::broadcast(const Packet& packet)
@@ -82,7 +97,11 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             std::vector<Player> players_list;
             players_list.reserve(players.size());
             for(auto& remote_player : players)
-                players_list.emplace_back(remote_player.get_nickname());
+                players_list.emplace_back(
+                        remote_player.get_nickname(),
+                        remote_player.get_x(),
+                        remote_player.get_y()
+                );
             broadcast(PlayersListPacket(players_list));
 
             GameBoardPacket game_board_packet(game_board);
@@ -134,19 +153,11 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             player_move_packet.set_player_id(player_id);
             broadcast(player_move_packet);
 
-            std::cout << "[" << player_id << "] move" << std::endl;
-
             break;
         }
         default:
             break;
     }
-}
-
-void Server::lost_connection(RemotePlayer& player)
-{
-    Connection& connection = player.get_connection();
-    std::cout << "[" << connection.get_addr() << "] Lost connection!" << std::endl;
 }
 
 void Server::disconnected(RemotePlayer& player, const std::string& reason)

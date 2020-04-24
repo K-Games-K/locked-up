@@ -76,3 +76,21 @@ int GameBoard::get_height() const
 {
     return height;
 }
+
+void GameBoard::operator=(const GameBoard& other)
+{
+    width = other.width;
+    height = other.height;
+    rooms = other.rooms;
+
+    tiles.reserve(other.tiles.size());
+    for(auto& room_ref : other.tiles)
+    {
+        auto idx = std::distance(
+                other.rooms.begin(),
+                std::find(other.rooms.begin(), other.rooms.end(), room_ref.get())
+        );
+
+        tiles.push_back(rooms[idx]);
+    }
+}
