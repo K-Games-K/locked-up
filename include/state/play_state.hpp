@@ -16,6 +16,10 @@ private:
     const unsigned short SERVER_PORT = 2704;
 
     GameBoard game_board;
+    int camera_pos_x;
+    int camera_pos_y;
+
+    int current_player_id;
     std::vector<Player> players;
 
     Connection server_connection;

@@ -11,6 +11,7 @@ PlayState::PlayState(sf::RenderWindow& window)
           textures("assets/sprites", "png")
 {
     JoinGamePacket packet("General Kenobi");
+    current_player_id = 0;
     server_connection.send(packet);
 }
 
@@ -73,17 +74,55 @@ std::unique_ptr<GameState> PlayState::update(float dt)
 void PlayState::render(float dt)
 {
     sf::Sprite bg_sprite;
-    bg_sprite.setTexture(textures.get("board"));
+    bg_sprite.setTexture(textures.get("mapa4"));
+
+    int map_render_pos_x = 0;
+    int map_render_pos_y = 0;
+    bool set_x;
+    bool set_y;
+
+    const int map_render_size_x = 17;
+    const int map_render_size_y = 17;
+
+    if (players.size() != 0)
+    {
+        map_render_pos_x = (players[current_player_id].get_x() - 9);
+        map_render_pos_y = (players[current_player_id].get_y() - 9);
+      
+
+        if (map_render_pos_x < 0) map_render_pos_x = 0;
+        else if (map_render_pos_x + map_render_size_x >= game_board.get_width()) map_render_pos_x = game_board.get_width() - map_render_size_x;
+
+
+        if (map_render_pos_y < 0) map_render_pos_y = 0;
+        else if (map_render_pos_y + map_render_size_y >= game_board.get_height()) map_render_pos_y = game_board.get_height() - map_render_size_y;
+
+
+
+        bg_sprite.setPosition(-map_render_pos_x * 40, -map_render_pos_y * 40);
+    }
+    else
+    {
+        bg_sprite.setPosition(0,0);
+    }
 
     window.draw(bg_sprite);
 
     sf::Sprite player_sprite;
     player_sprite.setTexture(textures.get("player"));
 
-    for(Player& player_obj : players)
-    {
-        player_sprite.setPosition(player_obj.get_x() * 40, player_obj.get_y() * 40);
+    
 
+    for(int i = 0; i < players.size(); ++i)
+    {
+        if (i == current_player_id)
+        {
+            player_sprite.setPosition((players[current_player_id].get_x() - map_render_pos_x) * 40,( players[current_player_id].get_y() - map_render_pos_y) * 40); //current player
+            window.draw(player_sprite);
+            continue;
+        }
+
+        player_sprite.setPosition(players[i].get_x() * 40, players[i].get_y() * 40);
         window.draw(player_sprite);
     }
 }
