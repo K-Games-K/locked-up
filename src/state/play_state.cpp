@@ -27,15 +27,15 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
     {
         sf::Vector2i mosepos = sf::Mouse::getPosition(window);
 
-        int posx = (int) (mosepos.x / 40);
-        int posy = (int) (mosepos.y / 40);
+        int posx = (int) (mosepos.x / 40) + camera_pos_x;
+        int posy = (int) (mosepos.y / 40) + camera_pos_y;
 
         std::cout << "room: " << game_board.get_room(posx, posy).get_name() << std::endl;
 
-        server_connection.send(PlayerMovePacket(posx, posy, false));
+        server_connection.send(PlayerMovePacket(posx, posy, current_player_id, false));
     }
 
-    if(event.type == sf::Event::KeyReleased)
+    if(event.type == sf::Event::KeyPressed)
     {
         switch(event.key.code)
         {
@@ -108,17 +108,10 @@ void PlayState::render(float dt)
 
     for(int i = 0; i < players.size(); ++i)
     {
-        if(i == current_player_id)
-        {
-            player_sprite.setPosition(
-                    (players[current_player_id].get_x() - camera_pos_x) * 40,
-                    (players[current_player_id].get_y() - camera_pos_y) * 40
-            ); //current player
-            window.draw(player_sprite);
-            continue;
-        }
-
-        player_sprite.setPosition(players[i].get_x() * 40, players[i].get_y() * 40);
+        player_sprite.setPosition(
+                (players[i].get_x() - camera_pos_x) * 40,
+                (players[i].get_y() - camera_pos_y) * 40
+        ); //current player
         window.draw(player_sprite);
     }
 }
@@ -141,6 +134,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             current_player_id = players_list_packet.get_player_id();
             players = players_list_packet.get_players_list();
 
+            std::cout << "I'm id " << current_player_id << std::endl;
             std::cout << "Received players list: " << std::endl;
             for(auto& player : players)
                 std::cout << "\t - " << player.get_nickname() << std::endl;
