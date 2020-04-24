@@ -74,33 +74,6 @@ bool GameBoard::can_move(int x, int y, int dirx, int diry)
     return false;
 }
 
-void GameBoard::load_from_indices(int width, int height, const std::vector<Room>& rooms,
-                                  const std::vector<int> indices)
-{
-    this->width = width;
-    this->height = height;
-    this->rooms = rooms;
-
-    this->tiles.reserve(width * height);
-    for(auto i : indices)
-        this->tiles.push_back(this->rooms[i]);
-}
-
-void GameBoard::save_indices(std::vector<Room>& rooms, std::vector<int>& indices) const
-{
-    rooms = this->rooms;
-
-    indices.reserve(width * height);
-    for(auto& room_ref : this->tiles)
-    {
-        auto idx = std::distance(
-                this->rooms.begin(),
-                std::find(this->rooms.begin(), this->rooms.end(), room_ref.get())
-        );
-
-        indices.push_back(idx);
-    }
-}
 
 int GameBoard::get_width() const
 {

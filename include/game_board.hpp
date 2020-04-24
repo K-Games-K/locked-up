@@ -9,6 +9,8 @@
 class GameBoard
 {
 private:
+    friend class GameBoardLoader;
+
     int width;
     int height;
 
@@ -22,11 +24,6 @@ public:
     GameBoard(const GameBoard& other);
 
     GameBoard(int width, int height);
-
-    void load_from_indices(int width, int height, const std::vector<Room>& rooms,
-                           const std::vector<int> tiles);
-
-    void save_indices(std::vector<Room>& rooms, std::vector<int>& tiles) const;
 
     Room& get_room(int x, int y);
 
