@@ -4,6 +4,7 @@
 #include "network/packet/packets.hpp"
 
 Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
+        : game_board(GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT)
 {
     listener.listen(bind_port, bind_addr);
     listener.setBlocking(false);
@@ -84,6 +85,9 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                 players_list.emplace_back(remote_player.get_nickname());
             broadcast(PlayersListPacket(players_list));
 
+            GameBoardPacket game_board_packet(game_board);
+            connection.send(game_board_packet);
+
             break;
         }
         case DisconnectPacket::PACKET_ID:
@@ -98,10 +102,29 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
         {
             auto player_move_packet = dynamic_cast<PlayerMovePacket&>(*packet);
 
+            int x = player_move_packet.get_x();
+            int y = player_move_packet.get_y();
+
             if(player_move_packet.is_relative())
-                player.move(player_move_packet.get_x(), player_move_packet.get_y());
+            {
+                int posx = player.get_x();
+                int posy = player.get_y();
+                int newx = posx + x;
+                int newy = posy + y;
+
+                if(newx < 0 || newx >= GAMEBOARD_WIDTH || newy < 0 || newy >= GAMEBOARD_HEIGHT)
+                    break;
+
+                // Players cannot leave room they're in.
+                if(game_board.get_room(posx, posy) == game_board.get_room(newx, newy))
+                    player.set_position(newx, newy);
+                else
+                    break;
+            }
             else
-                player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
+            {
+                player.set_position(x, y);
+            }
 
             auto player_id = std::distance(
                     players.begin(),

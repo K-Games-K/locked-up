@@ -5,13 +5,19 @@
 #include <SFML/Network.hpp>
 
 #include "remote_player.hpp"
+#include "game_board.hpp"
 
 class Server
 {
 private:
+    const int GAMEBOARD_WIDTH = 20;
+    const int GAMEBOARD_HEIGHT = 20;
+
     sf::TcpListener listener;
 
     std::vector<RemotePlayer> players;
+
+    GameBoard game_board;
 
     void new_connection(Connection connection);
 
