@@ -12,12 +12,10 @@
 class PlayState : public GameState
 {
 private:
-    const int GAMEBOARD_WIDTH = 100;
-    const int GAMEBOARD_HEIGHT = 100;
     const sf::IpAddress SERVER_ADDR = "127.0.0.1";
     const unsigned short SERVER_PORT = 2704;
 
-    GameBoard board;
+    GameBoard game_board;
     std::vector<Player> players;
 
     Connection server_connection;

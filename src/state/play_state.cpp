@@ -5,10 +5,8 @@
 #include "network/connection.hpp"
 #include "state/play_state.hpp"
 
-
 PlayState::PlayState(sf::RenderWindow& window)
         : GameState(window),
-          board(GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT),
           server_connection(SERVER_ADDR, SERVER_PORT),
           textures("assets/sprites", "png")
 {
@@ -31,26 +29,26 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
         int posx = (int) (mosepos.x / 40);
         int posy = (int) (mosepos.y / 40);
 
-        std::cout << "room: " << board.get_room(posx, posy).get_name() << std::endl;
-        printf("mose at: %d %d\n", posx, posy);
+        std::cout << "room: " << game_board.get_room(posx, posy).get_name() << std::endl;
 
         server_connection.send(PlayerMovePacket(posx, posy, false));
     }
-    if(event.type == sf::Event::KeyPressed)
+
+    if(event.type == sf::Event::KeyReleased)
     {
         switch(event.key.code)
         {
             case sf::Keyboard::Up:
-                server_connection.send(PlayerMovePacket(0, -1, true));
+                server_connection.send(PlayerMovePacket(0, -1));
                 break;
             case sf::Keyboard::Down:
-                server_connection.send(PlayerMovePacket(0, 1, true));
+                server_connection.send(PlayerMovePacket(0, 1));
                 break;
             case sf::Keyboard::Left:
-                server_connection.send(PlayerMovePacket(-1, 0, true));
+                server_connection.send(PlayerMovePacket(-1, 0));
                 break;
             case sf::Keyboard::Right:
-                server_connection.send(PlayerMovePacket(1, 0, true));
+                server_connection.send(PlayerMovePacket(1, 0));
                 break;
             default:
                 break;
@@ -92,8 +90,6 @@ void PlayState::render(float dt)
 
 void PlayState::packet_received(std::unique_ptr<Packet> packet)
 {
-    std::cout << "Server sent a packet!" << std::endl;
-
     switch(packet->get_id())
     {
         case DebugPacket::PACKET_ID:
@@ -126,7 +122,12 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             else
                 player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
 
-            std::cout << "Player " << player.get_nickname() << " moved!" << std::endl;
+            break;
+        }
+        case GameBoardPacket::PACKET_ID:
+        {
+            auto game_board_packet = dynamic_cast<GameBoardPacket&>(*packet);
+            game_board = game_board_packet.get_game_board();
 
             break;
         }
