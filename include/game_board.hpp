@@ -14,6 +14,7 @@ private:
 
     std::vector<Room> rooms;
     std::vector<std::reference_wrapper<Room>> tiles;
+    std::vector<std::array<bool, 2>> collision_map;
 
 public:
     GameBoard() = default;
@@ -28,6 +29,8 @@ public:
     void save_indices(std::vector<Room>& rooms, std::vector<int>& tiles) const;
 
     Room& get_room(int x, int y);
+
+    bool can_move(int x, int y, int dirx, int diry);
 
     int get_width() const;
 
