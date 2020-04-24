@@ -8,7 +8,9 @@ Game::Game()
                  WINDOW_NAME,
                  sf::Style::Close),
           current_state(std::make_unique<PlayState>(window))
-{}
+{
+    window.setKeyRepeatEnabled(false);
+}
 
 void Game::run()
 {
