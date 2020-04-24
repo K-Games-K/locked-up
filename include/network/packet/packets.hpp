@@ -6,3 +6,4 @@
 #include "players_list_packet.hpp"
 #include "disconnect_packet.hpp"
 #include "player_move_packet.hpp"
+#include "game_board_packet.hpp"
