@@ -8,14 +8,14 @@ PlayState::PlayState(sf::RenderWindow& window)
         : GameState(window),
           server_connection(SERVER_ADDR, SERVER_PORT),
           textures("assets/sprites", "png"),
-          fonts("assets/fonts", "ttf")
+          fonts("assets/fonts", "ttf"),
+          player_renderer(window, {textures, fonts}),
+          game_board_renderer(window, {textures, fonts}),
+          debug_renderer(window, {textures, fonts})
 {
     JoinGamePacket packet("General Kenobi");
     player_id = 0;
     server_connection.send(packet);
-
-    player_sprite.setTexture(textures.get("player"));
-    bg_sprite.setTexture(textures.get("mapa4"));
 }
 
 std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
@@ -28,12 +28,20 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
 
     if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
-        sf::Vector2i mosepos = sf::Mouse::getPosition(window);
+        sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
+        if(!Utils::is_inside(game_board_position, GAME_BOARD_SIZE, mouse_pos))
+            return nullptr;
 
-        int posx = (mosepos.x / (float) TILE_SIZE) + camera_pos.x;
-        int posy = (mosepos.y / (float) TILE_SIZE) + camera_pos.y;
+        sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
 
-        server_connection.send(PlayerMovePacket(posx, posy, player_id, false));
+        server_connection.send(
+                PlayerMovePacket(
+                        world_mouse_pos.x,
+                        world_mouse_pos.y,
+                        player_id,
+                        false
+                )
+        );
     }
 
     if(event.type == sf::Event::KeyPressed)
@@ -82,131 +90,41 @@ void PlayState::render(float dt)
 {
     window.clear(CLEAR_COLOR);
 
-    // Sizes of viewport in both window and world coordinates.
-    const sf::Vector2f window_viewport(window.getSize().x, window.getSize().y);
-    const sf::Vector2f world_viewport = window_viewport / (float) TILE_SIZE;
-
     if(players.size() != 0)
     {
+        sf::Vector2f game_board_viewport = GAME_BOARD_SIZE / (float) TILE_SIZE;
         Player& current_player = players[player_id];
         sf::Vector2f camera_target_pos(
                 Utils::clamp(
-                        current_player.get_position().x - world_viewport.x / 2 + 0.5, 0,
-                        Utils::max(game_board.get_width() - world_viewport.x, 0)),
+                        current_player.get_position().x - game_board_viewport.x / 2 + 0.5, 0,
+                        Utils::max(game_board.get_width() - game_board_viewport.x, 0)),
                 Utils::clamp(
-                        current_player.get_position().y - world_viewport.y / 2 + 0.5, 0,
-                        Utils::max(game_board.get_height() - world_viewport.y, 0))
+                        current_player.get_position().y - game_board_viewport.y / 2 + 0.5, 0,
+                        Utils::max(game_board.get_height() - game_board_viewport.y, 0))
         );
 
-        camera_pos.x = Utils::lerp(camera_pos.x, camera_target_pos.x, 5 * dt);
-        camera_pos.y = Utils::lerp(camera_pos.y, camera_target_pos.y, 5 * dt);
-
-        bg_sprite.setTextureRect(
-                {
-                        (int) (camera_pos.x * TILE_SIZE), (int) (camera_pos.y * TILE_SIZE),
-                        (int) window_viewport.x, (int) window_viewport.y
-                }
-        );
+        camera_pos = {
+                Utils::lerp(camera_pos.x, camera_target_pos.x, 5 * dt),
+                Utils::lerp(camera_pos.y, camera_target_pos.y, 5 * dt)
+        };
     }
     else
     {
-        bg_sprite.setTextureRect(
-                {
-                        0, 0,
-                        (int) window_viewport.x, (int) window_viewport.y
-                }
-        );
+        camera_pos = {0, 0};
     }
 
-    if(debug_render)
-        bg_sprite.setColor(sf::Color(150, 150, 150));
-    else
-        bg_sprite.setColor(sf::Color::White);
-    window.draw(bg_sprite);
+    game_board_renderer.set_game_board_position(game_board_position);
+    game_board_renderer.set_game_board_size(GAME_BOARD_SIZE);
+    game_board_renderer.render(game_board, camera_pos);
 
-    for(auto& player : players)
-    {
-        sf::Vector2f current_pos(player_sprite.getPosition());
-        sf::Vector2f target_pos(
-                (player.get_position().x - camera_pos.x) * TILE_SIZE + 1,
-                (player.get_position().y - camera_pos.y) * TILE_SIZE + 1
-        );
-
-        player_sprite.setPosition(target_pos);
-        window.draw(player_sprite);
-    }
+    player_renderer.set_game_board_position(game_board_position);
+    player_renderer.render(players, camera_pos);
 
     if(debug_render)
     {
-        sf::Font font = fonts.get("IndieFlower-Regular");
-
-        for(int y = 0; y < game_board.get_height(); ++y)
-        {
-            for(int x = 0; x < game_board.get_width(); ++x)
-            {
-                if(!game_board.can_move(x, y, 1, 0))
-                {
-                    sf::VertexArray arr(sf::LineStrip, 4);
-                    arr[0].position = sf::Vector2f((x + 1 - camera_pos.x) * TILE_SIZE,
-                            (y - camera_pos.y) * TILE_SIZE
-                    );
-                    arr[0].color = sf::Color::Red;
-                    arr[1].position = sf::Vector2f((x + 1 - camera_pos.x) * TILE_SIZE,
-                            (y + 1 - camera_pos.y) * TILE_SIZE
-                    );
-                    arr[1].color = sf::Color::Red;
-                    arr[2].position = sf::Vector2f((x + 1 - camera_pos.x) * TILE_SIZE + 1,
-                            (y + 1 - camera_pos.y) * TILE_SIZE
-                    );
-                    arr[2].color = sf::Color::Red;
-                    arr[3].position = sf::Vector2f((x + 1 - camera_pos.x) * TILE_SIZE + 1,
-                            (y - camera_pos.y) * TILE_SIZE + 1
-                    );
-                    arr[3].color = sf::Color::Red;
-
-                    window.draw(arr);
-                }
-                if(!game_board.can_move(x, y, 0, 1))
-                {
-                    sf::VertexArray arr(sf::LineStrip, 4);
-                    arr[0].position = sf::Vector2f((x - camera_pos.x) * TILE_SIZE,
-                            (y + 1 - camera_pos.y) * TILE_SIZE
-                    );
-                    arr[0].color = sf::Color::Red;
-                    arr[1].position = sf::Vector2f((x + 1 - camera_pos.x) * TILE_SIZE,
-                            (y + 1 - camera_pos.y) * TILE_SIZE
-                    );
-                    arr[1].color = sf::Color::Red;
-                    arr[2].position = sf::Vector2f((x + 1 - camera_pos.x) * TILE_SIZE,
-                            (y + 1 - camera_pos.y) * TILE_SIZE + 1
-                    );
-                    arr[2].color = sf::Color::Red;
-                    arr[3].position = sf::Vector2f((x - camera_pos.x) * TILE_SIZE,
-                            (y + 1 - camera_pos.y) * TILE_SIZE + 1
-                    );
-                    arr[3].color = sf::Color::Red;
-
-                    window.draw(arr);
-                }
-
-                // Rendiring name of room on each tile.
-                // std::string str = game_board.get_room(x, y).get_name().substr(0, 6);
-                // sf::Text name(str, font, 12);
-                // name.setPosition((x - camera_pos.x) * TILE_SIZE + 2, (y - camera_pos.y) * TILE_SIZE + 2);
-                // window.draw(name);
-            }
-        }
-
-        std::string str = "player_id: " + std::to_string(player_id)
-                + "\nx: " + std::to_string(players[player_id].get_position().x) + " y: "
-                + std::to_string(players[player_id].get_position().y)
-                + "\nroom: " + game_board.get_room(
-                players[player_id].get_position().x,
-                players[player_id].get_position().y
-        ).get_name();
-        sf::Text text(str, font, 25);
-        text.setPosition(5, 5);
-        window.draw(text);
+        debug_renderer.set_game_board_position(game_board_position);
+        debug_renderer.set_game_board_size(GAME_BOARD_SIZE);
+        debug_renderer.render({player_id, players[player_id], game_board}, camera_pos);
     }
 }
 
@@ -258,4 +176,14 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
         default:
             break;
     }
+}
+
+sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)
+{
+    return (window_coords - game_board_position) / (float) TILE_SIZE + camera_pos;
+}
+
+sf::Vector2f PlayState::board_to_window_coords(sf::Vector2f window_coords)
+{
+    return (window_coords - camera_pos) * (float) TILE_SIZE + game_board_position;
 }
