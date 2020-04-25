@@ -6,14 +6,15 @@
 Game::Game()
         : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT),
                  WINDOW_NAME,
-                 sf::Style::Close),
-          current_state(std::make_unique<PlayState>(window))
+                 sf::Style::Close,
+                 sf::ContextSettings(0, 0, 8))
 {
     window.setKeyRepeatEnabled(false);
 }
 
 void Game::run()
 {
+    current_state = std::make_unique<PlayState>(window);
     sf::Clock clock;
     while(window.isOpen())
     {
@@ -43,6 +44,6 @@ void Game::run()
         current_state->render(dt);
         window.display();
 
-        sf::sleep(sf::milliseconds(10));
+        sf::sleep(sf::milliseconds(5));
     }
 }
