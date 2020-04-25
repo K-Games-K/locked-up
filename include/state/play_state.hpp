@@ -15,16 +15,23 @@ private:
     const sf::IpAddress SERVER_ADDR = "127.0.0.1";
     const unsigned short SERVER_PORT = 2704;
 
-    GameBoard game_board;
-    int camera_pos_x;
-    int camera_pos_y;
+    const sf::Color CLEAR_COLOR = sf::Color::Black;
+    const int TILE_SIZE = 40;
 
-    int current_player_id;
+    GameBoard game_board;
+    sf::Vector2f camera_pos;
+
+    int player_id;
     std::vector<Player> players;
 
     Connection server_connection;
 
     ResourceManager<sf::Texture> textures;
+    ResourceManager<sf::Font> fonts;
+    sf::Sprite player_sprite;
+    sf::Sprite bg_sprite;
+
+    bool debug_render = false;
 
     void packet_received(std::unique_ptr<Packet> packet);
 
