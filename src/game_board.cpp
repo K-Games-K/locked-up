@@ -36,7 +36,7 @@ GameBoard::GameBoard(int width, int height)
 
     collision_map.reserve(width * height);
     for(int i = 0; i < width * height; ++i)
-        collision_map.push_back({i % width != width / 2, true});
+        collision_map.push_back({i % width == width / 2, false});
 }
 
 Room& GameBoard::get_room(int x, int y)
