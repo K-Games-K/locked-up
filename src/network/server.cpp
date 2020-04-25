@@ -1,13 +1,18 @@
 #include <iostream>
 
+#include "game_board_loader.hpp"
 #include "network/server.hpp"
 #include "network/packet/packets.hpp"
 
 Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
-        : game_board(GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT)
 {
+    std::cout << GameBoardLoader::load_from_file(game_board, "assets/maps/mapfile.txt") << std::endl;
+
     listener.listen(bind_port, bind_addr);
     listener.setBlocking(false);
+
+    std::cout << "Server listening on " << bind_addr.toString() << ":"
+              << listener.getLocalPort() << std::endl;
 }
 
 void Server::update()
@@ -49,8 +54,7 @@ void Server::update()
         for(auto& remote_player : players)
             players_list.emplace_back(
                     remote_player.get_nickname(),
-                    remote_player.get_x(),
-                    remote_player.get_y()
+                    remote_player.get_position()
             );
 
         for(int i = 0; i < players.size(); ++i)
@@ -103,8 +107,7 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             for(auto& remote_player : players)
                 players_list.emplace_back(
                         remote_player.get_nickname(),
-                        remote_player.get_x(),
-                        remote_player.get_y()
+                        remote_player.get_position()
                 );
 
 
@@ -135,8 +138,8 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
 
             if(player_move_packet.is_relative())
             {
-                int posx = player.get_x();
-                int posy = player.get_y();
+                int posx = player.get_position().x;
+                int posy = player.get_position().y;
                 int newx = posx + x;
                 int newy = posy + y;
 
