@@ -15,4 +15,6 @@ namespace Utils
     float magnitude(sf::Vector2f vec);
 
     sf::Vector2f normalize(sf::Vector2f vec);
+
+    bool is_inside(sf::Vector2f start, sf::Vector2f size, sf::Vector2f point);
 }
