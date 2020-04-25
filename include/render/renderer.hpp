@@ -24,5 +24,5 @@ public:
 
     virtual ~Renderer() = default;
 
-    virtual void render(const T& obj, sf::Vector2f camera_pos) = 0;
+    virtual void render(const T&, sf::Vector2f) = 0;
 };

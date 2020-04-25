@@ -3,15 +3,18 @@
 #include "utils.hpp"
 #include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
+#include "ui/text.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window)
-        : GameState(window),
-          server_connection(SERVER_ADDR, SERVER_PORT),
-          textures("assets/sprites", "png"),
-          fonts("assets/fonts", "ttf"),
-          player_renderer(window, {textures, fonts}),
-          game_board_renderer(window, {textures, fonts}),
-          debug_renderer(window, {textures, fonts})
+    : GameState(window),
+    server_connection(SERVER_ADDR, SERVER_PORT),
+    textures("assets/sprites", "png"),
+    fonts("assets/fonts", "ttf"),
+    player_renderer(window, {textures, fonts}),
+    game_board_renderer(window, {textures, fonts}),
+    debug_renderer(window, {textures, fonts}),
+    user_interface_renderer(window, {textures, fonts}),
+    user_interface({0, 0}, sf::Vector2f(window.getSize()))
 {
     JoinGamePacket packet("General Kenobi");
     player_id = 0;
@@ -35,12 +38,12 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
         sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
 
         server_connection.send(
-                PlayerMovePacket(
-                        world_mouse_pos.x,
-                        world_mouse_pos.y,
-                        player_id,
-                        false
-                )
+            PlayerMovePacket(
+                world_mouse_pos.x,
+                world_mouse_pos.y,
+                player_id,
+                false
+            )
         );
     }
 
@@ -95,17 +98,17 @@ void PlayState::render(float dt)
         sf::Vector2f game_board_viewport = GAME_BOARD_SIZE / (float) TILE_SIZE;
         Player& current_player = players[player_id];
         sf::Vector2f camera_target_pos(
-                Utils::clamp(
-                        current_player.get_position().x - game_board_viewport.x / 2 + 0.5, 0,
-                        Utils::max(game_board.get_width() - game_board_viewport.x, 0)),
-                Utils::clamp(
-                        current_player.get_position().y - game_board_viewport.y / 2 + 0.5, 0,
-                        Utils::max(game_board.get_height() - game_board_viewport.y, 0))
+            Utils::clamp(
+                current_player.get_position().x - game_board_viewport.x / 2 + 0.5, 0,
+                Utils::max(game_board.get_width() - game_board_viewport.x, 0)),
+            Utils::clamp(
+                current_player.get_position().y - game_board_viewport.y / 2 + 0.5, 0,
+                Utils::max(game_board.get_height() - game_board_viewport.y, 0))
         );
 
         camera_pos = {
-                Utils::lerp(camera_pos.x, camera_target_pos.x, 5 * dt),
-                Utils::lerp(camera_pos.y, camera_target_pos.y, 5 * dt)
+            Utils::lerp(camera_pos.x, camera_target_pos.x, 5 * dt),
+            Utils::lerp(camera_pos.y, camera_target_pos.y, 5 * dt)
         };
     }
     else
@@ -119,6 +122,8 @@ void PlayState::render(float dt)
 
     player_renderer.set_game_board_position(game_board_position);
     player_renderer.render(players, camera_pos);
+
+    user_interface_renderer.render(user_interface);
 
     if(debug_render)
     {
@@ -136,7 +141,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
         {
             auto debug_packet = dynamic_cast<DebugPacket&>(*packet);
             std::cout << "[Debug:" << server_connection.get_addr() << "]: "
-                    << debug_packet.get_message() << std::endl;
+                << debug_packet.get_message() << std::endl;
 
             break;
         }
