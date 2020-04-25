@@ -6,7 +6,7 @@
 
 Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
 {
-    std::cout << GameBoardLoader::load_from_file(game_board, "assets/maps/mapfile.txt") << std::endl;
+   GameBoardLoader::load_from_file(game_board, "assets/maps/mapfile.karol");
 
     listener.listen(bind_port, bind_addr);
     listener.setBlocking(false);
