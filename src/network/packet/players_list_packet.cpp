@@ -23,7 +23,7 @@ void PlayersListPacket::serialize(sf::Packet& data) const
     uint16_t players_count = players_list.size();
     data << player_id << players_count;
     for(auto& player : players_list)
-        data << player.get_nickname() << player.get_x() << player.get_y();
+        data << player.get_nickname() << player.get_position().x << player.get_position().y;
 }
 
 void PlayersListPacket::deserialize(sf::Packet& data)
