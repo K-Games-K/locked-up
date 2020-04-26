@@ -19,6 +19,9 @@ namespace Ui
     protected:
         using Callback = std::function<void(Button&)>;
 
+        bool activated = false;
+        bool hovered = false;
+
         Button(WidgetType type, const Widget& parent, const std::string& text, const sf::Font& font,
             Callback callback, sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
             ButtonColors colors = ButtonColors(), Anchor origin = Anchor::TopLeft,
@@ -28,9 +31,6 @@ namespace Ui
         Text text;
         ButtonColors colors;
         Callback callback;
-
-        bool activated = false;
-        bool hovered = false;
 
     public:
         Button(const Widget& parent, const std::string& text, const sf::Font& font,
@@ -47,8 +47,6 @@ namespace Ui
         const Text& get_text() const;
 
         void  set_colors(ButtonColors colors);
-
-        ButtonColors get_colors() const;
 
         sf::Color get_color() const;
 

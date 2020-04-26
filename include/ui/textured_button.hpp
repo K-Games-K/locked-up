@@ -4,17 +4,26 @@
 
 namespace Ui
 {
+    struct ButtonTextures
+    {
+        const sf::Texture& default_texture;
+        const sf::Texture& hover_texture;
+        const sf::Texture& active_texture;
+    };
+
     class TexturedButton : public Button
     {
     private:
-        const sf::Texture* texture;
+        const sf::Texture* default_texture;
+        const sf::Texture* hover_texture;
+        const sf::Texture* active_texture;
 
     public:
         TexturedButton(const Widget& parent, const std::string& text, const sf::Font& font,
-            const sf::Texture& texture, Callback callback, sf::Vector2f position = {0, 0},
+            const ButtonTextures& textures, Callback callback, sf::Vector2f position = {0, 0},
             Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
 
-        void set_texture(const sf::Texture& texture);
+        void set_textures(const ButtonTextures& textures);
 
         const sf::Texture& get_texture() const;
     };

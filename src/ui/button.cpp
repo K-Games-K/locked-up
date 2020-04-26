@@ -49,11 +49,6 @@ namespace Ui
         this->colors = colors;
     }
 
-    ButtonColors Button::get_colors() const
-    {
-        return colors;
-    }
-
     sf::Color Button::get_color() const
     {
         if(activated)

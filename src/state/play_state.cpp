@@ -25,7 +25,11 @@ PlayState::PlayState(sf::RenderWindow& window)
             user_interface,
             "This is button!",
             fonts.get("IndieFlower-Regular"),
-            textures.get("buttonStock1h"),
+            {
+                textures.get("buttonStock1"),
+                textures.get("buttonStock1h"),
+                textures.get("buttonStock1d")
+            },
             [](Ui::Button& btn) {
                 std::cout << "Clicked: " << btn.get_text().get_text() << "!" << std::endl;
             },
