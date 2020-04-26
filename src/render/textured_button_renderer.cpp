@@ -1,7 +1,7 @@
 #include "render/textured_button_renderer.hpp"
 
 TexturedButtonRenderer::TexturedButtonRenderer(sf::RenderWindow& window, ResourceManagers resources)
-    : WidgetRenderer(window, resources), button_renderer(window, resources)
+    : WidgetRenderer(window, resources), text_renderer(window, resources)
 {}
 
 void TexturedButtonRenderer::render(const Ui::TexturedButton& button, const float dt)
@@ -11,7 +11,7 @@ void TexturedButtonRenderer::render(const Ui::TexturedButton& button, const floa
     button_sprite.setPosition(button_position);
     window.draw(button_sprite);
 
-    button_renderer.set_origin_pos(origin_pos);
-    button_renderer.set_parent_size(parent_size);
-    button_renderer.render(button, dt);
+    text_renderer.set_origin_pos(button_position);
+    text_renderer.set_parent_size(button.get_size());
+    text_renderer.render(button.get_text(), dt);
 }
