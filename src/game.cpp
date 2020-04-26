@@ -8,9 +8,7 @@ Game::Game()
                  WINDOW_NAME,
                  sf::Style::Close,
                  sf::ContextSettings(0, 0, 8))
-{
-    window.setKeyRepeatEnabled(false);
-}
+{}
 
 void Game::run()
 {
