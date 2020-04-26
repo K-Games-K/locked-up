@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 #include "widget.hpp"
 
@@ -10,17 +11,20 @@ namespace Ui
     class UserInterface : public Widget
     {
     private:
-        std::vector<std::unique_ptr<Widget>> widgets;
+        sf::RenderWindow& window;
+        std::vector<Widget*> widgets;
 
     public:
-        UserInterface(sf::Vector2f position, sf::Vector2f size);
+        UserInterface(sf::RenderWindow& window, sf::Vector2f position, sf::Vector2f size);
 
-        void update();
+        ~UserInterface();
 
-        void add_widget(std::unique_ptr<Widget>&& widget);
+        void handle_event(sf::Event event);
 
-        const std::vector<std::unique_ptr<Widget>>& get_widgets() const;
+        void add_widget(Widget* widget);
 
-        sf::Vector2f get_absolute_position() const override;
+        void remove_widget(Widget* widget);
+
+        const std::vector<Widget*>& get_widgets() const;
     };
 }

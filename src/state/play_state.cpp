@@ -3,7 +3,7 @@
 #include "utils.hpp"
 #include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
-#include "ui/text.hpp"
+#include "ui/button.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window)
     : GameState(window),
@@ -14,11 +14,27 @@ PlayState::PlayState(sf::RenderWindow& window)
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
     user_interface_renderer(window, {textures, fonts}),
-    user_interface({0, 0}, sf::Vector2f(window.getSize()))
+    user_interface(window, {0, 0}, sf::Vector2f(window.getSize()))
 {
     JoinGamePacket packet("General Kenobi");
     player_id = 0;
     server_connection.send(packet);
+
+    user_interface.add_widget(
+        new Ui::Button(
+            user_interface,
+            "This is button!",
+            fonts.get("IndieFlower-Regular"),
+            [](Ui::Button& btn) {
+                std::cout << "Clicked: " << btn.get_text().get_text() << "!" << std::endl;
+            },
+            {-20, 0},
+            {200, 40},
+            {sf::Color::White, sf::Color::Green, sf::Color::Red},
+            Ui::Anchor::CenterRight,
+            Ui::Anchor::CenterRight
+        )
+    );
 }
 
 std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
@@ -28,6 +44,8 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
         server_connection.send(DisconnectPacket());
         window.close();
     }
+
+    user_interface.handle_event(event);
 
     if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
