@@ -4,6 +4,7 @@
 
 #include "game_state.hpp"
 #include "render/panel_renderer.hpp"
+#include "render/main_menu_background_renderer.hpp"
 #include "ui/panel.hpp"
 
 class MainMenuState : public GameState
@@ -20,6 +21,8 @@ private:
     Ui::TextEdit* port_text_edit;
     Ui::Panel* join_game_panel;
     Ui::Text* connecting_text_widget;
+
+    MainMenuBackgroundRenderer background_renderer;
 
     Connection server_connection;
     std::thread connection_thread;

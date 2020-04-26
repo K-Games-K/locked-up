@@ -12,14 +12,18 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     user_interface(
         {0, 0},
         {500, 700},
-        sf::Color(0, 0, 0, 100),
+        sf::Color(242, 0, 0, 150),
         Ui::Anchor::Center,
         Ui::Anchor::Center
     ),
-    panel_renderer(window, {textures, fonts})
+    panel_renderer(window, {textures, fonts}),
+    background_renderer(window, {textures, fonts})
 {
     panel_renderer.set_origin_pos({0, 0});
     panel_renderer.set_parent_size((sf::Vector2f) window.getSize());
+
+    // Preload background texture.
+    textures.get("mapa4");
 
     sf::Font& font = fonts.get("IndieFlower-Regular");
     user_interface.add_widget(
@@ -81,7 +85,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     Ui::ButtonColors button_colors = {
         sf::Color(0, 0, 0, 100),
         sf::Color(0, 0, 0, 150),
-        sf::Color(0, 0, 0, 190)
+        sf::Color(0, 0, 0, 255)
     };
 
     join_game_panel->add_widget(
@@ -101,7 +105,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             "Exit",
             font,
             std::bind(&MainMenuState::exit_clicked, this, std::placeholders::_1),
-            {0, -60},
+            {0, -50},
             {420, 40},
             button_colors,
             Ui::Anchor::CenterBottom,
@@ -124,7 +128,8 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
 
 MainMenuState::~MainMenuState()
 {
-    connection_thread.join();
+    if(connection_thread.joinable())
+        connection_thread.join();
 }
 
 void MainMenuState::handle_input(sf::Event event)
@@ -149,6 +154,9 @@ void MainMenuState::update(float dt)
 void MainMenuState::render(float dt)
 {
     window.clear(CLEAR_COLOR);
+
+    background_renderer.render(textures.get("mapa4"), dt);
+
     panel_renderer.render(user_interface, dt);
 }
 
