@@ -47,7 +47,7 @@ private:
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
     DebugRenderer debug_renderer;
-    PanelRenderer user_interface_renderer;
+    PanelRenderer panel_renderer;
 
     bool debug_render = false;
 

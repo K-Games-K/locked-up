@@ -12,7 +12,7 @@ PlayState::PlayState(sf::RenderWindow& window)
     player_renderer(window, {textures, fonts}),
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
-    user_interface_renderer(window, {textures, fonts}),
+    panel_renderer(window, {textures, fonts}),
     user_interface({0, 0}, sf::Vector2f(window.getSize()))
 {
     JoinGamePacket packet("General Kenobi");
@@ -133,7 +133,7 @@ void PlayState::render(float dt)
     player_renderer.set_game_board_pos(game_board_pos);
     player_renderer.render(players, dt);
 
-    user_interface_renderer.render(user_interface, dt);
+    panel_renderer.render(user_interface, dt);
 
     if(debug_render)
     {
