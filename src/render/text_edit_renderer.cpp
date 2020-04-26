@@ -6,6 +6,9 @@ TextEditRenderer::TextEditRenderer(sf::RenderWindow& window, ResourceManagers re
 
 void TextEditRenderer::render(const Ui::TextEdit& text_edit, const float dt)
 {
+    if(!text_edit.is_enabled())
+        return;
+
     sf::Vector2f text_edit_pos = text_edit.get_relative_position(origin_pos, parent_size);
     Ui::TextEditColors colors = text_edit.get_colors();
     sf::RectangleShape text_edit_rect(text_edit.get_size());

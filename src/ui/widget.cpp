@@ -14,6 +14,16 @@ namespace Ui
         return type;
     }
 
+    void Widget::set_enabled(bool enabled)
+    {
+        this->enabled = enabled;
+    }
+
+    bool Widget::is_enabled() const
+    {
+        return enabled;
+    }
+
     void Widget::set_position(sf::Vector2f position)
     {
         this->position = position;

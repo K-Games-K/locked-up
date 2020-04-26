@@ -6,6 +6,9 @@ ButtonRenderer::ButtonRenderer(sf::RenderWindow& window, ResourceManagers resour
 
 void ButtonRenderer::render(const Ui::Button& button, const float dt)
 {
+    if(!button.is_enabled())
+        return;
+
     sf::Vector2f button_position = button.get_relative_position(origin_pos, parent_size);
     sf::RectangleShape button_rect(button.get_size());
     button_rect.setPosition(button_position);

@@ -34,6 +34,8 @@ namespace Ui
     private:
         const WidgetType type;
 
+        bool enabled = true;
+
         sf::Vector2f position;
         sf::Vector2f size;
 
@@ -50,6 +52,10 @@ namespace Ui
         virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) {};
 
         WidgetType get_type() const;
+
+        void set_enabled(bool enabled);
+
+        bool is_enabled() const;
 
         void set_position(sf::Vector2f position);
 

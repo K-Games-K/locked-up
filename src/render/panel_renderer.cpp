@@ -10,6 +10,9 @@ PanelRenderer::PanelRenderer(sf::RenderWindow& window, ResourceManagers resource
 
 void PanelRenderer::render(const Ui::Panel& panel, const float dt)
 {
+    if(!panel.is_enabled())
+        return;
+
     sf::Vector2f panel_position = panel.get_relative_position(origin_pos, parent_size);
     sf::RectangleShape panel_rect(panel.get_size());
     panel_rect.setPosition(panel_position);
@@ -40,6 +43,17 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt)
                 text_edit_renderer.set_parent_size(panel.get_size());
                 text_edit_renderer.render(dynamic_cast<Ui::TextEdit&>(*widget), dt);
                 break;
+            case Ui::WidgetType::Panel:
+            {
+                sf::Vector2f temp_pos = origin_pos;
+                sf::Vector2f temp_size = parent_size;
+                set_origin_pos(panel_position);
+                set_parent_size(panel.get_size());
+                PanelRenderer::render(dynamic_cast<Ui::Panel&>(*widget), dt);
+                origin_pos = temp_pos;
+                parent_size = temp_size;
+                break;
+            }
             default:
                 break;
         }

@@ -6,6 +6,9 @@ TexturedButtonRenderer::TexturedButtonRenderer(sf::RenderWindow& window, Resourc
 
 void TexturedButtonRenderer::render(const Ui::TexturedButton& button, const float dt)
 {
+    if(!button.is_enabled())
+        return;
+
     sf::Vector2f button_position = button.get_relative_position(origin_pos, parent_size);
     button_sprite.setTexture(button.get_texture());
     button_sprite.setPosition(button_position);
