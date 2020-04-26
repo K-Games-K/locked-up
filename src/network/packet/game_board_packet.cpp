@@ -1,6 +1,8 @@
 #include "game_board_loader.hpp"
 #include "network/packet/game_board_packet.hpp"
 
+#include <array>
+
 GameBoardPacket::GameBoardPacket()
         : Packet(PACKET_ID)
 {}
@@ -76,8 +78,7 @@ void GameBoardPacket::deserialize(sf::Packet& data)
     {
         bool east, south;
         data >> east >> south;
-        std::array<bool, 2> entry = {east, south};
-        collision_map.push_back(entry);
+        collision_map.push_back({ east, south });
     }
 
     game_board = GameBoardLoader::load_from_memory(

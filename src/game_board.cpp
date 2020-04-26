@@ -1,5 +1,6 @@
 #include "game_board.hpp"
 
+
 GameBoard::GameBoard(const GameBoard& other)
         : width(other.width), height(other.height), rooms(other.rooms),
           collision_map(other.collision_map)
@@ -37,8 +38,7 @@ GameBoard::GameBoard(int width, int height)
     collision_map.reserve(width * height);
     for(int i = 0; i < width * height; ++i)
     {
-        std::array<bool, 2> entry = {i % width == width / 2, false};
-        collision_map.push_back(entry);
+        collision_map.push_back({ i % width == width / 2, false });
     }
 }
 

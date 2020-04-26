@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 
+
 #include "game_board_loader.hpp"
 
 void GameBoardLoader::save_in_memory(const GameBoard& game_board, int& width, int& height,
@@ -98,8 +99,7 @@ bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& f
         while(!line.eof())
         {
             line >> east >> south;
-            std::array<bool, 2> entry = {east, south};
-            collision_map.push_back(entry);
+            collision_map.push_back({ east, south });
         }
     }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "game_board.hpp"
 
 class GameBoardLoader
