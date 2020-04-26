@@ -13,7 +13,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
     panel_renderer(window, {textures, fonts}),
-    user_interface({0, 0}, sf::Vector2f(window.getSize()))
+    user_interface({0, 0}, (sf::Vector2f) window.getSize())
 {
     JoinGamePacket packet("General Kenobi");
     player_id = 0;

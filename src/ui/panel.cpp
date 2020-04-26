@@ -5,8 +5,10 @@
 
 namespace Ui
 {
-    Panel::Panel(sf::Vector2f position, sf::Vector2f size)
-        : Widget(WidgetType::Panel, position, size)
+    Panel::Panel(sf::Vector2f position, sf::Vector2f size, sf::Color background_color,
+        Anchor origin, Anchor anchor)
+        : Widget(WidgetType::Panel, position, size, origin, anchor),
+        background_color(background_color)
     {}
 
     Panel::~Panel()
@@ -40,5 +42,15 @@ namespace Ui
     const std::vector<Widget*>& Panel::get_widgets() const
     {
         return widgets;
+    }
+
+    void Panel::set_background_color(sf::Color background_color)
+    {
+        this->background_color = background_color;
+    }
+
+    sf::Color Panel::get_background_color() const
+    {
+        return background_color;
     }
 }

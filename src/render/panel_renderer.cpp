@@ -1,38 +1,43 @@
 #include "render/panel_renderer.hpp"
 
 PanelRenderer::PanelRenderer(sf::RenderWindow& window, ResourceManagers resources)
-    : Renderer(window, resources),
+    : WidgetRenderer(window, resources),
     text_renderer(window, resources),
     button_renderer(window, resources),
     textured_button_renderer(window, resources),
     text_edit_renderer(window, resources)
 {}
 
-void PanelRenderer::render(const Ui::Panel& ui, const float dt)
+void PanelRenderer::render(const Ui::Panel& panel, const float dt)
 {
-    text_renderer.set_origin_pos(ui.get_local_position());
-    text_renderer.set_parent_size(ui.get_size());
-    button_renderer.set_origin_pos(ui.get_local_position());
-    button_renderer.set_parent_size(ui.get_size());
-    textured_button_renderer.set_origin_pos(ui.get_local_position());
-    textured_button_renderer.set_parent_size(ui.get_size());
-    text_edit_renderer.set_origin_pos(ui.get_local_position());
-    text_edit_renderer.set_parent_size(ui.get_size());
+    sf::Vector2f panel_position = panel.get_relative_position(origin_pos, parent_size);
+    sf::RectangleShape panel_rect(panel.get_size());
+    panel_rect.setPosition(panel_position);
+    panel_rect.setFillColor(panel.get_background_color());
+    window.draw(panel_rect);
 
-    for(const auto& widget : ui.get_widgets())
+    for(const auto& widget : panel.get_widgets())
     {
         switch(widget->get_type())
         {
             case Ui::WidgetType::Text:
+                text_renderer.set_origin_pos(panel_position);
+                text_renderer.set_parent_size(panel.get_size());
                 text_renderer.render(dynamic_cast<Ui::Text&>(*widget), dt);
                 break;
             case Ui::WidgetType::Button:
+                button_renderer.set_origin_pos(panel_position);
+                button_renderer.set_parent_size(panel.get_size());
                 button_renderer.render(dynamic_cast<Ui::Button&>(*widget), dt);
                 break;
             case Ui::WidgetType::TexturedButton:
+                textured_button_renderer.set_origin_pos(panel_position);
+                textured_button_renderer.set_parent_size(panel.get_size());
                 textured_button_renderer.render(dynamic_cast<Ui::TexturedButton&>(*widget), dt);
                 break;
             case Ui::WidgetType::TextEdit:
+                text_edit_renderer.set_origin_pos(panel_position);
+                text_edit_renderer.set_parent_size(panel.get_size());
                 text_edit_renderer.render(dynamic_cast<Ui::TextEdit&>(*widget), dt);
                 break;
             default:

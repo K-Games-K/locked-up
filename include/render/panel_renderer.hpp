@@ -1,13 +1,13 @@
 #pragma once
 
-#include "renderer.hpp"
+#include "widget_renderer.hpp"
 #include "text_renderer.hpp"
 #include "button_renderer.hpp"
 #include "textured_button_renderer.hpp"
 #include "text_edit_renderer.hpp"
 #include "ui/panel.hpp"
 
-class PanelRenderer : public Renderer<Ui::Panel>
+class PanelRenderer : public WidgetRenderer<Ui::Panel>
 {
 private:
     TextRenderer text_renderer;
@@ -18,5 +18,5 @@ private:
 public:
     PanelRenderer(sf::RenderWindow& window, ResourceManagers resources);
 
-    void render(const Ui::Panel& ui, const float dt) override;
+    void render(const Ui::Panel& panel, const float dt) override;
 };
