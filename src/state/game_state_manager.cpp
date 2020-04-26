@@ -31,6 +31,10 @@ void GameStateManager::pop_state()
 
 GameState* GameStateManager::get_current_state()
 {
+    for(auto& state : to_delete)
+        delete state;
+    to_delete.clear();
+
     return !game_states.empty() ? game_states.top() : nullptr;
 }
 
