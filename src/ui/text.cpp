@@ -58,11 +58,6 @@ namespace Ui
     {
         sf::Text sf_text(string, *font, font_size);
         sf::FloatRect bounds = sf_text.getLocalBounds();
-        set_size(
-            {
-                bounds.width + bounds.left,
-                bounds.height + bounds.top
-            }
-        );
+        set_size({bounds.width + bounds.left, (float) font_size});
     }
 }
