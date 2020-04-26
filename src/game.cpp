@@ -2,6 +2,7 @@
 
 #include "game.hpp"
 #include "state/play_state.hpp"
+#include "state/main_menu_state.hpp"
 
 Game::Game()
         : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT),
@@ -12,7 +13,7 @@ Game::Game()
 
 void Game::run()
 {
-    game_state_manager.push_state(new PlayState(window));
+    game_state_manager.push_state(new MainMenuState(window, game_state_manager));
     sf::Clock clock;
     while(window.isOpen())
     {

@@ -28,10 +28,10 @@ private:
     GameBoard game_board;
 
     sf::Vector2f camera_pos;
-    sf::Vector2f window_viewport = {(float)window.getSize().x, (float)window.getSize().y};
+    sf::Vector2f window_viewport = {(float) window.getSize().x, (float) window.getSize().y};
     sf::Vector2f game_board_pos = {
-            (window_viewport.y - GAME_BOARD_SIZE.y) / 2,
-            (window_viewport.y - GAME_BOARD_SIZE.y) / 2
+        (window_viewport.y - GAME_BOARD_SIZE.y) / 2,
+        (window_viewport.y - GAME_BOARD_SIZE.y) / 2
     };
 
     int player_id;
@@ -58,7 +58,8 @@ private:
     sf::Vector2f board_to_window_coords(sf::Vector2f window_coords);
 
 public:
-    PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager);
+    PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
+        Connection server_connection);
 
     void handle_input(sf::Event event) override;
 

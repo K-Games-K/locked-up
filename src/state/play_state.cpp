@@ -4,9 +4,10 @@
 #include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
 
-PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager)
+PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
+    Connection server_connection)
     : GameState(window, game_state_manager),
-    server_connection(SERVER_ADDR, SERVER_PORT),
+    server_connection(server_connection),
     textures("assets/sprites", "png"),
     fonts("assets/fonts", "ttf"),
     player_renderer(window, {textures, fonts}),
@@ -18,17 +19,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     JoinGamePacket packet("General Kenobi");
     player_id = 0;
     server_connection.send(packet);
-
-    auto text_edit = new Ui::TextEdit(
-        fonts.get("IndieFlower-Regular"),
-        {-20, -20},
-        {200, 50},
-        Ui::TextEditColors(),
-        Ui::Anchor::BottomRight,
-        Ui::Anchor::BottomRight
-    );
-    text_edit->set_limit(16);
-    user_interface.add_widget(text_edit);
 }
 
 void PlayState::handle_input(sf::Event event)
