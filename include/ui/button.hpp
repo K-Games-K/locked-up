@@ -9,16 +9,22 @@ namespace Ui
 {
     struct ButtonColors
     {
-        sf::Color default_color = sf::Color::White;
-        sf::Color hover_color = sf::Color::White;
-        sf::Color active_color = sf::Color::White;
+        sf::Color default_color = sf::Color::Transparent;
+        sf::Color hover_color = sf::Color::Transparent;
+        sf::Color active_color = sf::Color::Transparent;
     };
 
     class Button : public Widget
     {
-    private:
+    protected:
         using Callback = std::function<void(Button&)>;
 
+        Button(WidgetType type, const Widget& parent, const std::string& text, const sf::Font& font,
+            Callback callback, sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
+            ButtonColors colors = ButtonColors(), Anchor origin = Anchor::TopLeft,
+            Anchor anchor = Anchor::TopLeft);
+
+    private:
         Text text;
         ButtonColors colors;
         Callback callback;

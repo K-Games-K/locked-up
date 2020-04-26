@@ -9,6 +9,7 @@ namespace Ui
     {
         Text,
         Button,
+        TexturedButton,
         Panel,
         UserInterface
     };

@@ -3,7 +3,8 @@
 UserInterfaceRenderer::UserInterfaceRenderer(sf::RenderWindow& window, ResourceManagers resources)
     : Renderer(window, resources),
     text_renderer(window, resources),
-    button_renderer(window, resources)
+    button_renderer(window, resources),
+    textured_button_renderer(window, resources)
 {}
 
 void UserInterfaceRenderer::render(const Ui::UserInterface& ui, sf::Vector2f origin)
@@ -17,6 +18,9 @@ void UserInterfaceRenderer::render(const Ui::UserInterface& ui, sf::Vector2f ori
                 break;
             case Ui::WidgetType::Button:
                 button_renderer.render(dynamic_cast<Ui::Button&>(*widget));
+                break;
+            case Ui::WidgetType::TexturedButton:
+                textured_button_renderer.render(dynamic_cast<Ui::TexturedButton&>(*widget));
                 break;
             default:
                 break;

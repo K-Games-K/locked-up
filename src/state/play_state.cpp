@@ -21,16 +21,15 @@ PlayState::PlayState(sf::RenderWindow& window)
     server_connection.send(packet);
 
     user_interface.add_widget(
-        new Ui::Button(
+        new Ui::TexturedButton(
             user_interface,
             "This is button!",
             fonts.get("IndieFlower-Regular"),
+            textures.get("buttonStock1h"),
             [](Ui::Button& btn) {
                 std::cout << "Clicked: " << btn.get_text().get_text() << "!" << std::endl;
             },
             {-20, 0},
-            {200, 40},
-            {sf::Color::White, sf::Color::Green, sf::Color::Red},
             Ui::Anchor::CenterRight,
             Ui::Anchor::CenterRight
         )
