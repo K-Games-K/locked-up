@@ -10,7 +10,9 @@ namespace Ui
         Text,
         Button,
         TexturedButton,
-        Panel
+        TextEdit,
+        TexturedTextEdit,
+        Panel,
     };
 
     enum class Anchor

@@ -20,23 +20,16 @@ PlayState::PlayState(sf::RenderWindow& window)
     player_id = 0;
     server_connection.send(packet);
 
-    user_interface.add_widget(
-        new Ui::TexturedButton(
-            "This is button!",
-            fonts.get("IndieFlower-Regular"),
-            {
-                textures.get("buttonStock1"),
-                textures.get("buttonStock1h"),
-                textures.get("buttonStock1d")
-            },
-            [](Ui::Button& btn) {
-                std::cout << "Clicked: " << btn.get_text().get_string() << "!" << std::endl;
-            },
-            {-20, 0},
-            Ui::Anchor::CenterRight,
-            Ui::Anchor::CenterRight
-        )
+    auto text_edit = new Ui::TextEdit(
+        fonts.get("IndieFlower-Regular"),
+        {-20, -20},
+        {200, 50},
+        Ui::TextEditColors(),
+        Ui::Anchor::BottomRight,
+        Ui::Anchor::BottomRight
     );
+    text_edit->set_limit(16);
+    user_interface.add_widget(text_edit);
 }
 
 std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
