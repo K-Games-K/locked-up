@@ -6,7 +6,7 @@ TextRenderer::TextRenderer(sf::RenderWindow& window, ResourceManagers resources)
 
 void TextRenderer::render(const Ui::Text& text, const float dt)
 {
-    sf::Text sf_text(text.get_text(), text.get_font(), text.get_font_size());
+    sf::Text sf_text(text.get_string(), text.get_font(), text.get_font_size());
     sf::Vector2f text_position = text.get_relative_position(origin_pos, parent_size);
 
     sf_text.setPosition(text_position);

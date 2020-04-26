@@ -30,7 +30,7 @@ PlayState::PlayState(sf::RenderWindow& window)
                 textures.get("buttonStock1d")
             },
             [](Ui::Button& btn) {
-                std::cout << "Clicked: " << btn.get_text().get_text() << "!" << std::endl;
+                std::cout << "Clicked: " << btn.get_text().get_string() << "!" << std::endl;
             },
             {-20, 0},
             Ui::Anchor::CenterRight,

@@ -12,7 +12,7 @@ namespace Ui
     private:
         static constexpr unsigned int DEFAULT_SIZE = 24;
 
-        std::string text;
+        std::string string;
         const sf::Font* font;
         unsigned int font_size;
         sf::Color color;
@@ -24,9 +24,9 @@ namespace Ui
             sf::Vector2f position = {0, 0}, sf::Color color = sf::Color::White,
             Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
 
-        void set_text(const std::string& text);
+        void set_string(const std::string& text);
 
-        std::string get_text() const;
+        std::string get_string() const;
 
         void set_font(const sf::Font& font);
 
