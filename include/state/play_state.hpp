@@ -12,7 +12,7 @@
 #include "render/player_renderer.hpp"
 #include "render/game_board_renderer.hpp"
 #include "render/user_interface_renderer.hpp"
-#include "ui/user_interface.hpp"
+#include "ui/panel.hpp"
 
 class PlayState : public GameState
 {
@@ -39,7 +39,7 @@ private:
 
     Connection server_connection;
 
-    Ui::UserInterface user_interface;
+    Ui::Panel user_interface;
 
     ResourceManager<sf::Texture> textures;
     ResourceManager<sf::Font> fonts;

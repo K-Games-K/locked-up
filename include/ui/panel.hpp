@@ -8,18 +8,17 @@
 
 namespace Ui
 {
-    class UserInterface : public Widget
+    class Panel : public Widget
     {
     private:
-        sf::RenderWindow& window;
         std::vector<Widget*> widgets;
 
     public:
-        UserInterface(sf::RenderWindow& window, sf::Vector2f position, sf::Vector2f size);
+        Panel(sf::Vector2f position, sf::Vector2f size);
 
-        ~UserInterface();
+        ~Panel();
 
-        void handle_event(sf::Event event);
+        void handle_event(sf::Event event, sf::Vector2f mouse_pos) override;
 
         void add_widget(Widget* widget);
 

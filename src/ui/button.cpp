@@ -22,16 +22,17 @@ namespace Ui
         this->text.set_anchor(Anchor::Center);
     }
 
-    void Button::set_activated(bool activated)
+    void Button::handle_event(sf::Event event, sf::Vector2f mouse_pos)
     {
-        this->activated = activated;
-        if(activated)
-            callback(*this);
-    }
+        sf::FloatRect widget_box({0, 0}, get_size());
 
-    void Button::set_hovered(bool hovered)
-    {
-        this->hovered = hovered;
+        if(event.type == sf::Event::MouseButtonPressed &&
+            widget_box.contains(mouse_pos))
+            activated = true;
+        if(event.type == sf::Event::MouseButtonReleased)
+            activated = false;
+        if(event.type == sf::Event::MouseMoved)
+            hovered = widget_box.contains(mouse_pos);
     }
 
     void Button::set_text(Text text)

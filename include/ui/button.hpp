@@ -9,9 +9,9 @@ namespace Ui
 {
     struct ButtonColors
     {
-        sf::Color default_color = sf::Color::Transparent;
-        sf::Color hover_color = sf::Color::Transparent;
-        sf::Color active_color = sf::Color::Transparent;
+        sf::Color default_color = sf::Color::White;
+        sf::Color hover_color = sf::Color::White;
+        sf::Color active_color = sf::Color::White;
     };
 
     class Button : public Widget
@@ -38,9 +38,7 @@ namespace Ui
             ButtonColors colors = ButtonColors(), Anchor origin = Anchor::TopLeft,
             Anchor anchor = Anchor::TopLeft);
 
-        void set_activated(bool activated);
-
-        void set_hovered(bool hovered);
+        void handle_event(sf::Event event, sf::Vector2f mouse_pos) override;
 
         void set_text(Text text);
 

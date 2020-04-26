@@ -14,7 +14,7 @@ PlayState::PlayState(sf::RenderWindow& window)
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
     user_interface_renderer(window, {textures, fonts}),
-    user_interface(window, {0, 0}, sf::Vector2f(window.getSize()))
+    user_interface({0, 0}, sf::Vector2f(window.getSize()))
 {
     JoinGamePacket packet("General Kenobi");
     player_id = 0;
@@ -47,7 +47,7 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
         window.close();
     }
 
-    user_interface.handle_event(event);
+    user_interface.handle_event(event, (sf::Vector2f) sf::Mouse::getPosition(window));
 
     if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {

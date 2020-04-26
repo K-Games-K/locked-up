@@ -7,7 +7,7 @@ UserInterfaceRenderer::UserInterfaceRenderer(sf::RenderWindow& window, ResourceM
     textured_button_renderer(window, resources)
 {}
 
-void UserInterfaceRenderer::render(const Ui::UserInterface& ui, const float dt)
+void UserInterfaceRenderer::render(const Ui::Panel& ui, const float dt)
 {
     text_renderer.set_origin_pos(ui.get_local_position());
     text_renderer.set_parent_size(ui.get_size());

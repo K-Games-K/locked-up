@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace Ui
 {
@@ -10,8 +10,7 @@ namespace Ui
         Text,
         Button,
         TexturedButton,
-        Panel,
-        UserInterface
+        Panel
     };
 
     enum class Anchor
@@ -45,6 +44,8 @@ namespace Ui
             Anchor anchor = Anchor::TopLeft);
 
         virtual ~Widget() = default;
+
+        virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) {};
 
         WidgetType get_type() const;
 
