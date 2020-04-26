@@ -22,6 +22,7 @@ namespace Ui
             switch(widget->get_type())
             {
                 case Ui::WidgetType::Button:
+                case Ui::WidgetType::TexturedButton:
                 {
                     auto button = dynamic_cast<Ui::Button*>(widget);
                     sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
