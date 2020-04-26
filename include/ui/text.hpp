@@ -13,7 +13,7 @@ namespace Ui
         static constexpr unsigned int DEFAULT_SIZE = 24;
 
         std::string text;
-        const sf::Font& font;
+        const sf::Font* font;
         unsigned int font_size;
         sf::Color color;
 
@@ -28,6 +28,8 @@ namespace Ui
         void set_text(const std::string& text);
 
         std::string get_text() const;
+
+        void set_font(const sf::Font& font);
 
         const sf::Font& get_font() const;
 

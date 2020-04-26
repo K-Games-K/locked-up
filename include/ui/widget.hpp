@@ -31,7 +31,7 @@ namespace Ui
     {
     private:
         const WidgetType type;
-        const Widget& parent;
+        const Widget* parent;
 
         sf::Vector2f position;
         sf::Vector2f size;
@@ -40,6 +40,12 @@ namespace Ui
         Anchor anchor;
 
     public:
+        /// This constructor should be called by widgets that don't require parent.
+        Widget(WidgetType type, sf::Vector2f position = {0, 0},
+            sf::Vector2f size = {0, 0}, Anchor origin = Anchor::TopLeft,
+            Anchor anchor = Anchor::TopLeft);
+
+        /// This constructor should be called by widgets that require parent.
         Widget(WidgetType type, const Widget& parent, sf::Vector2f position = {0, 0},
             sf::Vector2f size = {0, 0}, Anchor origin = Anchor::TopLeft,
             Anchor anchor = Anchor::TopLeft);
@@ -47,6 +53,8 @@ namespace Ui
         virtual ~Widget() = default;
 
         WidgetType get_type() const;
+
+        void set_parent(const Widget& parent);
 
         const Widget& get_parent() const;
 
@@ -66,6 +74,10 @@ namespace Ui
 
         Anchor get_anchor() const;
 
-        virtual sf::Vector2f get_absolute_position() const;
+        sf::Vector2f get_absolute_position() const;
+
+        bool operator==(const Widget& other) const;
+
+        Widget& operator=(const Widget& other);
     };
 }

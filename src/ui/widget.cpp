@@ -1,10 +1,17 @@
+#include <stdexcept>
+
 #include "ui/widget.hpp"
 
 namespace Ui
 {
+    Widget::Widget(WidgetType type, sf::Vector2f position, sf::Vector2f size,
+        Anchor origin, Anchor anchor)
+        : type(type), parent(nullptr), position(position), size(size), origin(origin), anchor(anchor)
+    {}
+
     Widget::Widget(WidgetType type, const Widget& parent, sf::Vector2f position, sf::Vector2f size,
         Anchor origin, Anchor anchor)
-        : type(type), parent(parent), position(position), size(size), origin(origin), anchor(anchor)
+        : type(type), parent(&parent), position(position), size(size), origin(origin), anchor(anchor)
     {}
 
     WidgetType Widget::get_type() const
@@ -12,9 +19,14 @@ namespace Ui
         return type;
     }
 
+    void Widget::set_parent(const Widget& parent)
+    {
+        this->parent = &parent;
+    }
+
     const Widget& Widget::get_parent() const
     {
-        return parent;
+        return *parent;
     }
 
     void Widget::set_position(sf::Vector2f position)
@@ -59,7 +71,7 @@ namespace Ui
 
     sf::Vector2f Widget::get_absolute_position() const
     {
-        sf::Vector2f result = parent.get_absolute_position();
+        sf::Vector2f result = parent != nullptr ? parent->get_absolute_position() : sf::Vector2f();
         switch(origin)
         {
             case Anchor::TopLeft:
@@ -93,38 +105,60 @@ namespace Ui
                 break;
         }
 
+        if(parent == nullptr)
+            return result;
+
         switch(anchor)
         {
             case Anchor::TopLeft:
                 break;
             case Anchor::TopRight:
-                result += sf::Vector2f(parent.size.x, 0);
+                result += sf::Vector2f(parent->size.x, 0);
                 break;
             case Anchor::BottomRight:
-                result += parent.size;
+                result += parent->size;
                 break;
             case Anchor::BottomLeft:
-                result += sf::Vector2f(0, parent.size.y);
+                result += sf::Vector2f(0, parent->size.y);
                 break;
             case Anchor::Center:
-                result += parent.size / 2.0f;
+                result += parent->size / 2.0f;
                 break;
             case Anchor::CenterTop:
-                result += sf::Vector2f(parent.size.x / 2, 0);
+                result += sf::Vector2f(parent->size.x / 2, 0);
                 break;
             case Anchor::CenterRight:
-                result += sf::Vector2f(parent.size.x, parent.size.y / 2);
+                result += sf::Vector2f(parent->size.x, parent->size.y / 2);
                 break;
             case Anchor::CenterBottom:
-                result += sf::Vector2f(parent.size.x / 2, parent.size.y);
+                result += sf::Vector2f(parent->size.x / 2, parent->size.y);
                 break;
             case Anchor::CenterLeft:
-                result += sf::Vector2f(0, parent.size.y / 2);
+                result += sf::Vector2f(0, parent->size.y / 2);
                 break;
             default:
                 break;
         }
 
         return result;
+    }
+
+    bool Widget::operator==(const Widget& other) const
+    {
+        return this == &other;
+    }
+
+    Widget& Widget::operator=(const Widget& other)
+    {
+        if(type != other.type)
+            throw std::invalid_argument("Tried to assign widgets of different types!");
+
+        parent = other.parent;
+        position = other.position;
+        size = other.size;
+        origin = other.origin;
+        anchor = other.anchor;
+
+        return *this;
     }
 }

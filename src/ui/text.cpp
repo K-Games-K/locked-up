@@ -8,7 +8,7 @@ namespace Ui
         unsigned int font_size, sf::Vector2f position, sf::Color color, Ui::Anchor origin,
         Ui::Anchor anchor)
         : Widget(WidgetType::Text, parent, position, {0, 0}, origin, anchor),
-        text(text), font(font), font_size(font_size), color(color)
+        text(text), font(&font), font_size(font_size), color(color)
     {
         update_size();
     }
@@ -24,9 +24,14 @@ namespace Ui
         return text;
     }
 
+    void Text::set_font(const sf::Font& font)
+    {
+        this->font = &font;
+    }
+
     const sf::Font& Text::get_font() const
     {
-        return font;
+        return *font;
     }
 
     void Text::set_font_size(unsigned int font_size)
@@ -52,7 +57,7 @@ namespace Ui
 
     void Text::update_size()
     {
-        sf::Text sf_text(text, font, font_size);
+        sf::Text sf_text(text, *font, font_size);
         sf::FloatRect bounds = sf_text.getLocalBounds();
         set_size(
             {
