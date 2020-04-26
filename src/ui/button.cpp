@@ -29,9 +29,9 @@ namespace Ui
         if(event.type == sf::Event::MouseButtonPressed &&
             widget_box.contains(mouse_pos))
             activated = true;
-        if(event.type == sf::Event::MouseButtonReleased)
+        else if(event.type == sf::Event::MouseButtonReleased)
             activated = false;
-        if(event.type == sf::Event::MouseMoved)
+        else if(event.type == sf::Event::MouseMoved)
             hovered = widget_box.contains(mouse_pos);
     }
 

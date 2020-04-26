@@ -11,7 +11,7 @@
 #include "render/debug_renderer.hpp"
 #include "render/player_renderer.hpp"
 #include "render/game_board_renderer.hpp"
-#include "render/user_interface_renderer.hpp"
+#include "render/panel_renderer.hpp"
 #include "ui/panel.hpp"
 
 class PlayState : public GameState
@@ -47,7 +47,7 @@ private:
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
     DebugRenderer debug_renderer;
-    UserInterfaceRenderer user_interface_renderer;
+    PanelRenderer user_interface_renderer;
 
     bool debug_render = false;
 

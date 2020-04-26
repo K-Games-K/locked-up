@@ -6,7 +6,7 @@
 #include "textured_button_renderer.hpp"
 #include "ui/panel.hpp"
 
-class UserInterfaceRenderer : public Renderer<Ui::Panel>
+class PanelRenderer : public Renderer<Ui::Panel>
 {
 private:
     TextRenderer text_renderer;
@@ -14,7 +14,7 @@ private:
     TexturedButtonRenderer textured_button_renderer;
 
 public:
-    UserInterfaceRenderer(sf::RenderWindow& window, ResourceManagers resources);
+    PanelRenderer(sf::RenderWindow& window, ResourceManagers resources);
 
     void render(const Ui::Panel& ui, const float dt) override;
 };

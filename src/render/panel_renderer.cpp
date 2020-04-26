@@ -1,13 +1,13 @@
-#include "render/user_interface_renderer.hpp"
+#include "render/panel_renderer.hpp"
 
-UserInterfaceRenderer::UserInterfaceRenderer(sf::RenderWindow& window, ResourceManagers resources)
+PanelRenderer::PanelRenderer(sf::RenderWindow& window, ResourceManagers resources)
     : Renderer(window, resources),
     text_renderer(window, resources),
     button_renderer(window, resources),
     textured_button_renderer(window, resources)
 {}
 
-void UserInterfaceRenderer::render(const Ui::Panel& ui, const float dt)
+void PanelRenderer::render(const Ui::Panel& ui, const float dt)
 {
     text_renderer.set_origin_pos(ui.get_local_position());
     text_renderer.set_parent_size(ui.get_size());
