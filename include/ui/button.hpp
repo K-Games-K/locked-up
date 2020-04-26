@@ -46,7 +46,7 @@ namespace Ui
 
         const Text& get_text() const;
 
-        void  set_colors(ButtonColors colors);
+        void set_colors(ButtonColors colors);
 
         sf::Color get_color() const;
 
