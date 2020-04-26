@@ -12,31 +12,22 @@ Game::Game()
 
 void Game::run()
 {
-    current_state = std::make_unique<PlayState>(window);
+    game_state_manager.push_state(new PlayState(window));
     sf::Clock clock;
     while(window.isOpen())
     {
         const float dt = clock.restart().asSeconds();
+        GameState* current_state = game_state_manager.get_current_state();
+        if(current_state == nullptr)
+            break;
 
         // Handling events.
         sf::Event event;
         if(window.pollEvent(event))
-        {
-            auto new_state = current_state->handle_input(event);
-            if(new_state != nullptr)
-            {
-                current_state = std::move(new_state);
-                continue;
-            }
-        }
+            current_state->handle_input(event);
 
         // Updating game logic.
-        auto new_state = current_state->update(dt);
-        if(new_state != nullptr)
-        {
-            current_state = std::move(new_state);
-            continue;
-        }
+        current_state->update(dt);
 
         // Rendering.
         current_state->render(dt);

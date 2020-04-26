@@ -60,9 +60,9 @@ private:
 public:
     PlayState(sf::RenderWindow& window);
 
-    std::unique_ptr<GameState> handle_input(sf::Event event) override;
+    void handle_input(sf::Event event) override;
 
-    std::unique_ptr<GameState> update(float dt) override;
+    void update(float dt) override;
 
     void render(float dt) override;
 };

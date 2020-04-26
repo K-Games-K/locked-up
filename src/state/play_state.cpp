@@ -3,7 +3,6 @@
 #include "utils.hpp"
 #include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
-#include "ui/button.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window)
     : GameState(window),
@@ -32,7 +31,7 @@ PlayState::PlayState(sf::RenderWindow& window)
     user_interface.add_widget(text_edit);
 }
 
-std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
+void PlayState::handle_input(sf::Event event)
 {
     if(event.type == sf::Event::Closed)
     {
@@ -46,7 +45,7 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
     {
         sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
         if(!Utils::is_inside(game_board_pos, GAME_BOARD_SIZE, mouse_pos))
-            return nullptr;
+            return;
 
         sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
 
@@ -86,11 +85,9 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
                 break;
         }
     }
-
-    return nullptr;
 }
 
-std::unique_ptr<GameState> PlayState::update(float dt)
+void PlayState::update(float dt)
 {
     if(server_connection.is_connected())
     {
@@ -98,8 +95,6 @@ std::unique_ptr<GameState> PlayState::update(float dt)
         if(packet != nullptr)
             packet_received(std::move(packet));
     }
-
-    return nullptr;
 }
 
 void PlayState::render(float dt)
