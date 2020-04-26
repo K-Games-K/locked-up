@@ -1,11 +1,13 @@
 #include "ui/text_edit.hpp"
 
+#include <iostream>
+
 namespace Ui
 {
     TextEdit::TextEdit(WidgetType type, const sf::Font& font, sf::Vector2f position,
-        sf::Vector2f size, TextEditColors colors, Anchor origin, Anchor anchor)
+        sf::Vector2f size, TextEditColors colors, int limit, Anchor origin, Anchor anchor)
         : Widget(type, position, size, origin, anchor),
-        text("", font), colors(colors)
+        text("", font), colors(colors), limit(limit)
     {
         text.set_position({5, 0});
         text.set_origin(Anchor::CenterLeft);
@@ -14,9 +16,9 @@ namespace Ui
     }
 
     TextEdit::TextEdit(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
-        TextEditColors colors, Anchor origin, Anchor anchor)
+        TextEditColors colors, int limit, Anchor origin, Anchor anchor)
         : Widget(WidgetType::TextEdit, position, size, origin, anchor),
-        text("", font), colors(colors)
+        text("", font), colors(colors), limit(limit)
     {
         text.set_position({5, 0});
         text.set_origin(Anchor::CenterLeft);
@@ -34,7 +36,7 @@ namespace Ui
         {
             char character = event.text.unicode;
             std::string string = text.get_string();
-            if(!std::isprint(character) || string.size() >= limit)
+            if(!std::isprint(character) || (limit > 0 && string.size() >= limit))
                 return;
 
             string += character;

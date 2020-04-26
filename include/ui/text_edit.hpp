@@ -19,7 +19,7 @@ namespace Ui
 
         TextEdit(WidgetType type, const sf::Font& font, sf::Vector2f position = {0, 0},
             sf::Vector2f size = {0, 0}, TextEditColors colors = TextEditColors(),
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+            int limit = 0, Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
 
     private:
         Text text;
@@ -30,7 +30,7 @@ namespace Ui
     public:
         TextEdit(const sf::Font& font, sf::Vector2f position = {0, 0},
             sf::Vector2f size = {0, 0}, TextEditColors colors = TextEditColors(),
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+            int limit = 0, Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
 
         void handle_event(sf::Event event, sf::Vector2f mouse_pos) override;
 
