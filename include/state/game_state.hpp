@@ -3,13 +3,16 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include "game_state_manager.hpp"
+
 class GameState
 {
 protected:
     sf::RenderWindow& window;
+    GameStateManager& game_state_manager;
 
 public:
-    GameState(sf::RenderWindow& window);
+    GameState(sf::RenderWindow& window, GameStateManager& game_state_manager);
 
     virtual ~GameState() = default;
 

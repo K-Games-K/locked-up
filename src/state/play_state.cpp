@@ -4,8 +4,8 @@
 #include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
 
-PlayState::PlayState(sf::RenderWindow& window)
-    : GameState(window),
+PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager)
+    : GameState(window, game_state_manager),
     server_connection(SERVER_ADDR, SERVER_PORT),
     textures("assets/sprites", "png"),
     fonts("assets/fonts", "ttf"),
@@ -36,7 +36,7 @@ void PlayState::handle_input(sf::Event event)
     if(event.type == sf::Event::Closed)
     {
         server_connection.send(DisconnectPacket());
-        window.close();
+        game_state_manager.pop_state();
     }
 
     user_interface.handle_event(event, (sf::Vector2f) sf::Mouse::getPosition(window));

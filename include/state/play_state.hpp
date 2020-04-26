@@ -58,7 +58,7 @@ private:
     sf::Vector2f board_to_window_coords(sf::Vector2f window_coords);
 
 public:
-    PlayState(sf::RenderWindow& window);
+    PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager);
 
     void handle_input(sf::Event event) override;
 
