@@ -4,10 +4,9 @@
 
 namespace Ui
 {
-    Text::Text(const Widget& parent, const std::string& text, const sf::Font& font,
-        unsigned int font_size, sf::Vector2f position, sf::Color color, Ui::Anchor origin,
-        Ui::Anchor anchor)
-        : Widget(WidgetType::Text, parent, position, {0, 0}, origin, anchor),
+    Text::Text(const std::string& text, const sf::Font& font, unsigned int font_size,
+        sf::Vector2f position, sf::Color color, Ui::Anchor origin, Ui::Anchor anchor)
+        : Widget(WidgetType::Text, position, {0, 0}, origin, anchor),
         text(text), font(&font), font_size(font_size), color(color)
     {
         update_size();

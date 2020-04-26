@@ -2,21 +2,21 @@
 
 namespace Ui
 {
-    Button::Button(WidgetType type, const Widget& parent, const std::string& text,
+    Button::Button(WidgetType type, const std::string& text,
         const sf::Font& font, Callback callback, sf::Vector2f position, sf::Vector2f size,
         ButtonColors colors, Ui::Anchor origin, Ui::Anchor anchor)
-        : Widget(type, parent, position, size, origin, anchor),
-        text(*this, text, font), colors(colors), callback(callback)
+        : Widget(type, position, size, origin, anchor),
+        text(text, font), colors(colors), callback(callback)
     {
         this->text.set_origin(Anchor::Center);
         this->text.set_anchor(Anchor::Center);
     }
 
-    Button::Button(const Widget& parent, const std::string& text, const sf::Font& font,
+    Button::Button(const std::string& text, const sf::Font& font,
         Callback callback, sf::Vector2f position, sf::Vector2f size, ButtonColors colors,
         Ui::Anchor origin, Ui::Anchor anchor)
-        : Widget(WidgetType::Button, parent, position, size, origin, anchor),
-        text(*this, text, font), colors(colors), callback(callback)
+        : Widget(WidgetType::Button, position, size, origin, anchor),
+        text(text, font), colors(colors), callback(callback)
     {
         this->text.set_origin(Anchor::Center);
         this->text.set_anchor(Anchor::Center);

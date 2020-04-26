@@ -1,10 +1,10 @@
 #pragma once
 
-#include "renderer.hpp"
+#include "widget_renderer.hpp"
 #include "text_renderer.hpp"
 #include "ui/button.hpp"
 
-class ButtonRenderer : public Renderer<Ui::Button>
+class ButtonRenderer : public WidgetRenderer<Ui::Button>
 {
 private:
     TextRenderer text_renderer;
@@ -12,6 +12,6 @@ private:
 public:
     ButtonRenderer(sf::RenderWindow& window, ResourceManagers resources);
 
-    void render(const Ui::Button& button, sf::Vector2f origin = {0, 0}) override;
+    void render(const Ui::Button& button, const float dt) override;
 };
 

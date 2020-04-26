@@ -29,7 +29,7 @@ private:
 
     sf::Vector2f camera_pos;
     sf::Vector2f window_viewport = {(float)window.getSize().x, (float)window.getSize().y};
-    sf::Vector2f game_board_position = {
+    sf::Vector2f game_board_pos = {
             (window_viewport.y - GAME_BOARD_SIZE.y) / 2,
             (window_viewport.y - GAME_BOARD_SIZE.y) / 2
     };

@@ -26,9 +26,14 @@ namespace Ui
                 {
                     auto button = dynamic_cast<Ui::Button*>(widget);
                     sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-                    sf::FloatRect widget_box(widget->get_absolute_position(), widget->get_size());
+                    sf::FloatRect widget_box(
+                        widget->get_relative_position(
+                            get_local_position(),
+                            get_size()
+                        ), widget->get_size());
 
-                    if(event.type == sf::Event::MouseButtonPressed && widget_box.contains(mouse_pos))
+                    if(event.type == sf::Event::MouseButtonPressed &&
+                        widget_box.contains(mouse_pos))
                         button->set_activated(true);
                     if(event.type == sf::Event::MouseButtonReleased)
                         button->set_activated(false);

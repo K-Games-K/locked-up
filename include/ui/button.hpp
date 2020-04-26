@@ -22,8 +22,8 @@ namespace Ui
         bool activated = false;
         bool hovered = false;
 
-        Button(WidgetType type, const Widget& parent, const std::string& text, const sf::Font& font,
-            Callback callback, sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
+        Button(WidgetType type, const std::string& text, const sf::Font& font, Callback callback,
+            sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
             ButtonColors colors = ButtonColors(), Anchor origin = Anchor::TopLeft,
             Anchor anchor = Anchor::TopLeft);
 
@@ -33,8 +33,8 @@ namespace Ui
         Callback callback;
 
     public:
-        Button(const Widget& parent, const std::string& text, const sf::Font& font,
-            Callback callback, sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
+        Button(const std::string& text, const sf::Font& font, Callback callback,
+            sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
             ButtonColors colors = ButtonColors(), Anchor origin = Anchor::TopLeft,
             Anchor anchor = Anchor::TopLeft);
 

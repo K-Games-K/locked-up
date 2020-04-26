@@ -16,5 +16,5 @@ private:
 public:
     UserInterfaceRenderer(sf::RenderWindow& window, ResourceManagers resources);
 
-    void render(const Ui::UserInterface& ui, sf::Vector2f origin = {0, 0}) override;
+    void render(const Ui::UserInterface& ui, const float dt) override;
 };

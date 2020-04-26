@@ -22,7 +22,6 @@ PlayState::PlayState(sf::RenderWindow& window)
 
     user_interface.add_widget(
         new Ui::TexturedButton(
-            user_interface,
             "This is button!",
             fonts.get("IndieFlower-Regular"),
             {
@@ -53,7 +52,7 @@ std::unique_ptr<GameState> PlayState::handle_input(sf::Event event)
     if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
         sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-        if(!Utils::is_inside(game_board_position, GAME_BOARD_SIZE, mouse_pos))
+        if(!Utils::is_inside(game_board_pos, GAME_BOARD_SIZE, mouse_pos))
             return nullptr;
 
         sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
@@ -137,20 +136,23 @@ void PlayState::render(float dt)
         camera_pos = {0, 0};
     }
 
-    game_board_renderer.set_game_board_position(game_board_position);
+    game_board_renderer.set_camera_pos(camera_pos);
+    game_board_renderer.set_game_board_pos(game_board_pos);
     game_board_renderer.set_game_board_size(GAME_BOARD_SIZE);
-    game_board_renderer.render(game_board, camera_pos);
+    game_board_renderer.render(game_board, dt);
 
-    player_renderer.set_game_board_position(game_board_position);
-    player_renderer.render(players, camera_pos);
+    player_renderer.set_camera_pos(camera_pos);
+    player_renderer.set_game_board_pos(game_board_pos);
+    player_renderer.render(players, dt);
 
-    user_interface_renderer.render(user_interface);
+    user_interface_renderer.render(user_interface, dt);
 
     if(debug_render)
     {
-        debug_renderer.set_game_board_position(game_board_position);
+        debug_renderer.set_camera_pos(camera_pos);
+        debug_renderer.set_game_board_pos(game_board_pos);
         debug_renderer.set_game_board_size(GAME_BOARD_SIZE);
-        debug_renderer.render({player_id, players[player_id], game_board}, camera_pos);
+        debug_renderer.render({player_id, players[player_id], game_board}, dt);
     }
 }
 
@@ -206,10 +208,10 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)
 {
-    return (window_coords - game_board_position) / (float) TILE_SIZE + camera_pos;
+    return (window_coords - game_board_pos) / (float) TILE_SIZE + camera_pos;
 }
 
 sf::Vector2f PlayState::board_to_window_coords(sf::Vector2f window_coords)
 {
-    return (window_coords - camera_pos) * (float) TILE_SIZE + game_board_position;
+    return (window_coords - camera_pos) * (float) TILE_SIZE + game_board_pos;
 }

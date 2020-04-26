@@ -1,17 +1,17 @@
 #include "render/debug_renderer.hpp"
 
 DebugRenderer::DebugRenderer(sf::RenderWindow& window, ResourceManagers resources)
-        : Renderer(window, resources)
+        : CameraRenderer(window, resources)
 {}
 
-void DebugRenderer::render(const DebugContext& context, sf::Vector2f camera_pos)
+void DebugRenderer::render(const DebugContext& context, const float dt)
 {
     sf::Font& font = resources.fonts.get("IndieFlower-Regular");
     GameBoard& game_board = context.game_board;
     Player& player = context.player;
 
     sf::Vector2f game_board_viewport = game_board_size / (float) TILE_SIZE;
-    sf::Vector2f offset = camera_pos - game_board_position / TILE_SIZE;
+    sf::Vector2f offset = camera_pos - game_board_pos / TILE_SIZE;
 
     for(int y = (int) camera_pos.y;
             y < game_board.get_height() && y <= camera_pos.y + game_board_viewport.y; ++y)
@@ -65,14 +65,4 @@ void DebugRenderer::render(const DebugContext& context, sf::Vector2f camera_pos)
     sf::Text text(str, font, 25);
     text.setPosition(5, 5);
     window.draw(text);
-}
-
-void DebugRenderer::set_game_board_position(sf::Vector2f game_board_position)
-{
-    this->game_board_position = game_board_position;
-}
-
-void DebugRenderer::set_game_board_size(sf::Vector2f game_board_size)
-{
-    this->game_board_size = game_board_size;
 }
