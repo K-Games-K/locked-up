@@ -98,7 +98,8 @@ bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& f
         while(!line.eof())
         {
             line >> east >> south;
-            collision_map.push_back({east, south});
+            std::array<bool, 2> entry = {east, south};
+            collision_map.push_back(entry);
         }
     }
 

@@ -76,7 +76,8 @@ void GameBoardPacket::deserialize(sf::Packet& data)
     {
         bool east, south;
         data >> east >> south;
-        collision_map.push_back({east, south});
+        std::array<bool, 2> entry = {east, south};
+        collision_map.push_back(entry);
     }
 
     game_board = GameBoardLoader::load_from_memory(
