@@ -30,7 +30,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
         new Ui::Text(
             "Locked Out!",
             font,
-            100,
+            95,
             {0, -300},
             sf::Color::White,
             Ui::Anchor::Center, Ui::Anchor::Center
@@ -44,6 +44,24 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
         Ui::Anchor::CenterBottom,
         Ui::Anchor::Center
     );
+    join_game_panel->add_widget(
+        new Ui::Text(
+            "Nickname:",
+            font,
+            24,
+            {-210, -80},
+            sf::Color::White,
+            Ui::Anchor::CenterLeft, Ui::Anchor::Center
+        )
+    );
+    nickname_text_edit = new Ui::TextEdit(
+        font,
+        {0, -40}, {420, 40},
+        Ui::TextEditColors(),
+        24,
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    join_game_panel->add_widget(nickname_text_edit);
     join_game_panel->add_widget(
         new Ui::Text(
             "Server address:",
@@ -83,9 +101,9 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     user_interface.add_widget(join_game_panel);
 
     Ui::ButtonColors button_colors = {
-        sf::Color(0, 0, 0, 100),
-        sf::Color(0, 0, 0, 150),
-        sf::Color(0, 0, 0, 255)
+        sf::Color(0, 0, 0, 140),
+        sf::Color(0, 0, 0, 190),
+        sf::Color(0, 0, 0, 210)
     };
 
     join_game_panel->add_widget(
@@ -148,7 +166,9 @@ void MainMenuState::handle_input(sf::Event event)
 void MainMenuState::update(float dt)
 {
     if(server_connection.is_connected())
-        game_state_manager.swap_state(new PlayState(window, game_state_manager, server_connection));
+        game_state_manager.swap_state(
+            new PlayState(window, game_state_manager, server_connection, nickname)
+        );
 }
 
 void MainMenuState::render(float dt)
@@ -162,9 +182,10 @@ void MainMenuState::render(float dt)
 
 void MainMenuState::join_clicked(Ui::Button& button)
 {
+    nickname = nickname_text_edit->get_text().get_string();
     std::string addr_str = address_text_edit->get_text().get_string();
     std::string port_str = port_text_edit->get_text().get_string();
-    if(addr_str.empty() || port_str.empty())
+    if(addr_str.empty() || port_str.empty() || nickname.empty())
         return;
 
     unsigned short port = std::stoi(port_str);

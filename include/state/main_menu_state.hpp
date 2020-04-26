@@ -17,6 +17,7 @@ private:
 
     Ui::Panel user_interface;
     PanelRenderer panel_renderer;
+    Ui::TextEdit* nickname_text_edit;
     Ui::TextEdit* address_text_edit;
     Ui::TextEdit* port_text_edit;
     Ui::Panel* join_game_panel;
@@ -24,6 +25,7 @@ private:
 
     MainMenuBackgroundRenderer background_renderer;
 
+    std::string nickname;
     Connection server_connection;
     std::thread connection_thread;
 

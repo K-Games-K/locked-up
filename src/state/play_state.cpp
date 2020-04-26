@@ -5,7 +5,7 @@
 #include "network/packet/packets.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-    Connection server_connection)
+    Connection server_connection, const std::string& nickname)
     : GameState(window, game_state_manager),
     server_connection(server_connection),
     textures("assets/sprites", "png"),
@@ -16,8 +16,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     panel_renderer(window, {textures, fonts}),
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
 {
-    JoinGamePacket packet("General Kenobi");
-    player_id = 0;
+    JoinGamePacket packet(nickname);
     server_connection.send(packet);
 }
 

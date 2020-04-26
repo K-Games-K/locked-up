@@ -34,7 +34,7 @@ private:
         (window_viewport.y - GAME_BOARD_SIZE.y) / 2
     };
 
-    int player_id;
+    int player_id = -1;
     std::vector<Player> players;
 
     Connection server_connection;
@@ -59,7 +59,7 @@ private:
 
 public:
     PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-        Connection server_connection);
+        Connection server_connection, const std::string& nickname);
 
     void handle_input(sf::Event event) override;
 
