@@ -10,8 +10,7 @@
 class Server
 {
 private:
-    const int GAMEBOARD_WIDTH = 50;
-    const int GAMEBOARD_HEIGHT = 28;
+    bool enabled = false;
 
     sf::TcpListener listener;
 

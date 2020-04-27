@@ -6,17 +6,34 @@
 
 Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
 {
-   GameBoardLoader::load_from_file(game_board, "assets/maps/mapfile.karol");
+    bool game_board_loaded = GameBoardLoader::load_from_file(
+        game_board, "assets/maps/mapfile.karol"
+    );
 
-    listener.listen(bind_port, bind_addr);
+    if(!game_board_loaded)
+    {
+        std::cerr << "Failed to read mapfile!" << std::endl;
+        return;
+    }
+
+    sf::Socket::Status status =  listener.listen(bind_port, bind_addr);
     listener.setBlocking(false);
+    if(status != sf::Socket::Done)
+    {
+        std::cerr << "Failed to bind to " << bind_addr.toString() << ":" << bind_port << std::endl;
+        return;
+    }
 
     std::cout << "Server listening on " << bind_addr.toString() << ":"
-              << listener.getLocalPort() << std::endl;
+        << listener.getLocalPort() << std::endl;
+    enabled = true;
 }
 
 void Server::update()
 {
+    if(!enabled)
+        return;
+
     auto incoming = std::make_shared<sf::TcpSocket>();
     if(listener.accept(*incoming) == sf::Socket::Done)
     {
@@ -53,8 +70,8 @@ void Server::update()
         players_list.reserve(players.size());
         for(auto& remote_player : players)
             players_list.emplace_back(
-                    remote_player.get_nickname(),
-                    remote_player.get_position()
+                remote_player.get_nickname(),
+                remote_player.get_position()
             );
 
         for(int i = 0; i < players.size(); ++i)
@@ -83,7 +100,7 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
 {
     Connection& connection = player.get_connection();
     std::cout << "[" << connection.get_addr() << "] sent a packet of id: "
-              << packet->get_id() << std::endl;
+        << packet->get_id() << std::endl;
 
     switch(packet->get_id())
     {
@@ -91,7 +108,7 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
         {
             auto debug_packet = dynamic_cast<DebugPacket&>(*packet);
             std::cout << "[Debug:" << connection.get_addr() << "]: "
-                      << debug_packet.get_message() << std::endl;
+                << debug_packet.get_message() << std::endl;
 
             break;
         }
@@ -106,8 +123,8 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             players_list.reserve(players.size());
             for(auto& remote_player : players)
                 players_list.emplace_back(
-                        remote_player.get_nickname(),
-                        remote_player.get_position()
+                    remote_player.get_nickname(),
+                    remote_player.get_position()
                 );
 
 
@@ -143,7 +160,8 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                 int newx = posx + x;
                 int newy = posy + y;
 
-                if(newx < 0 || newx >= GAMEBOARD_WIDTH || newy < 0 || newy >= GAMEBOARD_HEIGHT)
+                if(newx < 0 || newx >= game_board.get_width() ||
+                    newy < 0 || newy >= game_board.get_height())
                     break;
 
                 if(game_board.can_move(posx, posy, x, y))
@@ -175,7 +193,7 @@ void Server::disconnected(RemotePlayer& player, const std::string& reason)
     Connection& connection = player.get_connection();
 
     std::cout << "[" << connection.get_addr() << "] " << player.get_nickname()
-              << " left because: " << reason << std::endl;
+        << " left because: " << reason << std::endl;
 }
 
 
