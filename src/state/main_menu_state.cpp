@@ -1,6 +1,7 @@
 #include <functional>
 #include <iostream>
 
+#include "utils.hpp"
 #include "network/connection.hpp"
 #include "state/main_menu_state.hpp"
 #include "state/play_state.hpp"
@@ -186,10 +187,13 @@ void MainMenuState::join_clicked(Ui::Button& button)
     nickname = nickname_text_edit->get_text().get_string();
     std::string addr_str = address_text_edit->get_text().get_string();
     std::string port_str = port_text_edit->get_text().get_string();
-    if(addr_str.empty() || port_str.empty() || nickname.empty())
+    if(addr_str.empty() || port_str.empty() || nickname.empty() ||
+        !Utils::is_printable(nickname) || !Utils::is_number(port_str))
         return;
 
     unsigned short port = std::stoi(port_str);
+    if(port > 65535)
+        return;
 
     join_game_panel->set_enabled(false);
     connecting_text_widget->set_enabled(true);

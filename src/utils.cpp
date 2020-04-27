@@ -37,8 +37,24 @@ sf::Vector2f Utils::normalize(sf::Vector2f vec)
     return vec / magnitude(vec);
 }
 
-bool Utils::is_inside(sf::Vector2f start, sf::Vector2f size, sf::Vector2f point)
+bool Utils::is_number(const std::string& string)
 {
-    return start.x <= point.x && start.x + size.x >= point.x &&
-            start.y <= point.y && start.y + size.y >= point.y;
+    for(auto& ch : string)
+    {
+        if(ch < '0' || ch > '9')
+            return false;
+    }
+
+    return true;
+}
+
+bool Utils::is_printable(const std::string& string)
+{
+    for(auto& ch : string)
+    {
+        if(!isprint(ch))
+            return false;
+    }
+
+    return true;
 }
