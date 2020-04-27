@@ -17,9 +17,6 @@
 class PlayState : public GameState
 {
 private:
-    const sf::IpAddress SERVER_ADDR = "127.0.0.1";
-    const unsigned short SERVER_PORT = 2704;
-
     const sf::Vector2f GAME_BOARD_SIZE = {768, 768};
 
     const sf::Color CLEAR_COLOR = sf::Color::Black;

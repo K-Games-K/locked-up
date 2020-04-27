@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 #include <functional>
-#include <SFML/Graphics.hpp>
 
 #include "game_board_loader.hpp"
 
