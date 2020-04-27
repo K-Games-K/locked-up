@@ -166,8 +166,9 @@ void MainMenuState::handle_input(sf::Event event)
 void MainMenuState::update(float dt)
 {
     if(server_connection.is_connected())
-        game_state_manager.swap_state(
-            new PlayState(window, game_state_manager, server_connection, nickname)
+        game_state_manager.push_state(
+            new PlayState(window, game_state_manager, server_connection, nickname),
+            true
         );
 }
 
@@ -208,5 +209,9 @@ void MainMenuState::connect_to_server(sf::IpAddress addr, unsigned short port)
     {
         connecting_text_widget->set_enabled(false);
         join_game_panel->set_enabled(true);
+    }
+    else
+    {
+        connecting_text_widget->set_string("Loading...");
     }
 }

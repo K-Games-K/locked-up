@@ -1,7 +1,8 @@
 #pragma once
 
 #include <stack>
-#include <unordered_set>
+#include <queue>
+#include <mutex>
 #include <SFML/Window/Event.hpp>
 
 class GameState;
@@ -12,17 +13,18 @@ class GameStateManager
 private:
     std::stack<GameState*> game_states;
 
-    std::unordered_set<GameState*> to_delete;
+    std::mutex mutex;
+    std::queue<GameState*> queue;
+    bool pop_top = false;
 
 public:
     ~GameStateManager();
 
-    /// Pushes new game state on top of stack.
-    void push_state(GameState* game_state);
+    void update();
 
-    /// Puts new state on top of stack.
-    /// Deletes old one.
-    void swap_state(GameState* game_state);
+    /// Pushes new game state on top of stack.
+    /// If swap is true pops current state from stack.
+    void push_state(GameState* game_state, bool swap = false);
 
     /// Pops and deletes state from top of stack.
     void pop_state();

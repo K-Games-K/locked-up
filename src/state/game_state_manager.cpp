@@ -9,32 +9,53 @@ GameStateManager::~GameStateManager()
         game_states.pop();
         delete game_state;
     }
+    while(!queue.empty())
+    {
+        GameState* game_state = queue.front();
+        queue.pop();
+        delete game_state;
+    }
 }
 
-void GameStateManager::push_state(GameState* game_state)
+void GameStateManager::update()
 {
-    game_states.push(game_state);
+    if(pop_top)
+    {
+        GameState* game_state = game_states.top();
+        game_states.pop();
+        delete game_state;
+        pop_top = false;
+    }
+
+    if(!queue.empty())
+    {
+        mutex.lock();
+
+        GameState* game_state = queue.front();
+        game_states.push(game_state);
+        queue.pop();
+
+        mutex.unlock();
+    }
 }
 
-void GameStateManager::swap_state(GameState* game_state)
+void GameStateManager::push_state(GameState* game_state, bool swap)
 {
-    pop_state();
-    game_states.push(game_state);
+    mutex.lock();
+
+    queue.push(game_state);
+    pop_top = swap;
+
+    mutex.unlock();
 }
 
 void GameStateManager::pop_state()
 {
-    GameState* old_state = game_states.top();
-    to_delete.insert(old_state);
-    game_states.pop();
+    pop_top = true;
 }
 
 GameState* GameStateManager::get_current_state()
 {
-    for(auto& state : to_delete)
-        delete state;
-    to_delete.clear();
-
     return !game_states.empty() ? game_states.top() : nullptr;
 }
 

@@ -18,6 +18,8 @@ void Game::run()
     while(window.isOpen())
     {
         const float dt = clock.restart().asSeconds();
+
+        game_state_manager.update();
         GameState* current_state = game_state_manager.get_current_state();
         if(current_state == nullptr)
             break;
