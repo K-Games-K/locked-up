@@ -5,7 +5,7 @@
 #include "network/packet/packets.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-    Connection server_connection, const std::string& nickname)
+    Connection server_connection)
     : GameState(window, game_state_manager),
     server_connection(server_connection),
     player_renderer(window, {textures, fonts}),
@@ -13,10 +13,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     debug_renderer(window, {textures, fonts}),
     panel_renderer(window, {textures, fonts}),
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
-{
-    JoinGamePacket packet(nickname);
-    server_connection.send(packet);
-}
+{}
 
 void PlayState::handle_input(sf::Event event)
 {

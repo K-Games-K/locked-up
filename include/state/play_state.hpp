@@ -53,7 +53,7 @@ private:
 
 public:
     PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-        Connection server_connection, const std::string& nickname);
+        Connection server_connection);
 
     void handle_input(sf::Event event) override;
 

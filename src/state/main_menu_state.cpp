@@ -4,7 +4,8 @@
 #include "utils.hpp"
 #include "network/connection.hpp"
 #include "state/main_menu_state.hpp"
-#include "state/play_state.hpp"
+#include "state/lobby_state.hpp"
+#include "network/packet/join_game_packet.hpp"
 
 MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_state_manager)
     : GameState(window, game_state_manager),
@@ -167,10 +168,13 @@ void MainMenuState::handle_input(sf::Event event)
 void MainMenuState::update(float dt)
 {
     if(server_connection.is_connected())
+    {
+        server_connection.send(JoinGamePacket(nickname));
         game_state_manager.push_state(
-            new PlayState(window, game_state_manager, server_connection, nickname),
+            new LobbyState(window, game_state_manager, server_connection),
             true
         );
+    }
 }
 
 void MainMenuState::render(float dt)
