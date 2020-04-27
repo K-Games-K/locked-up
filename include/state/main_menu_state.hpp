@@ -3,9 +3,9 @@
 #include <thread>
 
 #include "game_state.hpp"
+#include "ui/widgets.hpp"
 #include "render/panel_renderer.hpp"
 #include "render/main_menu_background_renderer.hpp"
-#include "ui/panel.hpp"
 
 class MainMenuState : public GameState
 {
