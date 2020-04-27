@@ -9,6 +9,9 @@ class AnimatedBackgroundRenderer : public Renderer<sf::Texture>
 private:
     float time = 0;
 
+    float speed = 0.2;
+    float radius = 200;
+
 public:
     AnimatedBackgroundRenderer(sf::RenderWindow& window, ResourceManagers resources);
 

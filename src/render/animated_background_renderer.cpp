@@ -1,6 +1,8 @@
 #define _USE_MATH_DEFINES
+
 #include <cmath>
 
+#include "utils.hpp"
 #include "render/animated_background_renderer.hpp"
 
 AnimatedBackgroundRenderer::AnimatedBackgroundRenderer(sf::RenderWindow& window,
@@ -9,16 +11,25 @@ AnimatedBackgroundRenderer::AnimatedBackgroundRenderer(sf::RenderWindow& window,
 
 void AnimatedBackgroundRenderer::render(const sf::Texture& background, const float dt)
 {
-    time += dt * 0.2;
+    time += dt * speed;
     if(time >= 2 * M_PI)
         time -= 2 * M_PI;
 
     sf::Vector2f offset = {std::cos(time), std::sin(time)};
-    offset *= 200.0f;
-    offset -= (sf::Vector2f) window.getSize() * 0.5f;
+    offset *= radius;
 
     sf::Sprite bg_sprite(background);
-    bg_sprite.setScale(1.3, 1.3);
-    bg_sprite.setPosition(offset);
+
+    sf::Vector2f texture_size = (sf::Vector2f) background.getSize();
+    sf::Vector2f window_size = (sf::Vector2f) window.getSize();
+    float scale = Utils::max(
+        (window_size.x + 2.1 * radius) / texture_size.x,
+        (window_size.y + 2.1 * radius) / texture_size.y
+    );
+    bg_sprite.setScale(scale, scale);
+
+    sf::Vector2f position = window_size / 2.0f - texture_size * scale / 2.0f;
+
+    bg_sprite.setPosition(position + offset);
     window.draw(bg_sprite);
 }
