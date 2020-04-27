@@ -4,10 +4,10 @@
 
 namespace Ui
 {
-    Text::Text(const std::string& text, const sf::Font& font, unsigned int font_size,
-        sf::Vector2f position, sf::Color color, Ui::Anchor origin, Ui::Anchor anchor)
+    Text::Text(const std::string& text, const sf::Font& font, sf::Vector2f position,
+        TextSettings settings, Anchor origin, Anchor anchor)
         : Widget(WidgetType::Text, position, {0, 0}, origin, anchor),
-        string(text), font(&font), font_size(font_size), color(color)
+        string(text), font(&font), settings(settings)
     {
         update_size();
     }
@@ -33,31 +33,41 @@ namespace Ui
         return *font;
     }
 
+    void Text::set_color(sf::Color color)
+    {
+        settings.color = color;
+    }
+
     void Text::set_font_size(unsigned int font_size)
     {
-        this->font_size = font_size;
+        settings.font_size = font_size;
         update_size();
     }
 
-    unsigned int Text::get_font_size() const
+    void Text::set_outline_color(sf::Color outline_color)
     {
-        return font_size;
+        settings.outline_color = outline_color;
     }
 
-    void Text::set_color(sf::Color color)
+    void Text::set_outline_thickness(float outline_thickness)
     {
-        this->color = color;
+        settings.outline_thickness = outline_thickness;
     }
 
-    sf::Color Text::get_color() const
+    void Text::set_settings(TextSettings settings)
     {
-        return color;
+        this->settings = settings;
+    }
+
+    TextSettings Text::get_settings() const
+    {
+        return settings;
     }
 
     void Text::update_size()
     {
-        sf::Text sf_text(string, *font, font_size);
+        sf::Text sf_text(string, *font, settings.font_size);
         sf::FloatRect bounds = sf_text.getLocalBounds();
-        set_size({bounds.width + bounds.left, (float) font_size});
+        set_size({bounds.width + bounds.left, (float) settings.font_size});
     }
 }

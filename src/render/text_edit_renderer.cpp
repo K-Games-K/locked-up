@@ -28,9 +28,9 @@ void TextEditRenderer::render(const Ui::TextEdit& text_edit, const float dt)
 
     if(text_edit.is_active() && time <= 1)
     {
-        sf::RectangleShape cursor_rect({1, (float) text.get_font_size()});
+        sf::RectangleShape cursor_rect({1, (float) text.get_settings().font_size});
         cursor_rect.setPosition(text_pos + sf::Vector2f(text_width + 3, 0));
-        cursor_rect.setFillColor(text.get_color());
+        cursor_rect.setFillColor(text.get_settings().color);
         window.draw(cursor_rect);
     }
 

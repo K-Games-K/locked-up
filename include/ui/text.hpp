@@ -7,22 +7,28 @@
 
 namespace Ui
 {
+    struct TextSettings
+    {
+        sf::Color color = sf::Color::White;
+        unsigned int font_size = 24;
+        sf::Color outline_color = sf::Color::Black;
+        float outline_thickness = 0;
+    };
+
     class Text : public Widget
     {
     private:
-        static constexpr unsigned int DEFAULT_SIZE = 24;
-
         std::string string;
         const sf::Font* font;
-        unsigned int font_size;
-        sf::Color color;
+
+        TextSettings settings;
 
         void update_size();
 
     public:
-        Text(const std::string& text, const sf::Font& font, unsigned int font_size = DEFAULT_SIZE,
-            sf::Vector2f position = {0, 0}, sf::Color color = sf::Color::White,
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+        Text(const std::string& text, const sf::Font& font, sf::Vector2f position = {0, 0},
+            TextSettings text_settings = TextSettings(), Anchor origin = Anchor::TopLeft,
+            Anchor anchor = Anchor::TopLeft);
 
         void set_string(const std::string& text);
 
@@ -32,12 +38,16 @@ namespace Ui
 
         const sf::Font& get_font() const;
 
-        void set_font_size(unsigned int font_size);
-
-        unsigned int get_font_size() const;
-
         void set_color(sf::Color color);
 
-        sf::Color get_color() const;
+        void set_font_size(unsigned int font_size);
+
+        void set_outline_color(sf::Color outline_color);
+
+        void set_outline_thickness(float outline_thickness);
+
+        void set_settings(TextSettings settings);
+
+        TextSettings get_settings() const;
     };
 }

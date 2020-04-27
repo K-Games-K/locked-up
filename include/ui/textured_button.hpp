@@ -19,7 +19,8 @@ namespace Ui
     public:
         TexturedButton(const std::string& text, const sf::Font& font,
             ButtonTextures textures, Callback callback, sf::Vector2f position = {0, 0},
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+            TextSettings text_settings = TextSettings(),  Anchor origin = Anchor::TopLeft,
+            Anchor anchor = Anchor::TopLeft);
 
         const sf::Texture& get_texture() const;
     };

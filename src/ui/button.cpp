@@ -4,9 +4,9 @@ namespace Ui
 {
     Button::Button(WidgetType type, const std::string& text,
         const sf::Font& font, Callback callback, sf::Vector2f position, sf::Vector2f size,
-        ButtonColors colors, Ui::Anchor origin, Ui::Anchor anchor)
+        ButtonColors colors, TextSettings text_settings, Ui::Anchor origin, Ui::Anchor anchor)
         : Widget(type, position, size, origin, anchor),
-        text(text, font), colors(colors), callback(callback)
+        text(text, font, {0, 0}, text_settings), colors(colors), callback(callback)
     {
         this->text.set_origin(Anchor::Center);
         this->text.set_anchor(Anchor::Center);
@@ -14,9 +14,9 @@ namespace Ui
 
     Button::Button(const std::string& text, const sf::Font& font,
         Callback callback, sf::Vector2f position, sf::Vector2f size, ButtonColors colors,
-        Ui::Anchor origin, Ui::Anchor anchor)
+        TextSettings text_settings, Ui::Anchor origin, Ui::Anchor anchor)
         : Widget(WidgetType::Button, position, size, origin, anchor),
-        text(text, font), colors(colors), callback(callback)
+        text(text, font, {0, 0}, text_settings), colors(colors), callback(callback)
     {
         this->text.set_origin(Anchor::Center);
         this->text.set_anchor(Anchor::Center);
@@ -46,10 +46,31 @@ namespace Ui
         this->text = text;
     }
 
+    Text& Button::get_text()
+    {
+        return text;
+    }
+
     const Text& Button::get_text() const
     {
         return text;
     }
+
+    void Button::set_default_color(sf::Color default_color)
+    {
+        colors.default_color = default_color;
+    }
+
+    void Button::set_hover_color(sf::Color hover_color)
+    {
+        colors.hover_color = hover_color;
+    }
+
+    void Button::set_active_color(sf::Color active_color)
+    {
+        colors.active_color = active_color;
+    }
+
 
     void Button::set_colors(ButtonColors colors)
     {

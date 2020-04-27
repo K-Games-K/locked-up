@@ -29,11 +29,10 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     sf::Font& font = fonts.get("IndieFlower-Regular");
     user_interface.add_widget(
         new Ui::Text(
-            "Locked Out!",
+            "Locked Up!",
             font,
-            95,
             {0, -300},
-            sf::Color::White,
+            {sf::Color::White, 95, sf::Color::Black, 0},
             Ui::Anchor::Center, Ui::Anchor::Center
         )
     );
@@ -49,9 +48,8 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
         new Ui::Text(
             "Nickname:",
             font,
-            24,
             {-210, -80},
-            sf::Color::White,
+            Ui::TextSettings(),
             Ui::Anchor::CenterLeft, Ui::Anchor::Center
         )
     );
@@ -67,9 +65,8 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
         new Ui::Text(
             "Server address:",
             font,
-            24,
             {-210, 0},
-            sf::Color::White,
+            Ui::TextSettings(),
             Ui::Anchor::CenterLeft, Ui::Anchor::Center
         )
     );
@@ -85,9 +82,8 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
         new Ui::Text(
             "Port:",
             font,
-            24,
             {110, 0},
-            sf::Color::White,
+            Ui::TextSettings(),
             Ui::Anchor::CenterLeft, Ui::Anchor::Center
         )
     );
@@ -115,6 +111,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             {0, 100},
             {420, 40},
             button_colors,
+            Ui::TextSettings(),
             Ui::Anchor::Center,
             Ui::Anchor::Center
         )
@@ -127,6 +124,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             {0, -50},
             {420, 40},
             button_colors,
+            Ui::TextSettings(),
             Ui::Anchor::CenterBottom,
             Ui::Anchor::CenterBottom
         )
@@ -135,14 +133,18 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     connecting_text_widget = new Ui::Text(
         "Connecting to the server...",
         font,
-        28,
         {0, 0},
-        sf::Color::White,
+        Ui::TextSettings(),
         Ui::Anchor::Center,
         Ui::Anchor::Center
     );
     connecting_text_widget->set_enabled(false);
     user_interface.add_widget(connecting_text_widget);
+
+    // For easier debug fill login menu
+    nickname_text_edit->get_text().set_string("Debugger");
+    address_text_edit->get_text().set_string("localhost");
+    port_text_edit->get_text().set_string("2704");
 }
 
 MainMenuState::~MainMenuState()
