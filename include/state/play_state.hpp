@@ -38,9 +38,6 @@ private:
 
     Ui::Panel user_interface;
 
-    ResourceManager<sf::Texture> textures;
-    ResourceManager<sf::Font> fonts;
-
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
     DebugRenderer debug_renderer;

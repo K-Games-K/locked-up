@@ -8,8 +8,6 @@
 
 MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_state_manager)
     : GameState(window, game_state_manager),
-    textures("assets/sprites", "png"),
-    fonts("assets/fonts", "ttf"),
     user_interface(
         {0, 0},
         {500, 700},

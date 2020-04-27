@@ -8,8 +8,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     Connection server_connection, const std::string& nickname)
     : GameState(window, game_state_manager),
     server_connection(server_connection),
-    textures("assets/sprites", "png"),
-    fonts("assets/fonts", "ttf"),
     player_renderer(window, {textures, fonts}),
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),

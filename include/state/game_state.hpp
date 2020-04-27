@@ -1,15 +1,18 @@
 #pragma once
 
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "game_state_manager.hpp"
+#include "resource_manager.hpp"
 
 class GameState
 {
 protected:
     sf::RenderWindow& window;
     GameStateManager& game_state_manager;
+
+    ResourceManager<sf::Texture> textures;
+    ResourceManager<sf::Font> fonts;
 
 public:
     GameState(sf::RenderWindow& window, GameStateManager& game_state_manager);

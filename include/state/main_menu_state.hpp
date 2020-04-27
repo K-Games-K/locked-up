@@ -12,9 +12,6 @@ class MainMenuState : public GameState
 private:
     const sf::Color CLEAR_COLOR = sf::Color(242, 0, 0);
 
-    ResourceManager<sf::Texture> textures;
-    ResourceManager<sf::Font> fonts;
-
     Ui::Panel user_interface;
     PanelRenderer panel_renderer;
     Ui::TextEdit* nickname_text_edit;
