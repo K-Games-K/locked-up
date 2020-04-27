@@ -4,11 +4,11 @@
 #include <array>
 
 GameBoardPacket::GameBoardPacket()
-        : Packet(PACKET_ID)
+    : Packet(PACKET_ID)
 {}
 
 GameBoardPacket::GameBoardPacket(GameBoard& game_board)
-        : Packet(PACKET_ID), game_board(game_board)
+    : Packet(PACKET_ID), game_board(game_board)
 {}
 
 GameBoard GameBoardPacket::get_game_board() const
@@ -23,12 +23,12 @@ void GameBoardPacket::serialize(sf::Packet& data) const
     std::vector<int> indices;
     std::vector<std::array<bool, 2>> collision_map;
     GameBoardLoader::save_in_memory(
-            game_board,
-            width,
-            height,
-            rooms,
-            indices,
-            collision_map
+        game_board,
+        width,
+        height,
+        rooms,
+        indices,
+        collision_map
     );
 
     data << width << height << rooms.size();
@@ -78,14 +78,14 @@ void GameBoardPacket::deserialize(sf::Packet& data)
     {
         bool east, south;
         data >> east >> south;
-        collision_map.push_back({ east, south });
+        collision_map.push_back({east, south});
     }
 
     game_board = GameBoardLoader::load_from_memory(
-            width,
-            height,
-            rooms,
-            indices,
-            collision_map
+        width,
+        height,
+        rooms,
+        indices,
+        collision_map
     );
 }
