@@ -38,6 +38,8 @@ namespace Ui
 
         void set_text(Text text);
 
+        Text& get_text();
+
         const Text& get_text() const;
 
         void set_colors(TextEditColors colors);

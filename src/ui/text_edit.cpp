@@ -67,6 +67,11 @@ namespace Ui
         this->text = text;
     }
 
+    Text& TextEdit::get_text()
+    {
+        return text;
+    }
+
     const Text& TextEdit::get_text() const
     {
         return text;

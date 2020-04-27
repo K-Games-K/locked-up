@@ -33,7 +33,8 @@ void PlayState::handle_input(sf::Event event)
     if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
         sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-        if(!Utils::is_inside(game_board_pos, GAME_BOARD_SIZE, mouse_pos))
+        sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
+        if(!game_board_rect.contains(mouse_pos))
             return;
 
         sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
@@ -120,6 +121,7 @@ void PlayState::render(float dt)
 
     player_renderer.set_camera_pos(camera_pos);
     player_renderer.set_game_board_pos(game_board_pos);
+    player_renderer.set_game_board_size(GAME_BOARD_SIZE);
     player_renderer.render(players, dt);
 
     panel_renderer.render(user_interface, dt);

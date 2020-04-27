@@ -4,6 +4,7 @@
 
 #include "player.hpp"
 #include "camera_renderer.hpp"
+#include "text_renderer.hpp"
 
 class PlayerRenderer : public CameraRenderer<std::vector<Player>>
 {
@@ -11,6 +12,7 @@ private:
     const float TILE_SIZE = 40;
 
     sf::Sprite player_sprite;
+    TextRenderer text_renderer;
 
 public:
     PlayerRenderer(sf::RenderWindow& window, ResourceManagers resources);
