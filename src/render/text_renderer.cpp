@@ -1,13 +1,16 @@
 #include "render/text_renderer.hpp"
 
 TextRenderer::TextRenderer(sf::RenderWindow& window, ResourceManagers resources)
-    : Renderer(window, resources)
+    : WidgetRenderer(window, resources)
 {}
 
-void TextRenderer::render(const Ui::Text& text, sf::Vector2f origin)
+void TextRenderer::render(const Ui::Text& text, const float dt)
 {
-    sf::Text sf_text(text.get_text(), text.get_font(), text.get_font_size());
-    sf::Vector2f text_position = origin + text.get_absolute_position();
+    if(!text.is_enabled())
+        return;
+
+    sf::Text sf_text(text.get_string(), text.get_font(), text.get_font_size());
+    sf::Vector2f text_position = text.get_relative_position(origin_pos, parent_size);
 
     sf_text.setPosition(text_position);
     sf_text.setFillColor(text.get_color());

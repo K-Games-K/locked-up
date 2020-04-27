@@ -1,6 +1,5 @@
 #include "game_board.hpp"
 
-
 GameBoard::GameBoard(const GameBoard& other)
         : width(other.width), height(other.height), rooms(other.rooms),
           collision_map(other.collision_map)
@@ -14,31 +13,6 @@ GameBoard::GameBoard(const GameBoard& other)
         );
 
         tiles.push_back(rooms[idx]);
-    }
-}
-
-GameBoard::GameBoard(int width, int height)
-        : width(width), height(height)
-{
-    rooms.push_back(Room("<test_room_1>"));
-    rooms.push_back(Room("<test_room_2>"));
-    rooms.push_back(Room("<test_room_3>"));
-
-    tiles.reserve(width * height);
-    for(int i = 0; i < width * height; ++i)
-    {
-        if(i < 5 * width)
-            tiles.push_back(rooms[0]);
-        else if(i % width < width / 2)
-            tiles.push_back(rooms[1]);
-        else
-            tiles.push_back(rooms[2]);
-    }
-
-    collision_map.reserve(width * height);
-    for(int i = 0; i < width * height; ++i)
-    {
-        collision_map.push_back({ i % width == width / 2, false });
     }
 }
 

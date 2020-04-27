@@ -6,12 +6,7 @@ namespace Ui
 {
     Widget::Widget(WidgetType type, sf::Vector2f position, sf::Vector2f size,
         Anchor origin, Anchor anchor)
-        : type(type), parent(nullptr), position(position), size(size), origin(origin), anchor(anchor)
-    {}
-
-    Widget::Widget(WidgetType type, const Widget& parent, sf::Vector2f position, sf::Vector2f size,
-        Anchor origin, Anchor anchor)
-        : type(type), parent(&parent), position(position), size(size), origin(origin), anchor(anchor)
+        : type(type), position(position), size(size), origin(origin), anchor(anchor)
     {}
 
     WidgetType Widget::get_type() const
@@ -19,14 +14,14 @@ namespace Ui
         return type;
     }
 
-    void Widget::set_parent(const Widget& parent)
+    void Widget::set_enabled(bool enabled)
     {
-        this->parent = &parent;
+        this->enabled = enabled;
     }
 
-    const Widget& Widget::get_parent() const
+    bool Widget::is_enabled() const
     {
-        return *parent;
+        return enabled;
     }
 
     void Widget::set_position(sf::Vector2f position)
@@ -34,44 +29,15 @@ namespace Ui
         this->position = position;
     }
 
-    sf::Vector2f Widget::get_position() const
+    sf::Vector2f Widget::get_local_position() const
     {
         return position;
     }
 
-    void Widget::set_size(sf::Vector2f size)
+    sf::Vector2f
+    Widget::get_relative_position(sf::Vector2f origin_pos, sf::Vector2f parent_size) const
     {
-        this->size = size;
-    }
-
-    sf::Vector2f Widget::get_size() const
-    {
-        return size;
-    }
-
-    void Widget::set_origin(Anchor origin)
-    {
-        this->origin = origin;
-    }
-
-    Anchor Widget::get_origin() const
-    {
-        return origin;
-    }
-
-    void Widget::set_anchor(Anchor anchor)
-    {
-        this->anchor = anchor;
-    }
-
-    Anchor Widget::get_anchor() const
-    {
-        return anchor;
-    }
-
-    sf::Vector2f Widget::get_absolute_position() const
-    {
-        sf::Vector2f result = parent != nullptr ? parent->get_absolute_position() : sf::Vector2f();
+        sf::Vector2f result = origin_pos;
         switch(origin)
         {
             case Anchor::TopLeft:
@@ -105,42 +71,69 @@ namespace Ui
                 break;
         }
 
-        if(parent == nullptr)
-            return result;
-
         switch(anchor)
         {
             case Anchor::TopLeft:
                 break;
             case Anchor::TopRight:
-                result += sf::Vector2f(parent->size.x, 0);
+                result += sf::Vector2f(parent_size.x, 0);
                 break;
             case Anchor::BottomRight:
-                result += parent->size;
+                result += parent_size;
                 break;
             case Anchor::BottomLeft:
-                result += sf::Vector2f(0, parent->size.y);
+                result += sf::Vector2f(0, parent_size.y);
                 break;
             case Anchor::Center:
-                result += parent->size / 2.0f;
+                result += parent_size / 2.0f;
                 break;
             case Anchor::CenterTop:
-                result += sf::Vector2f(parent->size.x / 2, 0);
+                result += sf::Vector2f(parent_size.x / 2, 0);
                 break;
             case Anchor::CenterRight:
-                result += sf::Vector2f(parent->size.x, parent->size.y / 2);
+                result += sf::Vector2f(parent_size.x, parent_size.y / 2);
                 break;
             case Anchor::CenterBottom:
-                result += sf::Vector2f(parent->size.x / 2, parent->size.y);
+                result += sf::Vector2f(parent_size.x / 2, parent_size.y);
                 break;
             case Anchor::CenterLeft:
-                result += sf::Vector2f(0, parent->size.y / 2);
+                result += sf::Vector2f(0, parent_size.y / 2);
                 break;
             default:
                 break;
         }
 
         return result;
+    }
+
+    void Widget::set_size(sf::Vector2f size)
+    {
+        this->size = size;
+    }
+
+    sf::Vector2f Widget::get_size() const
+    {
+        return size;
+    }
+
+    void Widget::set_origin(Anchor origin)
+    {
+        this->origin = origin;
+    }
+
+    Anchor Widget::get_origin() const
+    {
+        return origin;
+    }
+
+    void Widget::set_anchor(Anchor anchor)
+    {
+        this->anchor = anchor;
+    }
+
+    Anchor Widget::get_anchor() const
+    {
+        return anchor;
     }
 
     bool Widget::operator==(const Widget& other) const
@@ -153,7 +146,6 @@ namespace Ui
         if(type != other.type)
             throw std::invalid_argument("Tried to assign widgets of different types!");
 
-        parent = other.parent;
         position = other.position;
         size = other.size;
         origin = other.origin;

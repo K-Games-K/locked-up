@@ -24,8 +24,6 @@ public:
 
     GameBoard(const GameBoard& other);
 
-    GameBoard(int width, int height);
-
     Room& get_room(int x, int y);
 
     bool can_move(int x, int y, int dirx, int diry);

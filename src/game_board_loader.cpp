@@ -1,25 +1,27 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-
+#include <functional>
+#include <SFML/Graphics.hpp>
 
 #include "game_board_loader.hpp"
 
 void GameBoardLoader::save_in_memory(const GameBoard& game_board, int& width, int& height,
-                                     std::vector<Room>& rooms, std::vector<int>& indices,
-                                     std::vector<std::array<bool, 2>>& collision_map)
+    std::vector<Room>& rooms, std::vector<int>& indices,
+    std::vector<std::array<bool, 2>>& collision_map)
 {
     width = game_board.width;
     height = game_board.height;
     rooms = game_board.rooms;
     collision_map = game_board.collision_map;
 
+    indices.clear();
     indices.reserve(width * height);
     for(auto& room_ref : game_board.tiles)
     {
         auto idx = std::distance(
-                game_board.rooms.begin(),
-                std::find(game_board.rooms.begin(), game_board.rooms.end(), room_ref.get())
+            game_board.rooms.begin(),
+            std::find(game_board.rooms.begin(), game_board.rooms.end(), room_ref.get())
         );
 
         indices.push_back(idx);
@@ -27,8 +29,7 @@ void GameBoardLoader::save_in_memory(const GameBoard& game_board, int& width, in
 }
 
 GameBoard GameBoardLoader::load_from_memory(int width, int height, const std::vector<Room>& rooms,
-                                            const std::vector<int>& indices,
-                                            const std::vector<std::array<bool, 2>>& collision_map)
+    const std::vector<int>& indices, const std::vector<std::array<bool, 2>>& collision_map)
 {
     GameBoard game_board;
     game_board.width = width;
@@ -64,7 +65,6 @@ bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& f
         std::stringstream line(line_str);
         std::string room_name;
         std::getline(line >> std::ws, room_name, ':');
-        // TODO: Handle items
 
         rooms.emplace_back(room_name);
     }
@@ -99,7 +99,7 @@ bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& f
         while(!line.eof())
         {
             line >> east >> south;
-            collision_map.push_back({ east, south });
+            collision_map.push_back({east, south});
         }
     }
 

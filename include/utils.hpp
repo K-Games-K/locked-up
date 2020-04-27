@@ -16,5 +16,7 @@ namespace Utils
 
     sf::Vector2f normalize(sf::Vector2f vec);
 
-    bool is_inside(sf::Vector2f start, sf::Vector2f size, sf::Vector2f point);
+    bool is_number(const std::string& string);
+
+    bool is_printable(const std::string& string);
 }

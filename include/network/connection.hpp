@@ -14,6 +14,8 @@ private:
     bool connected = false;
 
 public:
+    Connection() = default;
+
     explicit Connection(std::shared_ptr<sf::TcpSocket>& socket);
 
     Connection(sf::IpAddress remote_addr, unsigned short remote_port);

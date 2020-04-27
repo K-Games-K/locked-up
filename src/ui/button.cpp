@@ -2,26 +2,43 @@
 
 namespace Ui
 {
-    Button::Button(const Widget& parent, const std::string& text, const sf::Font& font,
-        Callback callback, sf::Vector2f position, sf::Vector2f size, ButtonColors colors,
-        Ui::Anchor origin, Ui::Anchor anchor)
-        : Widget(WidgetType::Button, parent, position, size, origin, anchor),
-        text(*this, text, font), colors(colors), callback(callback)
+    Button::Button(WidgetType type, const std::string& text,
+        const sf::Font& font, Callback callback, sf::Vector2f position, sf::Vector2f size,
+        ButtonColors colors, Ui::Anchor origin, Ui::Anchor anchor)
+        : Widget(type, position, size, origin, anchor),
+        text(text, font), colors(colors), callback(callback)
     {
         this->text.set_origin(Anchor::Center);
         this->text.set_anchor(Anchor::Center);
     }
 
-    void Button::set_activated(bool activated)
+    Button::Button(const std::string& text, const sf::Font& font,
+        Callback callback, sf::Vector2f position, sf::Vector2f size, ButtonColors colors,
+        Ui::Anchor origin, Ui::Anchor anchor)
+        : Widget(WidgetType::Button, position, size, origin, anchor),
+        text(text, font), colors(colors), callback(callback)
     {
-        this->activated = activated;
-        if(activated)
-            callback(*this);
+        this->text.set_origin(Anchor::Center);
+        this->text.set_anchor(Anchor::Center);
     }
 
-    void Button::set_hovered(bool hovered)
+    void Button::handle_event(sf::Event event, sf::Vector2f mouse_pos)
     {
-        this->hovered = hovered;
+        if(!is_enabled())
+            return;
+
+        sf::FloatRect widget_box({0, 0}, get_size());
+
+        if(event.type == sf::Event::MouseButtonPressed &&
+            widget_box.contains(mouse_pos))
+        {
+            callback(*this);
+            activated = true;
+        }
+        else if(event.type == sf::Event::MouseButtonReleased)
+            activated = false;
+        else if(event.type == sf::Event::MouseMoved)
+            hovered = widget_box.contains(mouse_pos);
     }
 
     void Button::set_text(Text text)
@@ -37,11 +54,6 @@ namespace Ui
     void Button::set_colors(ButtonColors colors)
     {
         this->colors = colors;
-    }
-
-    ButtonColors Button::get_colors() const
-    {
-        return colors;
     }
 
     sf::Color Button::get_color() const

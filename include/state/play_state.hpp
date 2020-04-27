@@ -11,8 +11,8 @@
 #include "render/debug_renderer.hpp"
 #include "render/player_renderer.hpp"
 #include "render/game_board_renderer.hpp"
-#include "render/user_interface_renderer.hpp"
-#include "ui/user_interface.hpp"
+#include "render/panel_renderer.hpp"
+#include "ui/panel.hpp"
 
 class PlayState : public GameState
 {
@@ -28,18 +28,18 @@ private:
     GameBoard game_board;
 
     sf::Vector2f camera_pos;
-    sf::Vector2f window_viewport = {(float)window.getSize().x, (float)window.getSize().y};
-    sf::Vector2f game_board_position = {
-            (window_viewport.y - GAME_BOARD_SIZE.y) / 2,
-            (window_viewport.y - GAME_BOARD_SIZE.y) / 2
+    sf::Vector2f window_viewport = {(float) window.getSize().x, (float) window.getSize().y};
+    sf::Vector2f game_board_pos = {
+        (window_viewport.y - GAME_BOARD_SIZE.y) / 2,
+        (window_viewport.y - GAME_BOARD_SIZE.y) / 2
     };
 
-    int player_id;
+    int player_id = -1;
     std::vector<Player> players;
 
     Connection server_connection;
 
-    Ui::UserInterface user_interface;
+    Ui::Panel user_interface;
 
     ResourceManager<sf::Texture> textures;
     ResourceManager<sf::Font> fonts;
@@ -47,7 +47,7 @@ private:
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
     DebugRenderer debug_renderer;
-    UserInterfaceRenderer user_interface_renderer;
+    PanelRenderer panel_renderer;
 
     bool debug_render = false;
 
@@ -58,11 +58,12 @@ private:
     sf::Vector2f board_to_window_coords(sf::Vector2f window_coords);
 
 public:
-    PlayState(sf::RenderWindow& window);
+    PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
+        Connection server_connection, const std::string& nickname);
 
-    std::unique_ptr<GameState> handle_input(sf::Event event) override;
+    void handle_input(sf::Event event) override;
 
-    std::unique_ptr<GameState> update(float dt) override;
+    void update(float dt) override;
 
     void render(float dt) override;
 };
