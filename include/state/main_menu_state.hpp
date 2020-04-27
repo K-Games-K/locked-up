@@ -12,7 +12,7 @@ class MainMenuState : public GameState
 private:
     const sf::Color CLEAR_COLOR = sf::Color(242, 0, 0);
 
-    Ui::Panel user_interface;
+    Ui::TexturedPanel user_interface;
     PanelRenderer panel_renderer;
     Ui::TextEdit* nickname_text_edit;
     Ui::TextEdit* address_text_edit;

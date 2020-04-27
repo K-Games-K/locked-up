@@ -10,9 +10,8 @@
 MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_state_manager)
     : GameState(window, game_state_manager),
     user_interface(
+        textures.get("paper"),
         {0, 0},
-        {500, 700},
-        sf::Color(242, 0, 0, 150),
         Ui::Anchor::Center,
         Ui::Anchor::Center
     ),
@@ -31,14 +30,13 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             "Locked Up!",
             font,
             {0, -300},
-            {sf::Color::White, 95, sf::Color::Black, 0},
+            {sf::Color::Black, 95},
             Ui::Anchor::Center, Ui::Anchor::Center
         )
     );
 
     join_game_panel = new Ui::Panel(
-        {0, 0},
-        {420, 100},
+        {0, 0}, {420, 100},
         sf::Color::Transparent,
         Ui::Anchor::CenterBottom,
         Ui::Anchor::Center
@@ -48,7 +46,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             "Nickname:",
             font,
             {-210, -80},
-            Ui::TextSettings(),
+            {sf::Color::Black},
             Ui::Anchor::CenterLeft, Ui::Anchor::Center
         )
     );
@@ -65,7 +63,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             "Server address:",
             font,
             {-210, 0},
-            Ui::TextSettings(),
+            {sf::Color::Black},
             Ui::Anchor::CenterLeft, Ui::Anchor::Center
         )
     );
@@ -82,7 +80,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             "Port:",
             font,
             {110, 0},
-            Ui::TextSettings(),
+            {sf::Color::Black},
             Ui::Anchor::CenterLeft, Ui::Anchor::Center
         )
     );
@@ -110,7 +108,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             {0, 100},
             {420, 40},
             button_colors,
-            Ui::TextSettings(),
+            {sf::Color::Black},
             Ui::Anchor::Center,
             Ui::Anchor::Center
         )
@@ -123,7 +121,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             {0, -50},
             {420, 40},
             button_colors,
-            Ui::TextSettings(),
+            {sf::Color::Black},
             Ui::Anchor::CenterBottom,
             Ui::Anchor::CenterBottom
         )
@@ -133,7 +131,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
         "Connecting to the server...",
         font,
         {0, 0},
-        Ui::TextSettings(),
+        {sf::Color::Black},
         Ui::Anchor::Center,
         Ui::Anchor::Center
     );
