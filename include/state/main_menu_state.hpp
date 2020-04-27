@@ -5,7 +5,7 @@
 #include "game_state.hpp"
 #include "ui/widgets.hpp"
 #include "render/panel_renderer.hpp"
-#include "render/main_menu_background_renderer.hpp"
+#include "render/animated_background_renderer.hpp"
 
 class MainMenuState : public GameState
 {
@@ -20,7 +20,7 @@ private:
     Ui::Panel* join_game_panel;
     Ui::Text* connecting_text_widget;
 
-    MainMenuBackgroundRenderer background_renderer;
+    AnimatedBackgroundRenderer background_renderer;
 
     std::string nickname;
     Connection server_connection;

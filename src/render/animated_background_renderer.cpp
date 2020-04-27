@@ -1,13 +1,13 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "render/main_menu_background_renderer.hpp"
+#include "render/animated_background_renderer.hpp"
 
-MainMenuBackgroundRenderer::MainMenuBackgroundRenderer(sf::RenderWindow& window,
+AnimatedBackgroundRenderer::AnimatedBackgroundRenderer(sf::RenderWindow& window,
     ResourceManagers resources) : Renderer(window, resources)
 {}
 
-void MainMenuBackgroundRenderer::render(const sf::Texture& background, const float dt)
+void AnimatedBackgroundRenderer::render(const sf::Texture& background, const float dt)
 {
     time += dt * 0.2;
     if(time >= 2 * M_PI)

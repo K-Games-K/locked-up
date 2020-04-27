@@ -4,13 +4,13 @@
 
 #include "renderer.hpp"
 
-class MainMenuBackgroundRenderer : public Renderer<sf::Texture>
+class AnimatedBackgroundRenderer : public Renderer<sf::Texture>
 {
 private:
     float time = 0;
 
 public:
-    MainMenuBackgroundRenderer(sf::RenderWindow& window, ResourceManagers resources);
+    AnimatedBackgroundRenderer(sf::RenderWindow& window, ResourceManagers resources);
 
     void render(const sf::Texture& background, const float dt);
 };
