@@ -18,14 +18,15 @@ Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
 
     sf::Socket::Status status =  listener.listen(bind_port, bind_addr);
     listener.setBlocking(false);
+
+    std::string bind_str = bind_addr.toString() + ":" + std::to_string(bind_port);
     if(status != sf::Socket::Done)
     {
-        std::cerr << "Failed to bind to " << bind_addr.toString() << ":" << bind_port << std::endl;
+        std::cerr << "Failed to bind to " << bind_str << "!" << std::endl;
         return;
     }
 
-    std::cout << "Server listening on " << bind_addr.toString() << ":"
-        << listener.getLocalPort() << std::endl;
+    std::cout << "Server listening on " << bind_str << "..." << std::endl;
     enabled = true;
 }
 
