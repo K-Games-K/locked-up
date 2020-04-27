@@ -18,8 +18,8 @@ private:
 
     Ui::Panel user_interface;
     PanelRenderer panel_renderer;
-    Ui::Panel* left_panel;
-    Ui::Panel* right_panel;
+    Ui::TexturedPanel* left_panel;
+    Ui::TexturedPanel* right_panel;
     Ui::Text* players_list_text;
 
     AnimatedBackgroundRenderer background_renderer;

@@ -54,8 +54,32 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt)
                 parent_size = temp_size;
                 break;
             }
+            case Ui::WidgetType::TexturedPanel:
+            {
+                sf::Vector2f temp_pos = origin_pos;
+                sf::Vector2f temp_size = parent_size;
+                set_origin_pos(panel_position);
+                set_parent_size(panel.get_size());
+                render(dynamic_cast<Ui::TexturedPanel&>(*widget), dt);
+                origin_pos = temp_pos;
+                parent_size = temp_size;
+                break;
+            }
             default:
                 break;
         }
     }
+}
+
+void PanelRenderer::render(const Ui::TexturedPanel& panel, const float dt)
+{
+    if(!panel.is_enabled())
+        return;
+
+    sf::Vector2f panel_position = panel.get_relative_position(origin_pos, parent_size);
+    panel_sprite.setTexture(panel.get_texture());
+    panel_sprite.setPosition(panel_position);
+    window.draw(panel_sprite);
+
+    render(dynamic_cast<const Ui::Panel&>(panel), dt);
 }

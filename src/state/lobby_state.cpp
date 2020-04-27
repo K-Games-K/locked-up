@@ -19,9 +19,9 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
         sf::Color(0, 0, 0, 210)
     };
 
-    left_panel = new Ui::Panel(
-        {-40, 0}, {500, 700},
-        sf::Color(242, 0, 0, 150),
+    left_panel = new Ui::TexturedPanel(
+        textures.get("paper"),
+        {-40, 0},
         Ui::Anchor::CenterRight, Ui::Anchor::Center
     );
     user_interface.add_widget(left_panel);
@@ -31,7 +31,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
             "Waiting for players...",
             font,
             {0, 30},
-            {sf::Color::White, 50, sf::Color::Black, 0},
+            {sf::Color::Black, 50},
             Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
         )
     );
@@ -44,7 +44,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
             {0, -50},
             {420, 40},
             button_colors,
-            Ui::TextSettings(),
+            {sf::Color::Red},
             Ui::Anchor::CenterBottom,
             Ui::Anchor::CenterBottom
         )
@@ -54,14 +54,14 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
         "",
         font,
         {0, 150},
-        Ui::TextSettings(),
+        {sf::Color::Black},
         Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
     );
     left_panel->add_widget(players_list_text);
 
-    right_panel = new Ui::Panel(
-        {40, 0}, {500, 700},
-        sf::Color(242, 0, 0, 150),
+    right_panel = new Ui::TexturedPanel(
+        textures.get("paper"),
+        {40, 0},
         Ui::Anchor::CenterLeft, Ui::Anchor::Center
     );
     user_interface.add_widget(right_panel);
@@ -71,7 +71,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
             "Chat coming soonTM...",
             font,
             {0, 0},
-            {sf::Color::White, 50, sf::Color::Black, 0},
+            {sf::Color::Black, 50},
             Ui::Anchor::Center, Ui::Anchor::Center
         )
     );
@@ -140,5 +140,5 @@ void LobbyState::ready_clicked(Ui::Button& button)
 {
     ready = !ready;
     button.get_text().set_string(ready ? "I'm ready!" : "Not ready");
-    button.get_text().set_color(ready ? sf::Color::Green : sf::Color::White);
+    button.get_text().set_color(ready ? sf::Color::Green : sf::Color::Red);
 }

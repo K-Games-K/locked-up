@@ -13,6 +13,7 @@ namespace Ui
         TextEdit,
         TexturedTextEdit,
         Panel,
+        TexturedPanel
     };
 
     enum class Anchor

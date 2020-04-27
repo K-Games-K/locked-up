@@ -5,6 +5,13 @@
 
 namespace Ui
 {
+    Panel::Panel(WidgetType type, sf::Vector2f position, sf::Vector2f size,
+        sf::Color background_color, Anchor origin, Anchor anchor)
+        : Widget(type, position, size, origin, anchor),
+        background_color(background_color)
+    {}
+
+
     Panel::Panel(sf::Vector2f position, sf::Vector2f size, sf::Color background_color,
         Anchor origin, Anchor anchor)
         : Widget(WidgetType::Panel, position, size, origin, anchor),
