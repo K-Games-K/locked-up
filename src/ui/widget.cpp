@@ -17,6 +17,8 @@ namespace Ui
     void Widget::set_enabled(bool enabled)
     {
         this->enabled = enabled;
+        if(!enabled)
+            this->reset();
     }
 
     bool Widget::is_enabled() const

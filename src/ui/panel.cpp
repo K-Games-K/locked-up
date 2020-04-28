@@ -26,12 +26,20 @@ namespace Ui
 
     void Panel::handle_event(sf::Event event, sf::Vector2f mouse_pos)
     {
+        if(!is_enabled())
+            return;
+
         for(auto& widget : widgets)
+        {
+            if(!widget->is_enabled())
+                continue;
+
             widget->handle_event(
                 event, mouse_pos - widget->get_relative_position(
                     get_local_position(),
                     get_size()
                 ));
+        }
     }
 
     void Panel::add_widget(Widget* widget)
@@ -59,5 +67,11 @@ namespace Ui
     sf::Color Panel::get_background_color() const
     {
         return background_color;
+    }
+
+    void Panel::reset()
+    {
+        for(auto& widget : widgets)
+            widget->reset();
     }
 }

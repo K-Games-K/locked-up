@@ -47,5 +47,7 @@ namespace Ui
         TextEditColors get_colors() const;
 
         void set_limit(int limit);
+
+        void reset() override;
     };
 }

@@ -28,9 +28,6 @@ namespace Ui
 
     void TextEdit::handle_event(sf::Event event, sf::Vector2f mouse_pos)
     {
-        if(!is_enabled())
-            return;
-
         sf::FloatRect widget_box({0, 0}, get_size());
 
         if(event.type == sf::Event::MouseButtonPressed)
@@ -90,5 +87,10 @@ namespace Ui
     void TextEdit::set_limit(int limit)
     {
         this->limit = limit;
+    }
+
+    void TextEdit::reset()
+    {
+        activated = false;
     }
 }

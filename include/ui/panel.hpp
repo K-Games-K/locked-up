@@ -38,5 +38,7 @@ namespace Ui
         void set_background_color(sf::Color background_color);
 
         sf::Color get_background_color() const;
+
+        void reset() override;
     };
 }

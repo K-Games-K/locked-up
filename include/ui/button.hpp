@@ -57,5 +57,7 @@ namespace Ui
         sf::Color get_color() const;
 
         void set_callback(Callback callback);
+
+        void reset() override;
     };
 }

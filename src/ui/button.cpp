@@ -1,4 +1,5 @@
 #include "ui/button.hpp"
+#include <iostream>
 
 namespace Ui
 {
@@ -24,16 +25,13 @@ namespace Ui
 
     void Button::handle_event(sf::Event event, sf::Vector2f mouse_pos)
     {
-        if(!is_enabled())
-            return;
-
         sf::FloatRect widget_box({0, 0}, get_size());
 
         if(event.type == sf::Event::MouseButtonPressed &&
             widget_box.contains(mouse_pos))
         {
-            callback(*this);
             activated = true;
+            callback(*this);
         }
         else if(event.type == sf::Event::MouseButtonReleased)
             activated = false;
@@ -71,7 +69,6 @@ namespace Ui
         colors.active_color = active_color;
     }
 
-
     void Button::set_colors(ButtonColors colors)
     {
         this->colors = colors;
@@ -90,5 +87,11 @@ namespace Ui
     void Button::set_callback(Button::Callback callback)
     {
         this->callback = callback;
+    }
+
+    void Button::reset()
+    {
+        activated = false;
+        hovered = false;
     }
 }

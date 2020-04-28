@@ -76,6 +76,8 @@ namespace Ui
 
         Anchor get_anchor() const;
 
+        virtual void reset() {};
+
         bool operator==(const Widget& other) const;
 
         Widget& operator=(const Widget& other);
