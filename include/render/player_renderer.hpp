@@ -9,7 +9,7 @@
 class PlayerRenderer : public CameraRenderer<std::vector<Player>>
 {
 private:
-    const float TILE_SIZE = 40;
+    const float TILE_SIZE = 60;
 
     sf::Sprite player_sprite;
     TextRenderer text_renderer;

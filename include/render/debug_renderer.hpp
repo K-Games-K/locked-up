@@ -14,7 +14,7 @@ struct DebugContext
 class DebugRenderer : public CameraRenderer<DebugContext>
 {
 private:
-    const float TILE_SIZE = 40;
+    const float TILE_SIZE = 60;
 
 public:
     DebugRenderer(sf::RenderWindow& window, ResourceManagers resources);

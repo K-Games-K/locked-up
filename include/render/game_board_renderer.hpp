@@ -6,7 +6,7 @@
 class GameBoardRenderer : public CameraRenderer<GameBoard>
 {
 private:
-    const float TILE_SIZE = 40;
+    const float TILE_SIZE = 60;
 
     sf::Sprite game_board_sprite;
 
