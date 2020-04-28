@@ -3,6 +3,7 @@
 
 #include "state/lobby_state.hpp"
 #include "state/play_state.hpp"
+#include "state/main_menu_state.hpp"
 #include "network/packet/packets.hpp"
 
 LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
@@ -42,12 +43,24 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
             "Not ready",
             font,
             std::bind(&LobbyState::ready_clicked, this, std::placeholders::_1),
-            {0, -50},
+            {0, -100},
             {420, 40},
             button_colors,
             {sf::Color::Red},
-            Ui::Anchor::CenterBottom,
-            Ui::Anchor::CenterBottom
+            Ui::Anchor::CenterBottom, Ui::Anchor::CenterBottom
+        )
+    );
+
+    left_panel->add_widget(
+        new Ui::Button(
+            "Exit server",
+            font,
+            std::bind(&LobbyState::exit_clicked, this, std::placeholders::_1),
+            {0, -40},
+            {420, 40},
+            button_colors,
+            {sf::Color::Black},
+            Ui::Anchor::CenterBottom, Ui::Anchor::CenterBottom
         )
     );
 
@@ -205,4 +218,10 @@ void LobbyState::ready_clicked(Ui::Button& button)
     button.get_text().set_string(ready ? "I'm ready!" : "Not ready");
     server_connection.send(PlayerReadyPacket(player_id, ready));
     button.get_text().set_color(ready ? sf::Color::Green : sf::Color::Red);
+}
+
+void LobbyState::exit_clicked(Ui::Button& button)
+{
+    server_connection.send(DisconnectPacket());
+    game_state_manager.push_state(new MainMenuState(window, game_state_manager), true);
 }

@@ -37,6 +37,8 @@ private:
 
     void ready_clicked(Ui::Button& button);
 
+    void exit_clicked(Ui::Button& button);
+
 public:
     LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
         Connection server_connection);
