@@ -31,7 +31,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
     left_panel_title_text = new Ui::Text(
         "",
         font,
-        {0, 30},
+        {0, 40},
         {sf::Color::Black, 50},
         Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
     );
