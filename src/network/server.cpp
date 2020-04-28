@@ -1,4 +1,6 @@
 #include <iostream>
+#include <random>
+#include <ctime>
 
 #include "game_board_loader.hpp"
 #include "network/server.hpp"
@@ -28,6 +30,11 @@ Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
 
     std::cout << "Server listening on " << bind_str << "..." << std::endl;
     enabled = true;
+}
+
+bool Server::is_enabled() const
+{
+    return enabled;
 }
 
 void Server::update()
@@ -67,16 +74,12 @@ void Server::update()
 
     if(update_players_list)
     {
-        std::vector<Player> players_list;
-        players_list.reserve(players.size());
-        for(auto& remote_player : players)
-            players_list.emplace_back(
-                remote_player.get_nickname(),
-                remote_player.get_position()
-            );
-
+        std::vector<Player> players_list(players.begin(), players.end());
         for(int i = 0; i < players.size(); ++i)
+        {
+            players[i].set_player_id(i);
             players[i].get_connection().send(PlayersListPacket(i, players_list));
+        }
     }
 
     switch(game_stage)
@@ -116,15 +119,76 @@ void Server::update()
             if(timer.getElapsedTime().asSeconds() < COUNTDOWN_INTERVAL)
                 break;
 
-            for(int i = 0; i < players.size(); ++i)
-                players[i].get_connection().send(GameStartPacket(i, i));
+            std::mt19937 gen(time(nullptr));
+            std::uniform_int_distribution<> rand_room(0, game_board.rooms_count() - 1);
+            int crime_room = rand_room(gen);
+            std::cout << "Generating alibis. Crime room is "
+                << game_board.get_room(crime_room).get_name() << "." << std::endl;
+            for(auto& player : players)
+            {
+                player.generate_alibi(game_board, crime_room, ALIBI_LENGTH);
+            }
 
-            game_stage = GameStage::Play;
-            
+            std::uniform_int_distribution<> rand_alibi();
+            for(int i = 0; i < players.size(); ++i)
+            {
+                std::vector<std::vector<int>> alibis(players.size());
+                for(int j = 0; j < players.size(); ++j)
+                {
+                    if(i == j)
+                    {
+                        alibis[j] = players[i].get_alibi();
+                    }
+                    else
+                    {
+                        std::vector<int> alibi = players[j].get_alibi();
+                        std::vector<int> indices(alibi.size() - 1); // Last alibi is left untouched.
+                        std::iota(indices.begin(), indices.end(), 0);
+                        std::random_shuffle(indices.begin(), indices.end());
+                        alibis[j].resize(alibi.size(), -1);
+                        for(int k = 0; k < VISIBLE_ALIBIS; ++k)
+                            alibis[j][indices[k]] = alibi[indices[k]];
+                    }
+                }
+
+                players[i].get_connection().send(GameStartPacket(i, i, alibis));
+            }
+
+
+            game_stage = GameStage::NewTurn;
+
             break;
         }
-        case GameStage::Play:
+        case GameStage::NewTurn:
         {
+            current_player_id++;
+            if(current_player_id >= players.size())
+            {
+                turn++;
+                current_player_id = 0;
+            }
+
+            broadcast(NewTurnPacket(current_player_id));
+            moves_left = MOVES_PER_TURN;
+            actions_left = 0;
+            game_stage = GameStage::Movement;
+            break;
+        }
+        case GameStage::Movement:
+        {
+            if(moves_left <= 0)
+                game_stage = GameStage::Action;
+            break;
+        }
+        case GameStage::Action:
+        {
+            if(actions_left <= 0)
+                game_stage = GameStage::EndTurn;
+            break;
+        }
+        case GameStage::EndTurn:
+        {
+            game_stage = GameStage::NewTurn;
             break;
         }
         case GameStage::Voting:
@@ -150,7 +214,7 @@ void Server::new_connection(Connection connection)
 {
     std::cout << "New connection from: " << connection.get_addr() << std::endl;
 
-    players.emplace_back(connection);
+    players.emplace_back(players.size(), connection);
 }
 
 void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packet)
@@ -171,24 +235,17 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
         }
         case JoinGamePacket::PACKET_ID:
         {
+            if(game_stage != GameStage::Lobby)
+                break;
+
             auto join_game_packet = dynamic_cast<JoinGamePacket&>(*packet);
 
             std::string nickname = join_game_packet.get_nickname();
             player.set_nickname(nickname);
 
-            std::vector<Player> players_list;
-            players_list.reserve(players.size());
-            for(auto& remote_player : players)
-                players_list.emplace_back(
-                    remote_player.get_nickname(),
-                    remote_player.get_position()
-                );
-
-
+            std::vector<Player> players_list(players.begin(), players.end());
             for(int i = 0; i < players.size(); ++i)
-            {
                 players[i].get_connection().send(PlayersListPacket(i, players_list));
-            }
 
             GameBoardPacket game_board_packet(game_board);
             connection.send(game_board_packet);
@@ -205,6 +262,9 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
         }
         case PlayerMovePacket::PACKET_ID:
         {
+            if(game_stage != GameStage::Movement || current_player_id != player.get_player_id())
+                break;
+
             auto player_move_packet = dynamic_cast<PlayerMovePacket&>(*packet);
 
             int x = player_move_packet.get_x();
@@ -225,18 +285,23 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                     player.set_position(newx, newy);
                 else
                     break;
+
+                moves_left--;
+                broadcast(player_move_packet);
             }
-            else
+            else if(teleport_allowed)
             {
                 player.set_position(x, y);
+                broadcast(player_move_packet);
             }
-
-            broadcast(player_move_packet);
 
             break;
         }
         case PlayerReadyPacket::PACKET_ID:
         {
+            if(game_stage != GameStage::Lobby)
+                break;
+
             auto player_ready_packet = dynamic_cast<PlayerReadyPacket&>(*packet);
             bool ready = player_ready_packet.is_ready();
             player.set_ready(ready);

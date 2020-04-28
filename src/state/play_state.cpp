@@ -88,19 +88,20 @@ void PlayState::handle_input(sf::Event event)
     {
         sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
         sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
-        if(!game_board_rect.contains(mouse_pos))
-            return;
 
-        sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
+        if(game_board_rect.contains(mouse_pos))
+        {
+            sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
 
-        server_connection.send(
-            PlayerMovePacket(
-                world_mouse_pos.x,
-                world_mouse_pos.y,
-                player_id,
-                false
-            )
-        );
+            server_connection.send(
+                PlayerMovePacket(
+                    world_mouse_pos.x,
+                    world_mouse_pos.y,
+                    player_id,
+                    false
+                )
+            );
+        }
     }
 
     user_interface.handle_event(event, (sf::Vector2f) sf::Mouse::getPosition(window));
@@ -148,28 +149,21 @@ void PlayState::render(float dt)
 {
     window.clear(CLEAR_COLOR);
 
-    if(players_list.size() != 0)
-    {
-        sf::Vector2f game_board_viewport = GAME_BOARD_SIZE / (float) TILE_SIZE;
-        Player& current_player = players_list.at(player_id);
-        sf::Vector2f camera_target_pos(
-            Utils::clamp(
-                current_player.get_position().x - game_board_viewport.x / 2 + 0.5, 0,
-                Utils::max(game_board.get_width() - game_board_viewport.x, 0)),
-            Utils::clamp(
-                current_player.get_position().y - game_board_viewport.y / 2 + 0.5, 0,
-                Utils::max(game_board.get_height() - game_board_viewport.y, 0))
-        );
+    sf::Vector2f game_board_viewport = GAME_BOARD_SIZE / (float) TILE_SIZE;
+    Player& current_player = players_list.at(current_player_id);
+    sf::Vector2f camera_target_pos(
+        Utils::clamp(
+            current_player.get_position().x - game_board_viewport.x / 2 + 0.5, 0,
+            Utils::max(game_board.get_width() - game_board_viewport.x, 0)),
+        Utils::clamp(
+            current_player.get_position().y - game_board_viewport.y / 2 + 0.5, 0,
+            Utils::max(game_board.get_height() - game_board_viewport.y, 0))
+    );
 
-        camera_pos = {
-            Utils::lerp(camera_pos.x, camera_target_pos.x, 5 * dt),
-            Utils::lerp(camera_pos.y, camera_target_pos.y, 5 * dt)
-        };
-    }
-    else
-    {
-        camera_pos = {0, 0};
-    }
+    camera_pos = {
+        Utils::lerp(camera_pos.x, camera_target_pos.x, dt / CAMERA_SMOOTH),
+        Utils::lerp(camera_pos.y, camera_target_pos.y, dt / CAMERA_SMOOTH)
+    };
 
     game_board_renderer.set_camera_pos(camera_pos);
     game_board_renderer.set_game_board_pos(game_board_pos);
@@ -214,6 +208,13 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
                 player.move(player_move_packet.get_x(), player_move_packet.get_y());
             else
                 player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
+
+            break;
+        }
+        case NewTurnPacket::PACKET_ID:
+        {
+            auto new_turn_packet = dynamic_cast<NewTurnPacket&>(*packet);
+            current_player_id = new_turn_packet.get_current_player_id();
 
             break;
         }

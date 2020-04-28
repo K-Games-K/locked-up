@@ -1,8 +1,18 @@
 #include "remote_player.hpp"
 
-RemotePlayer::RemotePlayer(Connection connection)
-        : Player("[invalid]"), connection(connection)
+RemotePlayer::RemotePlayer(int player_id, Connection connection)
+        : Player("[invalid]"), player_id(player_id), connection(connection)
 {}
+
+void RemotePlayer::set_player_id(int player_id)
+{
+    this->player_id = player_id;
+}
+
+int RemotePlayer::get_player_id() const
+{
+    return player_id;
+}
 
 Connection& RemotePlayer::get_connection()
 {

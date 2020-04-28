@@ -6,6 +6,8 @@ int main(int argc, char* argv[])
     if(argc == 2)
     {
         Server server(2704);
+        if(!server.is_enabled())
+            return -1;
         for(;;)
             server.update();
     }

@@ -13,7 +13,9 @@ namespace Ui
         TextEdit,
         TexturedTextEdit,
         Panel,
-        TexturedPanel
+        TexturedPanel,
+        Checkbox,
+        TexturedCheckbox
     };
 
     enum class Anchor
@@ -43,11 +45,12 @@ namespace Ui
         Anchor origin;
         Anchor anchor;
 
-    public:
+    protected:
         Widget(WidgetType type, sf::Vector2f position = {0, 0},
             sf::Vector2f size = {0, 0}, Anchor origin = Anchor::TopLeft,
             Anchor anchor = Anchor::TopLeft);
 
+    public:
         virtual ~Widget() = default;
 
         virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) {};
