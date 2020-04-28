@@ -4,7 +4,6 @@ PanelRenderer::PanelRenderer(sf::RenderWindow& window, ResourceManagers resource
     : WidgetRenderer(window, resources),
     text_renderer(window, resources),
     button_renderer(window, resources),
-    textured_button_renderer(window, resources),
     text_edit_renderer(window, resources)
 {}
 
@@ -34,9 +33,9 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt)
                 button_renderer.render(dynamic_cast<Ui::Button&>(*widget), dt);
                 break;
             case Ui::WidgetType::TexturedButton:
-                textured_button_renderer.set_origin_pos(panel_position);
-                textured_button_renderer.set_parent_size(panel.get_size());
-                textured_button_renderer.render(dynamic_cast<Ui::TexturedButton&>(*widget), dt);
+                button_renderer.set_origin_pos(panel_position);
+                button_renderer.set_parent_size(panel.get_size());
+                button_renderer.render(dynamic_cast<Ui::TexturedButton&>(*widget), dt);
                 break;
             case Ui::WidgetType::TextEdit:
                 text_edit_renderer.set_origin_pos(panel_position);
