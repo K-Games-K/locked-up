@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "player.hpp"
+#include "game_board.hpp"
 #include "game_state.hpp"
 #include "network/connection.hpp"
 #include "ui/widgets.hpp"
@@ -20,14 +21,17 @@ private:
     PanelRenderer panel_renderer;
     Ui::TexturedPanel* left_panel;
     Ui::TexturedPanel* right_panel;
+    Ui::Text* left_panel_title_text;
     Ui::Text* players_list_text;
 
     AnimatedBackgroundRenderer background_renderer;
 
     int player_id = -1;
     std::vector<Player> players_list;
+    GameBoard game_board;
 
     bool ready = false;
+    float time = 0;
 
     void packet_received(std::unique_ptr<Packet> packet);
 

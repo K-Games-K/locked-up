@@ -1,6 +1,8 @@
 #include <sstream>
+#include <iomanip>
 
 #include "state/lobby_state.hpp"
+#include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
 
 LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
@@ -26,15 +28,14 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
     );
     user_interface.add_widget(left_panel);
 
-    left_panel->add_widget(
-        new Ui::Text(
-            "Waiting for players...",
-            font,
-            {0, 30},
-            {sf::Color::Black, 50},
-            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
-        )
+    left_panel_title_text = new Ui::Text(
+        "",
+        font,
+        {0, 30},
+        {sf::Color::Black, 50},
+        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
     );
+    left_panel->add_widget(left_panel_title_text);
 
     left_panel->add_widget(
         new Ui::Button(
@@ -101,6 +102,21 @@ void LobbyState::update(float dt)
         if(packet != nullptr)
             packet_received(std::move(packet));
     }
+
+    time -= dt;
+    if(time < 0)
+        time = 0;
+
+    if(time > 0)
+    {
+        std::stringstream ss;
+        ss << "Game starting in " << std::fixed << std::setprecision(1) << time << "s";
+        left_panel_title_text->set_string(ss.str());
+    }
+    else
+    {
+        left_panel_title_text->set_string("Waiting for players...");
+    }
 }
 
 void LobbyState::render(float dt)
@@ -114,6 +130,9 @@ void LobbyState::render(float dt)
 
 void LobbyState::packet_received(std::unique_ptr<Packet> packet)
 {
+    std::cout << "[" << server_connection.get_addr() << "] sent a packet of id: "
+        << packet->get_id() << std::endl;
+
     switch(packet->get_id())
     {
         case PlayersListPacket::PACKET_ID:
@@ -131,6 +150,46 @@ void LobbyState::packet_received(std::unique_ptr<Packet> packet)
 
             break;
         }
+        case GameBoardPacket::PACKET_ID:
+        {
+            auto game_board_packet = dynamic_cast<GameBoardPacket&>(*packet);
+            game_board = game_board_packet.get_game_board();
+
+            break;
+        }
+        case PlayerReadyPacket::PACKET_ID:
+        {
+            auto player_ready_packet = dynamic_cast<PlayerReadyPacket&>(*packet);
+            uint16_t player_id = player_ready_packet.get_player_id();
+            bool ready = player_ready_packet.is_ready();
+
+            // TODO: Show which players are ready.
+
+            break;
+        }
+        case CountdownPacket::PACKET_ID:
+        {
+            auto countdown_packet = dynamic_cast<CountdownPacket&>(*packet);
+            time = countdown_packet.get_interval();
+
+            break;
+        }
+        case GameStartPacket::PACKET_ID:
+        {
+            auto game_start_packet = dynamic_cast<GameStartPacket&>(*packet);
+            sf::Vector2i start_pos(
+                game_start_packet.get_start_x(), game_start_packet.get_start_y()
+            );
+            players_list.at(player_id).set_position(start_pos);
+
+            left_panel_title_text->set_string("Loading...");
+            game_state_manager.push_state(
+                new PlayState(
+                    window, game_state_manager, server_connection, game_board,
+                    player_id, players_list
+                ), true
+            );
+        }
         default:
             break;
     }
@@ -138,7 +197,12 @@ void LobbyState::packet_received(std::unique_ptr<Packet> packet)
 
 void LobbyState::ready_clicked(Ui::Button& button)
 {
+    if(player_id == -1)
+        return;
+
     ready = !ready;
+    time = 0;
     button.get_text().set_string(ready ? "I'm ready!" : "Not ready");
+    server_connection.send(PlayerReadyPacket(player_id, ready));
     button.get_text().set_color(ready ? sf::Color::Green : sf::Color::Red);
 }

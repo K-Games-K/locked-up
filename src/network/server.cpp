@@ -16,7 +16,7 @@ Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
         return;
     }
 
-    sf::Socket::Status status =  listener.listen(bind_port, bind_addr);
+    sf::Socket::Status status = listener.listen(bind_port, bind_addr);
     listener.setBlocking(false);
 
     std::string bind_str = bind_addr.toString() + ":" + std::to_string(bind_port);
@@ -76,8 +76,64 @@ void Server::update()
             );
 
         for(int i = 0; i < players.size(); ++i)
-        {
             players[i].get_connection().send(PlayersListPacket(i, players_list));
+    }
+
+    switch(game_stage)
+    {
+        case GameStage::Lobby:
+        {
+            bool ready = players.size() >= MIN_PLAYERS_COUNT;
+            for(auto& player : players)
+            {
+                if(!player.is_ready())
+                {
+                    ready = false;
+                    break;
+                }
+            }
+
+            if(ready)
+            {
+                broadcast(CountdownPacket(COUNTDOWN_INTERVAL));
+                game_stage = GameStage::Countdown;
+                timer.restart();
+            }
+
+            break;
+        }
+        case GameStage::Countdown:
+        {
+            for(auto& player : players)
+            {
+                if(!player.is_ready())
+                {
+                    game_stage = GameStage::Lobby;
+                    break;
+                }
+            }
+
+            if(timer.getElapsedTime().asSeconds() < COUNTDOWN_INTERVAL)
+                break;
+
+            for(int i = 0; i < players.size(); ++i)
+                players[i].get_connection().send(GameStartPacket(i, i));
+
+            game_stage = GameStage::Play;
+            
+            break;
+        }
+        case GameStage::Play:
+        {
+            break;
+        }
+        case GameStage::Voting:
+        {
+            break;
+        }
+        case GameStage::Results:
+        {
+            break;
         }
     }
 }
@@ -175,12 +231,17 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                 player.set_position(x, y);
             }
 
-            // if(player_move_packet.is_relative())
-            //     player.move(player_move_packet.get_x(), player_move_packet.get_y());
-            // else
-            //     player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
-
             broadcast(player_move_packet);
+
+            break;
+        }
+        case PlayerReadyPacket::PACKET_ID:
+        {
+            auto player_ready_packet = dynamic_cast<PlayerReadyPacket&>(*packet);
+            bool ready = player_ready_packet.is_ready();
+            player.set_ready(ready);
+
+            broadcast(player_ready_packet);
 
             break;
         }

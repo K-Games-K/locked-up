@@ -10,6 +10,9 @@
 class Server
 {
 private:
+    const float COUNTDOWN_INTERVAL = 5;
+    const size_t MIN_PLAYERS_COUNT = 1;
+
     bool enabled = false;
 
     sf::TcpListener listener;
@@ -17,6 +20,17 @@ private:
     std::vector<RemotePlayer> players;
 
     GameBoard game_board;
+
+    enum class GameStage
+    {
+        Lobby,
+        Countdown,
+        Play,
+        Voting,
+        Results
+    } game_stage = GameStage::Lobby;
+
+    sf::Clock timer;
 
     void new_connection(Connection connection);
 

@@ -5,9 +5,13 @@
 #include "network/packet/packets.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-    Connection server_connection)
+    Connection server_connection, const GameBoard& game_board, int player_id,
+    const std::vector<Player> players_list)
     : GameState(window, game_state_manager),
     server_connection(server_connection),
+    game_board(std::move(game_board)),
+    player_id(player_id),
+    players_list(std::move(players_list)),
     player_renderer(window, {textures, fonts}),
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
@@ -60,9 +64,6 @@ void PlayState::handle_input(sf::Event event)
             case sf::Keyboard::Right:
                 server_connection.send(PlayerMovePacket(1, 0, player_id));
                 break;
-            case sf::Keyboard::Escape:
-                window.close();
-                break;
             case sf::Keyboard::Tilde:
                 debug_render = !debug_render;
                 break;
@@ -86,10 +87,10 @@ void PlayState::render(float dt)
 {
     window.clear(CLEAR_COLOR);
 
-    if(players.size() != 0)
+    if(players_list.size() != 0)
     {
         sf::Vector2f game_board_viewport = GAME_BOARD_SIZE / (float) TILE_SIZE;
-        Player& current_player = players[player_id];
+        Player& current_player = players_list.at(player_id);
         sf::Vector2f camera_target_pos(
             Utils::clamp(
                 current_player.get_position().x - game_board_viewport.x / 2 + 0.5, 0,
@@ -117,7 +118,7 @@ void PlayState::render(float dt)
     player_renderer.set_camera_pos(camera_pos);
     player_renderer.set_game_board_pos(game_board_pos);
     player_renderer.set_game_board_size(GAME_BOARD_SIZE);
-    player_renderer.render(players, dt);
+    player_renderer.render(players_list, dt);
 
     panel_renderer.render(user_interface, dt);
 
@@ -126,7 +127,7 @@ void PlayState::render(float dt)
         debug_renderer.set_camera_pos(camera_pos);
         debug_renderer.set_game_board_pos(game_board_pos);
         debug_renderer.set_game_board_size(GAME_BOARD_SIZE);
-        debug_renderer.render({player_id, players[player_id], game_board}, dt);
+        debug_renderer.render({player_id, players_list.at(player_id), game_board}, dt);
     }
 }
 
@@ -142,36 +143,16 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
 
             break;
         }
-        case PlayersListPacket::PACKET_ID:
-        {
-            auto players_list_packet = dynamic_cast<PlayersListPacket&>(*packet);
-            player_id = players_list_packet.get_player_id();
-            players = players_list_packet.get_players_list();
-
-            std::cout << "I'm id " << player_id << std::endl;
-            std::cout << "Received players list: " << std::endl;
-            for(auto& player : players)
-                std::cout << "\t - " << player.get_nickname() << std::endl;
-
-            break;
-        }
         case PlayerMovePacket::PACKET_ID:
         {
             auto player_move_packet = dynamic_cast<PlayerMovePacket&>(*packet);
             uint16_t player_id = player_move_packet.get_player_id();
-            Player& player = players.at(player_id);
+            Player& player = players_list.at(player_id);
 
             if(player_move_packet.is_relative())
                 player.move(player_move_packet.get_x(), player_move_packet.get_y());
             else
                 player.set_position(player_move_packet.get_x(), player_move_packet.get_y());
-
-            break;
-        }
-        case GameBoardPacket::PACKET_ID:
-        {
-            auto game_board_packet = dynamic_cast<GameBoardPacket&>(*packet);
-            game_board = game_board_packet.get_game_board();
 
             break;
         }

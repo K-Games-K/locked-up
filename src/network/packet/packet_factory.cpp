@@ -17,6 +17,12 @@ std::unique_ptr<Packet> PacketFactory::create(uint16_t packet_id)
             return std::make_unique<PlayerMovePacket>();
         case GameBoardPacket::PACKET_ID:
             return std::make_unique<GameBoardPacket>();
+        case PlayerReadyPacket::PACKET_ID:
+            return std::make_unique<PlayerReadyPacket>();
+        case CountdownPacket::PACKET_ID:
+            return std::make_unique<CountdownPacket>();
+        case GameStartPacket::PACKET_ID:
+            return std::make_unique<GameStartPacket>();
         default:
             return nullptr;
     }

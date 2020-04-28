@@ -26,10 +26,9 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
             player.get_nickname(),
             resources.fonts.get("IndieFlower-Regular"),
             {0, 0},
-            Ui::TextSettings(),
+            {sf::Color::White, 18, sf::Color::Black, 1},
             Ui::Anchor::CenterTop, Ui::Anchor::CenterBottom
         );
-        nickname.set_font_size(18);
 
         sf::Vector2f player_pos(
             (player.get_position().x - camera_pos.x) * TILE_SIZE,
