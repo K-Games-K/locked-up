@@ -28,13 +28,15 @@ void GameBoardLoader::save_in_memory(const GameBoard& game_board, int& width, in
 }
 
 GameBoard GameBoardLoader::load_from_memory(int width, int height, const std::vector<Room>& rooms,
-    const std::vector<int>& indices, const std::vector<std::array<bool, 2>>& collision_map)
+    const std::vector<int>& indices, const std::vector<std::array<bool, 2>>& collision_map,
+    const std::vector<std::vector<int>>& neighbours_map)
 {
     GameBoard game_board;
     game_board.width = width;
     game_board.height = height;
     game_board.rooms = rooms;
     game_board.collision_map = collision_map;
+    game_board.neighbours_map = neighbours_map;
 
     game_board.tiles.reserve(width * height);
     for(auto i : indices)
@@ -90,7 +92,7 @@ bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& f
 
     std::vector<std::array<bool, 2>> collision_map;
     collision_map.reserve(width * height);
-    for(std::getline(file >> std::ws, line_str); !file.eof();
+    for(std::getline(file >> std::ws, line_str); line_str != "neighbours:" && !file.eof();
         std::getline(file >> std::ws, line_str))
     {
         std::stringstream line(line_str);
@@ -105,6 +107,20 @@ bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& f
     if(collision_map.size() != width * height)
         return false;
 
-    game_board = load_from_memory(width, height, rooms, indices, collision_map);
+    std::vector<std::vector<int>> neighbours_map(rooms.size());
+    for(std::getline(file >> std::ws, line_str); !file.eof();
+        std::getline(file >> std::ws, line_str))
+    {
+        std::stringstream line(line_str);
+        int room1, room2;
+        while(!line.eof())
+        {
+            line >> room1 >> room2;
+            neighbours_map[room1].push_back(room2);
+            neighbours_map[room2].push_back(room1);
+        }
+    }
+
+    game_board = load_from_memory(width, height, rooms, indices, collision_map, neighbours_map);
     return true;
 }

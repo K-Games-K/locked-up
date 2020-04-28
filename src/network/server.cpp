@@ -208,6 +208,8 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             std::string nickname = join_game_packet.get_nickname();
             player.set_nickname(nickname);
 
+            player.generate_alibi(game_board, 1, 12);
+
             std::vector<Player> players_list(players.begin(), players.end());
             for(int i = 0; i < players.size(); ++i)
                 players[i].get_connection().send(PlayersListPacket(i, players_list));

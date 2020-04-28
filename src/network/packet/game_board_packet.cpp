@@ -86,6 +86,7 @@ void GameBoardPacket::deserialize(sf::Packet& data)
         height,
         rooms,
         indices,
-        collision_map
+        collision_map,
+        {}
     );
 }
