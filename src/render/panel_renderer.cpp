@@ -72,6 +72,13 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt)
                 checkbox_render.render(dynamic_cast<Ui::Checkbox&>(*widget), dt);
                 break;
             }
+            case Ui::WidgetType::TexturedCheckbox:
+            {
+                checkbox_render.set_origin_pos(panel_position);
+                checkbox_render.set_parent_size(panel.get_size());
+                checkbox_render.render(dynamic_cast<Ui::TexturedCheckbox&>(*widget), dt);
+                break;
+            }
             default:
                 break;
         }

@@ -14,7 +14,8 @@ namespace Ui
         TexturedTextEdit,
         Panel,
         TexturedPanel,
-        Checkbox
+        Checkbox,
+        TexturedCheckbox
     };
 
     enum class Anchor
