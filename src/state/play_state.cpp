@@ -1,5 +1,6 @@
 #include <iostream>
 #include <functional>
+#include <iostream>
 
 #include "utils.hpp"
 #include "state/play_state.hpp"
@@ -88,19 +89,20 @@ void PlayState::handle_input(sf::Event event)
     {
         sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
         sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
-        if(!game_board_rect.contains(mouse_pos))
-            return;
 
-        sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
+        if(game_board_rect.contains(mouse_pos))
+        {
+            sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
 
-        server_connection.send(
-            PlayerMovePacket(
-                world_mouse_pos.x,
-                world_mouse_pos.y,
-                player_id,
-                false
-            )
-        );
+            server_connection.send(
+                PlayerMovePacket(
+                    world_mouse_pos.x,
+                    world_mouse_pos.y,
+                    player_id,
+                    false
+                )
+            );
+        }
     }
 
     user_interface.handle_event(event, (sf::Vector2f) sf::Mouse::getPosition(window));
