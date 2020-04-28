@@ -6,12 +6,17 @@
 class RemotePlayer : public Player
 {
 private:
+    int player_id;
     Connection connection;
 
     bool ready = false;
 
 public:
-    explicit RemotePlayer(Connection connection);
+    explicit RemotePlayer(int player_id, Connection connection);
+
+    void set_player_id(int player_id);
+
+    int get_player_id() const;
 
     Connection& get_connection();
 

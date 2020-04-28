@@ -20,6 +20,7 @@ private:
     const sf::Vector2f GAME_BOARD_SIZE = {1000, 1000};
 
     const sf::Color CLEAR_COLOR = sf::Color::Black;
+    const float CAMERA_SMOOTH = 0.2;
     const int TILE_SIZE = 60;
 
     GameBoard game_board;
@@ -32,6 +33,7 @@ private:
     };
 
     int player_id;
+    int current_player_id = 0;
     std::vector<Player> players_list;
 
     Connection server_connection;
