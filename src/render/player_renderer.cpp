@@ -9,6 +9,11 @@ PlayerRenderer::PlayerRenderer(sf::RenderWindow& window, ResourceManagers resour
 
 void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
 {
+    sf::FloatRect game_board_rect(
+        sf::Vector2f(-TILE_SIZE / 2, -TILE_SIZE / 2),
+        game_board_size
+    );
+
     for(auto& player : players)
     {
         sf::Vector2f player_pos(
@@ -16,12 +21,23 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
             (player.get_position().y - camera_pos.y) * TILE_SIZE
         );
 
+        if(!game_board_rect.contains(player_pos))
+            continue;
+
         player_sprite.setPosition(player_pos + game_board_pos);
         window.draw(player_sprite);
     }
 
     for(auto& player : players)
     {
+        sf::Vector2f player_pos(
+            (player.get_position().x - camera_pos.x) * TILE_SIZE,
+            (player.get_position().y - camera_pos.y) * TILE_SIZE
+        );
+
+        if(!game_board_rect.contains(player_pos))
+            continue;
+
         Ui::Text nickname(
             player.get_nickname(),
             resources.fonts.get("IndieFlower-Regular"),
@@ -30,10 +46,6 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
             Ui::Anchor::CenterTop, Ui::Anchor::CenterBottom
         );
 
-        sf::Vector2f player_pos(
-            (player.get_position().x - camera_pos.x) * TILE_SIZE,
-            (player.get_position().y - camera_pos.y) * TILE_SIZE
-        );
         sf::FloatRect player_bounds = player_sprite.getLocalBounds();
         sf::Vector2f player_size(
             player_bounds.width + player_bounds.left,
