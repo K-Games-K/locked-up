@@ -6,3 +6,4 @@
 #include "text_edit.hpp"
 #include "panel.hpp"
 #include "textured_panel.hpp"
+#include "checkbox.hpp"
