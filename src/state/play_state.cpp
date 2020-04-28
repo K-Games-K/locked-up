@@ -1,6 +1,5 @@
 #include <iostream>
 #include <functional>
-#include <iostream>
 
 #include "utils.hpp"
 #include "state/play_state.hpp"

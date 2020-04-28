@@ -91,7 +91,7 @@ void PanelRenderer::render(const Ui::TexturedPanel& panel, const float dt)
         return;
 
     sf::Vector2f panel_position = panel.get_relative_position(origin_pos, parent_size);
-    panel_sprite.setTexture(panel.get_texture());
+    sf::Sprite panel_sprite(panel.get_texture());
     panel_sprite.setPosition(panel_position);
     window.draw(panel_sprite);
 

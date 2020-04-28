@@ -26,7 +26,7 @@ void ButtonRenderer::render(const Ui::TexturedButton& button, const float dt)
         return;
 
     sf::Vector2f button_position = button.get_relative_position(origin_pos, parent_size);
-    button_sprite.setTexture(button.get_texture());
+    sf::Sprite button_sprite(button.get_texture());
     button_sprite.setPosition(button_position);
     window.draw(button_sprite);
 

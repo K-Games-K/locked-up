@@ -20,9 +20,9 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
             continue;
 
         auto& texture = resources.textures.get("mr1");
+        sf::Sprite player_sprite(texture);
         player_sprite.setOrigin(texture.getSize().x / 2, texture.getSize().y - TILE_SIZE / 2);
         player_sprite.setPosition(player_pos + game_board_pos);
-        player_sprite.setTexture(texture);
         window.draw(player_sprite);
     }
 

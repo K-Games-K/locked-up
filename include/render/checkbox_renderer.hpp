@@ -6,9 +6,6 @@
 
 class CheckboxRender : public WidgetRenderer<Ui::Checkbox>
 {
-private:
-    sf::Sprite checkbox_sprite;
-
 public:
     CheckboxRender(sf::RenderWindow& window, ResourceManagers resources);
 

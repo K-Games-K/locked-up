@@ -10,8 +10,6 @@ class ButtonRenderer : public WidgetRenderer<Ui::Button>
 private:
     TextRenderer text_renderer;
 
-    sf::Sprite button_sprite;
-
 public:
     ButtonRenderer(sf::RenderWindow& window, ResourceManagers resources);
 

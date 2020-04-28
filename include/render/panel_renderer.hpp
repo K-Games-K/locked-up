@@ -16,8 +16,6 @@ private:
     TextEditRenderer text_edit_renderer;
     CheckboxRender checkbox_render;
 
-    sf::Sprite panel_sprite;
-
 public:
     PanelRenderer(sf::RenderWindow& window, ResourceManagers resources);
 
