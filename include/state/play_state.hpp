@@ -17,7 +17,7 @@
 class PlayState : public GameState
 {
 private:
-    const sf::Vector2f GAME_BOARD_SIZE = {768, 768};
+    const sf::Vector2f GAME_BOARD_SIZE = {1000, 1000};
 
     const sf::Color CLEAR_COLOR = sf::Color::Black;
     const int TILE_SIZE = 40;
@@ -37,15 +37,21 @@ private:
     Connection server_connection;
 
     Ui::Panel user_interface;
+    Ui::Panel* pause_menu;
 
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
     DebugRenderer debug_renderer;
     PanelRenderer panel_renderer;
 
+    bool paused = false;
     bool debug_render = false;
 
     void packet_received(std::unique_ptr<Packet> packet);
+
+    void resume_clicked(Ui::Button& button);
+
+    void exit_clicked(Ui::Button& button);
 
     sf::Vector2f window_to_board_coords(sf::Vector2f window_coords);
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 
 #include "utils.hpp"
 #include "state/play_state.hpp"
@@ -17,7 +18,62 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     debug_renderer(window, {textures, fonts}),
     panel_renderer(window, {textures, fonts}),
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
-{}
+{
+    pause_menu = new Ui::Panel(
+        {0, 0}, user_interface.get_size(),
+        sf::Color(0, 0, 0, 180)
+    );
+    pause_menu->set_enabled(false);
+    user_interface.add_widget(pause_menu);
+
+    auto pause_menu_panel = new Ui::TexturedPanel(
+        textures.get("paper"),
+        {0, 0},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    pause_menu->add_widget(pause_menu_panel);
+
+    auto& font = fonts.get("IndieFlower-Regular");
+
+    pause_menu_panel->add_widget(
+        new Ui::Text(
+            "Game Paused",
+            font,
+            {0, 30},
+            {sf::Color::Black, 50},
+            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+        )
+    );
+
+    Ui::ButtonColors button_colors = {
+        sf::Color(0, 0, 0, 140),
+        sf::Color(0, 0, 0, 190),
+        sf::Color(0, 0, 0, 210)
+    };
+
+    pause_menu_panel->add_widget(
+        new Ui::Button(
+            "Resume",
+            font,
+            std::bind(&PlayState::resume_clicked, this, std::placeholders::_1),
+            {0, -10}, {420, 40},
+            button_colors,
+            {sf::Color::Black},
+            Ui::Anchor::CenterBottom, Ui::Anchor::Center
+        )
+    );
+    pause_menu_panel->add_widget(
+        new Ui::Button(
+            "Exit",
+            font,
+            std::bind(&PlayState::exit_clicked, this, std::placeholders::_1),
+            {0, 10}, {420, 40},
+            button_colors,
+            {sf::Color::Black},
+            Ui::Anchor::CenterTop, Ui::Anchor::Center
+        )
+    );
+}
 
 void PlayState::handle_input(sf::Event event)
 {
@@ -27,9 +83,8 @@ void PlayState::handle_input(sf::Event event)
         game_state_manager.pop_state();
     }
 
-    user_interface.handle_event(event, (sf::Vector2f) sf::Mouse::getPosition(window));
-
-    if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+    if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left &&
+        !paused)
     {
         sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
         sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
@@ -47,6 +102,8 @@ void PlayState::handle_input(sf::Event event)
             )
         );
     }
+
+    user_interface.handle_event(event, (sf::Vector2f) sf::Mouse::getPosition(window));
 
     if(event.type == sf::Event::KeyPressed)
     {
@@ -66,6 +123,10 @@ void PlayState::handle_input(sf::Event event)
                 break;
             case sf::Keyboard::Tilde:
                 debug_render = !debug_render;
+                break;
+            case sf::Keyboard::Escape:
+                paused = !paused;
+                pause_menu->set_enabled(paused);
                 break;
             default:
                 break;
@@ -159,6 +220,18 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
         default:
             break;
     }
+}
+
+void PlayState::resume_clicked(Ui::Button& button)
+{
+    paused = false;
+    pause_menu->set_enabled(false);
+}
+
+void PlayState::exit_clicked(Ui::Button& button)
+{
+    server_connection.send(DisconnectPacket());
+    game_state_manager.pop_state();
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)
