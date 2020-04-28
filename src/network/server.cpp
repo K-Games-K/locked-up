@@ -1,4 +1,6 @@
 #include <iostream>
+#include <random>
+#include <ctime>
 
 #include "game_board_loader.hpp"
 #include "network/server.hpp"
@@ -117,8 +119,41 @@ void Server::update()
             if(timer.getElapsedTime().asSeconds() < COUNTDOWN_INTERVAL)
                 break;
 
+            std::mt19937 gen(time(nullptr));
+            std::uniform_int_distribution<> rand_room(0, game_board.rooms_count() - 1);
+            int crime_room = rand_room(gen);
+            std::cout << "Generating alibis. Crime room is "
+                << game_board.get_room(crime_room).get_name() << "." << std::endl;
+            for(auto& player : players)
+            {
+                player.generate_alibi(game_board, crime_room, ALIBI_LENGTH);
+            }
+
+            std::uniform_int_distribution<> rand_alibi();
             for(int i = 0; i < players.size(); ++i)
-                players[i].get_connection().send(GameStartPacket(i, i));
+            {
+                std::vector<std::vector<int>> alibis(players.size());
+                for(int j = 0; j < players.size(); ++j)
+                {
+                    if(i == j)
+                    {
+                        alibis[j] = players[i].get_alibi();
+                    }
+                    else
+                    {
+                        std::vector<int> alibi = players[j].get_alibi();
+                        std::vector<int> indices(alibi.size() - 1); // Last alibi is left untouched.
+                        std::iota(indices.begin(), indices.end(), 0);
+                        std::random_shuffle(indices.begin(), indices.end());
+                        alibis[j].resize(alibi.size(), -1);
+                        for(int k = 0; k < VISIBLE_ALIBIS; ++k)
+                            alibis[j][indices[k]] = alibi[indices[k]];
+                    }
+                }
+
+                players[i].get_connection().send(GameStartPacket(i, i, alibis));
+            }
+
 
             game_stage = GameStage::NewTurn;
 
@@ -207,8 +242,6 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
 
             std::string nickname = join_game_packet.get_nickname();
             player.set_nickname(nickname);
-
-            player.generate_alibi(game_board, 1, 12);
 
             std::vector<Player> players_list(players.begin(), players.end());
             for(int i = 0; i < players.size(); ++i)

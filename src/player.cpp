@@ -43,6 +43,11 @@ void Player::move(int x, int y)
     this->position += {x, y};
 }
 
+const std::vector<int>& Player::get_alibi() const
+{
+    return alibi;
+}
+
 void Player::generate_alibi(const GameBoard& game_board, int crime_room, int length)
 {
     size_t rooms_count = game_board.rooms_count();
@@ -52,7 +57,7 @@ void Player::generate_alibi(const GameBoard& game_board, int crime_room, int len
     alibi.push_back(crime_room);
 
     // Initializing RNG
-    std::mt19937 gen(time(nullptr));
+    static std::mt19937 gen(time(nullptr));
     std::uniform_real_distribution<> rand_percent(0, 100);
     std::uniform_int_distribution<> rand_room(0, rooms_count - 1);
 

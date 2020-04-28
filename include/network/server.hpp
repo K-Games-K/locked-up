@@ -14,6 +14,8 @@ private:
     const size_t MIN_PLAYERS_COUNT = 1;
     const int MOVES_PER_TURN = 3;
     const int ACTIONS_PER_TURN = 1;
+    const int ALIBI_LENGTH = 12;
+    const int VISIBLE_ALIBIS = 3;
 
     bool enabled = false;
     bool teleport_allowed = true;

@@ -31,6 +31,8 @@ public:
 
     void move(int x, int y);
 
+    const std::vector<int>& get_alibi() const;
+
     void generate_alibi(const GameBoard& game_board, int crime_room, int length);
 
     bool operator==(const Player& other) const;
