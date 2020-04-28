@@ -4,7 +4,8 @@ PanelRenderer::PanelRenderer(sf::RenderWindow& window, ResourceManagers resource
     : WidgetRenderer(window, resources),
     text_renderer(window, resources),
     button_renderer(window, resources),
-    text_edit_renderer(window, resources)
+    text_edit_renderer(window, resources),
+    checkbox_render(window, resources)
 {}
 
 void PanelRenderer::render(const Ui::Panel& panel, const float dt)
@@ -62,6 +63,13 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt)
                 render(dynamic_cast<Ui::TexturedPanel&>(*widget), dt);
                 origin_pos = temp_pos;
                 parent_size = temp_size;
+                break;
+            }
+            case Ui::WidgetType::Checkbox:
+            {
+                checkbox_render.set_origin_pos(panel_position);
+                checkbox_render.set_parent_size(panel.get_size());
+                checkbox_render.render(dynamic_cast<Ui::Checkbox&>(*widget), dt);
                 break;
             }
             default:
