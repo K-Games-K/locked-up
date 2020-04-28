@@ -10,3 +10,4 @@
 #include "player_ready_packet.hpp"
 #include "countdown_packet.hpp"
 #include "game_start_packet.hpp"
+#include "new_turn_packet.hpp"
