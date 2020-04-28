@@ -20,7 +20,7 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
             continue;
 
         auto& texture = resources.textures.get("mr1");
-        player_sprite.setOrigin((sf::Vector2f) texture.getSize() / 2.0f);
+        player_sprite.setOrigin(texture.getSize().x / 2, texture.getSize().y - TILE_SIZE / 2);
         player_sprite.setPosition(player_pos + game_board_pos);
         player_sprite.setTexture(texture);
         window.draw(player_sprite);
@@ -38,7 +38,8 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
 
         auto& texture = resources.textures.get("mr1");
         sf::Vector2f player_size(texture.getSize());
-        player_pos += sf::Vector2f(TILE_SIZE / 2, TILE_SIZE / 2) - player_size / 2.0f;
+        player_pos += sf::Vector2f(TILE_SIZE / 2, TILE_SIZE) -
+            sf::Vector2f(player_size.x / 2, texture.getSize().y);
 
         Ui::Text nickname(
             player.get_nickname(),
