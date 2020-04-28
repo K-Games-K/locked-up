@@ -29,9 +29,9 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
         new Ui::Text(
             "Locked Up!",
             font,
-            {0, -300},
+            {0, 30},
             {sf::Color::Black, 95},
-            Ui::Anchor::Center, Ui::Anchor::Center
+            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
         )
     );
 
@@ -105,8 +105,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             "Join the game",
             font,
             std::bind(&MainMenuState::join_clicked, this, std::placeholders::_1),
-            {0, 100},
-            {420, 40},
+            {0, 100}, {420, 40},
             button_colors,
             {sf::Color::Black},
             Ui::Anchor::Center,
