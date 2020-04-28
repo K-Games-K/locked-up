@@ -200,6 +200,8 @@ void MainMenuState::join_clicked(Ui::Button& button)
     join_game_panel->set_enabled(false);
     connecting_text_widget->set_enabled(true);
 
+    if(connection_thread.joinable())
+        connection_thread.join();
     connection_thread = std::thread(&MainMenuState::connect_to_server, this, addr_str, port);
 }
 
