@@ -3,7 +3,7 @@
 GameBoardRenderer::GameBoardRenderer(sf::RenderWindow& window, ResourceManagers resources)
     : CameraRenderer(window, resources)
 {
-    game_board_sprite.setTexture(resources.textures.get("mapa4"));
+    game_board_sprite.setTexture(resources.textures.get("map"));
 }
 
 void GameBoardRenderer::render(const GameBoard& game_board, const float dt)

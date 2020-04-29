@@ -22,7 +22,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     panel_renderer.set_parent_size((sf::Vector2f) window.getSize());
 
     // Preload background texture.
-    textures.get("mapa4");
+    textures.get("map");
 
     sf::Font& font = fonts.get("IndieFlower-Regular");
     user_interface.add_widget(
@@ -178,7 +178,7 @@ void MainMenuState::render(float dt)
 {
     window.clear(CLEAR_COLOR);
 
-    background_renderer.render(textures.get("mapa4"), dt);
+    background_renderer.render(textures.get("map"), dt);
 
     panel_renderer.render(user_interface, dt);
 }

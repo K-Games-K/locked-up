@@ -14,7 +14,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
     background_renderer(window, {textures, fonts})
 {
     // Preload background texture.
-    textures.get("mapa4");
+    textures.get("map");
     sf::Font& font = fonts.get("IndieFlower-Regular");
     Ui::ButtonColors button_colors = {
         sf::Color(0, 0, 0, 140),
@@ -136,7 +136,7 @@ void LobbyState::render(float dt)
 {
     window.clear(CLEAR_COLOR);
 
-    background_renderer.render(textures.get("mapa4"), dt);
+    background_renderer.render(textures.get("map"), dt);
 
     panel_renderer.render(user_interface, dt);
 }
@@ -196,18 +196,12 @@ void LobbyState::packet_received(std::unique_ptr<Packet> packet)
             players_list.at(player_id).set_position(start_pos);
 
             auto& alibis = game_start_packet.get_alibis();
-            for(auto& alibi : alibis)
-            {
-                for(int room : alibi)
-                    std::cout << room << " ";
-                std::cout << std::endl;
-            }
 
             left_panel_title_text->set_string("Loading...");
             game_state_manager.push_state(
                 new PlayState(
                     window, game_state_manager, server_connection, game_board,
-                    player_id, players_list
+                    player_id, players_list, alibis
                 ), true
             );
         }
