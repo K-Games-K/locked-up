@@ -7,7 +7,7 @@
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
     Connection server_connection, const GameBoard& game_board, int player_id,
-    const std::vector<Player> players_list, const std::vector<std::vector<int>> alibis)
+    const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis)
     : GameState(window, game_state_manager),
     server_connection(server_connection),
     game_board(std::move(game_board)),
@@ -19,6 +19,13 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     panel_renderer(window, {textures, fonts}),
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
 {
+    notepad_widget = new Ui::NotepadWidget(
+        Notepad(players_list, alibis, game_board), textures.get("paper_big"),
+        fonts.get("IndieFlower-Regular"), {}, {-50, 0},
+        Ui::Anchor::CenterRight, Ui::Anchor::CenterRight
+    );
+    user_interface.add_widget(notepad_widget);
+
     pause_menu = new Ui::Panel(
         {0, 0}, user_interface.get_size(),
         sf::Color(0, 0, 0, 180)
@@ -104,7 +111,12 @@ void PlayState::handle_input(sf::Event event)
         }
     }
 
-    user_interface.handle_event(event, (sf::Vector2f) sf::Mouse::getPosition(window));
+    sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
+    sf::Vector2f mouse_pos_rel = mouse_pos - user_interface.get_relative_position(
+        {0, 0},
+        (sf::Vector2f) window.getSize()
+    );
+    user_interface.handle_event(event, mouse_pos_rel);
 
     if(event.type == sf::Event::KeyPressed)
     {

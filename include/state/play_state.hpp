@@ -13,6 +13,7 @@
 #include "render/game_board_renderer.hpp"
 #include "render/panel_renderer.hpp"
 #include "ui/panel.hpp"
+#include "ui/notepad_widget.hpp"
 
 class PlayState : public GameState
 {
@@ -40,6 +41,7 @@ private:
 
     Ui::Panel user_interface;
     Ui::Panel* pause_menu;
+    Ui::NotepadWidget* notepad_widget;
 
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
@@ -62,7 +64,7 @@ private:
 public:
     PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
         Connection server_connection, const GameBoard& game_board, int player_id,
-        const std::vector<Player> players_list, const std::vector<std::vector<int>> alibis);
+        const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis);
 
     void handle_input(sf::Event event) override;
 
