@@ -22,11 +22,6 @@ namespace Ui
         bool activated = false;
         bool hovered = false;
 
-        Button(WidgetType type, const std::string& text, const sf::Font& font, Callback callback,
-            sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
-            ButtonColors colors = ButtonColors(), TextSettings text_settings = TextSettings(),
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
-
     private:
         Text text;
         ButtonColors colors;

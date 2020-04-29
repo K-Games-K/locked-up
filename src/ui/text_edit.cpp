@@ -4,20 +4,10 @@
 
 namespace Ui
 {
-    TextEdit::TextEdit(WidgetType type, const sf::Font& font, sf::Vector2f position,
-        sf::Vector2f size, TextEditColors colors, int limit, Anchor origin, Anchor anchor)
-        : Widget(type, position, size, origin, anchor),
-        text("", font), colors(colors), limit(limit)
-    {
-        text.set_position({5, 0});
-        text.set_origin(Anchor::CenterLeft);
-        text.set_anchor(Anchor::CenterLeft);
-        text.set_color(colors.text_color);
-    }
 
     TextEdit::TextEdit(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
         TextEditColors colors, int limit, Anchor origin, Anchor anchor)
-        : Widget(WidgetType::TextEdit, position, size, origin, anchor),
+        : Widget(position, size, origin, anchor),
         text("", font), colors(colors), limit(limit)
     {
         text.set_position({5, 0});

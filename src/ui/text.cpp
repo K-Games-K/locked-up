@@ -6,7 +6,7 @@ namespace Ui
 {
     Text::Text(const std::string& text, const sf::Font& font, sf::Vector2f position,
         TextSettings settings, Anchor origin, Anchor anchor)
-        : Widget(WidgetType::Text, position, {0, 0}, origin, anchor),
+        : Widget(position, {0, 0}, origin, anchor),
         string(text), font(&font), settings(settings)
     {
         update_size();

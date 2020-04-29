@@ -3,20 +3,10 @@
 
 namespace Ui
 {
-    Button::Button(WidgetType type, const std::string& text,
-        const sf::Font& font, Callback callback, sf::Vector2f position, sf::Vector2f size,
-        ButtonColors colors, TextSettings text_settings, Ui::Anchor origin, Ui::Anchor anchor)
-        : Widget(type, position, size, origin, anchor),
-        text(text, font, {0, 0}, text_settings), colors(colors), callback(callback)
-    {
-        this->text.set_origin(Anchor::Center);
-        this->text.set_anchor(Anchor::Center);
-    }
-
     Button::Button(const std::string& text, const sf::Font& font,
         Callback callback, sf::Vector2f position, sf::Vector2f size, ButtonColors colors,
         TextSettings text_settings, Ui::Anchor origin, Ui::Anchor anchor)
-        : Widget(WidgetType::Button, position, size, origin, anchor),
+        : Widget(position, size, origin, anchor),
         text(text, font, {0, 0}, text_settings), colors(colors), callback(callback)
     {
         this->text.set_origin(Anchor::Center);

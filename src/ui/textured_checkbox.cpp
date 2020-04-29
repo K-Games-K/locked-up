@@ -4,8 +4,7 @@ namespace Ui
 {
     TexturedCheckbox::TexturedCheckbox(CheckboxTextures textures, sf::Vector2f position,
         Anchor origin, Anchor anchor)
-        : Checkbox(
-        WidgetType::TexturedCheckbox, position, (sf::Vector2f) textures.unchecked_texture.getSize(),
+        : Checkbox(position, (sf::Vector2f) textures.unchecked_texture.getSize(),
         {}, origin, anchor
     ), textures(textures)
     {}

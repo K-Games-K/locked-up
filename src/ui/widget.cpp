@@ -4,15 +4,10 @@
 
 namespace Ui
 {
-    Widget::Widget(WidgetType type, sf::Vector2f position, sf::Vector2f size,
+    Widget::Widget(sf::Vector2f position, sf::Vector2f size,
         Anchor origin, Anchor anchor)
-        : type(type), position(position), size(size), origin(origin), anchor(anchor)
+        : position(position), size(size), origin(origin), anchor(anchor)
     {}
-
-    WidgetType Widget::get_type() const
-    {
-        return type;
-    }
 
     void Widget::set_enabled(bool enabled)
     {
@@ -141,18 +136,5 @@ namespace Ui
     bool Widget::operator==(const Widget& other) const
     {
         return this == &other;
-    }
-
-    Widget& Widget::operator=(const Widget& other)
-    {
-        if(type != other.type)
-            throw std::invalid_argument("Tried to assign widgets of different types!");
-
-        position = other.position;
-        size = other.size;
-        origin = other.origin;
-        anchor = other.anchor;
-
-        return *this;
     }
 }

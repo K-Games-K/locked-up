@@ -15,11 +15,6 @@ namespace Ui
 
         std::vector<Widget*> widgets;
 
-    protected:
-        Panel(WidgetType type, sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
-            sf::Color background_color = sf::Color::Transparent,
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
-
     public:
         Panel(sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
             sf::Color background_color = sf::Color::Transparent,

@@ -4,8 +4,7 @@ namespace Ui
 {
     TexturedPanel::TexturedPanel(const sf::Texture& texture, sf::Vector2f position, Anchor origin,
         Anchor anchor)
-        : Panel(
-        WidgetType::TexturedPanel, position, (sf::Vector2f) texture.getSize(),
+        : Panel(position, (sf::Vector2f) texture.getSize(),
         sf::Color::Transparent, origin, anchor
     ), texture(&texture)
     {

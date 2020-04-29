@@ -4,20 +4,6 @@
 
 namespace Ui
 {
-    /// WidgetType allows to recognize widget using polymorphic type.
-    enum class WidgetType
-    {
-        Text,
-        Button,
-        TexturedButton,
-        TextEdit,
-        TexturedTextEdit,
-        Panel,
-        TexturedPanel,
-        Checkbox,
-        TexturedCheckbox
-    };
-
     enum class Anchor
     {
         TopLeft,
@@ -35,8 +21,6 @@ namespace Ui
     class Widget
     {
     private:
-        const WidgetType type;
-
         bool enabled = true;
 
         sf::Vector2f position;
@@ -46,7 +30,7 @@ namespace Ui
         Anchor anchor;
 
     protected:
-        Widget(WidgetType type, sf::Vector2f position = {0, 0},
+        Widget(sf::Vector2f position = {0, 0},
             sf::Vector2f size = {0, 0}, Anchor origin = Anchor::TopLeft,
             Anchor anchor = Anchor::TopLeft);
 
@@ -54,8 +38,6 @@ namespace Ui
         virtual ~Widget() = default;
 
         virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) {};
-
-        WidgetType get_type() const;
 
         void set_enabled(bool enabled);
 
@@ -82,7 +64,5 @@ namespace Ui
         virtual void reset() {};
 
         bool operator==(const Widget& other) const;
-
-        Widget& operator=(const Widget& other);
     };
 }

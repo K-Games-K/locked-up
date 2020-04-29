@@ -21,66 +21,61 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt)
 
     for(const auto& widget : panel.get_widgets())
     {
-        switch(widget->get_type())
+        if(auto text = dynamic_cast<Ui::Text*>(widget))
         {
-            case Ui::WidgetType::Text:
-                text_renderer.set_origin_pos(panel_position);
-                text_renderer.set_parent_size(panel.get_size());
-                text_renderer.render(dynamic_cast<Ui::Text&>(*widget), dt);
-                break;
-            case Ui::WidgetType::Button:
-                button_renderer.set_origin_pos(panel_position);
-                button_renderer.set_parent_size(panel.get_size());
-                button_renderer.render(dynamic_cast<Ui::Button&>(*widget), dt);
-                break;
-            case Ui::WidgetType::TexturedButton:
-                button_renderer.set_origin_pos(panel_position);
-                button_renderer.set_parent_size(panel.get_size());
-                button_renderer.render(dynamic_cast<Ui::TexturedButton&>(*widget), dt);
-                break;
-            case Ui::WidgetType::TextEdit:
-                text_edit_renderer.set_origin_pos(panel_position);
-                text_edit_renderer.set_parent_size(panel.get_size());
-                text_edit_renderer.render(dynamic_cast<Ui::TextEdit&>(*widget), dt);
-                break;
-            case Ui::WidgetType::Panel:
-            {
-                sf::Vector2f temp_pos = origin_pos;
-                sf::Vector2f temp_size = parent_size;
-                set_origin_pos(panel_position);
-                set_parent_size(panel.get_size());
-                PanelRenderer::render(dynamic_cast<Ui::Panel&>(*widget), dt);
-                origin_pos = temp_pos;
-                parent_size = temp_size;
-                break;
-            }
-            case Ui::WidgetType::TexturedPanel:
-            {
-                sf::Vector2f temp_pos = origin_pos;
-                sf::Vector2f temp_size = parent_size;
-                set_origin_pos(panel_position);
-                set_parent_size(panel.get_size());
-                render(dynamic_cast<Ui::TexturedPanel&>(*widget), dt);
-                origin_pos = temp_pos;
-                parent_size = temp_size;
-                break;
-            }
-            case Ui::WidgetType::Checkbox:
-            {
-                checkbox_render.set_origin_pos(panel_position);
-                checkbox_render.set_parent_size(panel.get_size());
-                checkbox_render.render(dynamic_cast<Ui::Checkbox&>(*widget), dt);
-                break;
-            }
-            case Ui::WidgetType::TexturedCheckbox:
-            {
-                checkbox_render.set_origin_pos(panel_position);
-                checkbox_render.set_parent_size(panel.get_size());
-                checkbox_render.render(dynamic_cast<Ui::TexturedCheckbox&>(*widget), dt);
-                break;
-            }
-            default:
-                break;
+            text_renderer.set_origin_pos(panel_position);
+            text_renderer.set_parent_size(panel.get_size());
+            text_renderer.render(*text, dt);
+        }
+        else if(auto textured_button = dynamic_cast<Ui::TexturedButton*>(widget))
+        {
+            button_renderer.set_origin_pos(panel_position);
+            button_renderer.set_parent_size(panel.get_size());
+            button_renderer.render(*textured_button, dt);
+        }
+        else if(auto button = dynamic_cast<Ui::Button*>(widget))
+        {
+            button_renderer.set_origin_pos(panel_position);
+            button_renderer.set_parent_size(panel.get_size());
+            button_renderer.render(*button, dt);
+        }
+        else if(auto text_edit = dynamic_cast<Ui::TextEdit*>(widget))
+        {
+            text_edit_renderer.set_origin_pos(panel_position);
+            text_edit_renderer.set_parent_size(panel.get_size());
+            text_edit_renderer.render(*text_edit, dt);
+        }
+        else if(auto textured_checkbox = dynamic_cast<Ui::TexturedCheckbox*>(widget))
+        {
+            checkbox_render.set_origin_pos(panel_position);
+            checkbox_render.set_parent_size(panel.get_size());
+            checkbox_render.render(*textured_checkbox, dt);
+        }
+        else if(auto checkbox = dynamic_cast<Ui::Checkbox*>(widget))
+        {
+            checkbox_render.set_origin_pos(panel_position);
+            checkbox_render.set_parent_size(panel.get_size());
+            checkbox_render.render(*checkbox, dt);
+        }
+        else if(auto textured_panel = dynamic_cast<Ui::TexturedPanel*>(widget))
+        {
+            sf::Vector2f temp_pos = origin_pos;
+            sf::Vector2f temp_size = parent_size;
+            set_origin_pos(panel_position);
+            set_parent_size(panel.get_size());
+            render(*textured_panel, dt);
+            origin_pos = temp_pos;
+            parent_size = temp_size;
+        }
+        else if(auto sub_panel = dynamic_cast<Ui::Panel*>(widget))
+        {
+            sf::Vector2f temp_pos = origin_pos;
+            sf::Vector2f temp_size = parent_size;
+            set_origin_pos(panel_position);
+            set_parent_size(panel.get_size());
+            render(*sub_panel, dt);
+            origin_pos = temp_pos;
+            parent_size = temp_size;
         }
     }
 }

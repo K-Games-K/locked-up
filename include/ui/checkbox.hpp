@@ -18,10 +18,6 @@ namespace Ui
     protected:
         bool checked = false;
 
-        Checkbox(WidgetType type, sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
-            CheckboxSettings settings = CheckboxSettings(), Anchor origin = Anchor::TopLeft,
-            Anchor anchor = Anchor::TopLeft);
-
     private:
         CheckboxSettings settings;
 

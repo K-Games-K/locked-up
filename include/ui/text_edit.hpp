@@ -17,10 +17,6 @@ namespace Ui
     protected:
         bool activated = false;
 
-        TextEdit(WidgetType type, const sf::Font& font, sf::Vector2f position = {0, 0},
-            sf::Vector2f size = {0, 0}, TextEditColors colors = TextEditColors(),
-            int limit = 0, Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
-
     private:
         Text text;
         TextEditColors colors;

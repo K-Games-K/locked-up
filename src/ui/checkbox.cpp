@@ -2,15 +2,9 @@
 
 namespace Ui
 {
-    Checkbox::Checkbox(WidgetType type, sf::Vector2f position, sf::Vector2f size,
-        CheckboxSettings settings, Anchor origin, Anchor anchor)
-        : Widget(type, position, size, origin, anchor),
-        settings(settings)
-    {}
-
     Checkbox::Checkbox(sf::Vector2f position, sf::Vector2f size, CheckboxSettings settings,
         Anchor origin, Anchor anchor)
-        : Widget(WidgetType::Checkbox, position, size, origin, anchor),
+        : Widget(position, size, origin, anchor),
         settings(settings)
     {}
 

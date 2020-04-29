@@ -5,8 +5,7 @@ namespace Ui
     TexturedButton::TexturedButton(const std::string& text, const sf::Font& font,
         ButtonTextures textures, Ui::Button::Callback callback,
         sf::Vector2f position, TextSettings text_settings, Ui::Anchor origin, Ui::Anchor anchor)
-        : Button(
-        WidgetType::TexturedButton, text, font, callback, position,
+        : Button(text, font, callback, position,
         (sf::Vector2f) textures.default_texture.getSize(), {}, text_settings, origin, anchor
     ), textures(textures)
     {}
