@@ -29,6 +29,8 @@ public:
 
     Room& get_room(int room_id);
 
+    const Room& get_room(int room_id) const;
+
     Room& get_room(int x, int y);
 
     bool can_move(int x, int y, int dirx, int diry);

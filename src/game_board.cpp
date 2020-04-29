@@ -26,6 +26,11 @@ Room& GameBoard::get_room(int room_id)
     return rooms.at(room_id);
 }
 
+const Room& GameBoard::get_room(int room_id) const
+{
+    return rooms.at(room_id);
+}
+
 Room& GameBoard::get_room(int x, int y)
 {
     return tiles.at(x + y * width).get();
