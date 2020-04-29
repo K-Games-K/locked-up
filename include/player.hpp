@@ -36,4 +36,6 @@ public:
     void generate_alibi(const GameBoard& game_board, int crime_room, int length);
 
     bool operator==(const Player& other) const;
+
+    bool operator<(const Player& other) const;
 };
