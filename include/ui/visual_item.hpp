@@ -1,17 +1,24 @@
 #pragma once
 
+#include "items/item.hpp"
 #include "widget.hpp"
 
-class Visual_item : public Widget
+namespace Ui
 {
-private:
-	const sf::Texture texture;
+	class VisualItem : public Widget
+	{
+	private:
+		const sf::Texture* texture;
+		Item item;
 
-public:
-	Visual_item(const std::string& name, const sf::Texture& texture, sf::Vector2f position = { 0, 0 },
-        Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+	public:
+		VisualItem(Item item, const sf::Texture& texture, sf::Vector2f position = { 0, 0 },
+			Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
 
-	void set_texture(sf::Texture texture);
+		void set_texture(const sf::Texture& texture);
 
+		const sf::Texture& get_texture() const;
 
-};
+		const Item& get_item() const;
+	};
+}
