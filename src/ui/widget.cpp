@@ -34,35 +34,34 @@ namespace Ui
     sf::Vector2f
     Widget::get_relative_position(sf::Vector2f origin_pos, sf::Vector2f parent_size) const
     {
-        sf::Vector2f result = origin_pos;
+        sf::Vector2f result = origin_pos + position;
         switch(origin)
         {
             case Anchor::TopLeft:
-                result += position;
                 break;
             case Anchor::TopRight:
-                result += position - sf::Vector2f(size.x, 0);
+                result -= sf::Vector2f(size.x, 0);
                 break;
             case Anchor::BottomRight:
-                result += position - size;
+                result -= size;
                 break;
             case Anchor::BottomLeft:
-                result += position - sf::Vector2f(0, size.y);
+                result -= sf::Vector2f(0, size.y);
                 break;
             case Anchor::Center:
-                result += position - size / 2.0f;
+                result -= size / 2.0f;
                 break;
             case Anchor::CenterTop:
-                result += position - sf::Vector2f(size.x / 2, 0);
+                result -= sf::Vector2f(size.x / 2, 0);
                 break;
             case Anchor::CenterRight:
-                result += position - sf::Vector2f(size.x, size.y / 2);
+                result -= sf::Vector2f(size.x, size.y / 2);
                 break;
             case Anchor::CenterBottom:
-                result += position - sf::Vector2f(size.x / 2, size.y);
+                result -= sf::Vector2f(size.x / 2, size.y);
                 break;
             case Anchor::CenterLeft:
-                result += position - sf::Vector2f(0, size.y / 2);
+                result -= sf::Vector2f(0, size.y / 2);
                 break;
             default:
                 break;
