@@ -99,12 +99,12 @@ void LobbyState::handle_input(sf::Event event)
         game_state_manager.pop_state();
     }
 
-    sf::Vector2f mouse_pos =
-        (sf::Vector2f) sf::Mouse::getPosition(window) - user_interface.get_relative_position(
-            {0, 0},
-            (sf::Vector2f) window.getSize()
-        );
-    user_interface.handle_event(event, mouse_pos);
+    sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
+    sf::Vector2f mouse_pos_rel = mouse_pos - user_interface.get_relative_position(
+        {0, 0},
+        (sf::Vector2f) window.getSize()
+    );
+    user_interface.handle_event(event, mouse_pos_rel);
 }
 
 void LobbyState::update(float dt)

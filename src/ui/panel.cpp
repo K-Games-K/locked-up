@@ -28,10 +28,8 @@ namespace Ui
                 continue;
 
             widget->handle_event(
-                event, mouse_pos - widget->get_relative_position(
-                    get_local_position(),
-                    get_size()
-                ));
+                event, mouse_pos - widget->get_relative_position({0, 0}, get_size())
+            );
         }
     }
 
