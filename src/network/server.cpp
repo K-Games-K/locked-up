@@ -1,6 +1,9 @@
+#include <numeric>
+#include <algorithm>
 #include <iostream>
 #include <random>
 #include <ctime>
+
 
 #include "game_board_loader.hpp"
 #include "network/server.hpp"
@@ -144,7 +147,7 @@ void Server::update()
                         std::vector<int> alibi = players[j].get_alibi();
                         std::vector<int> indices(alibi.size() - 1); // Last alibi is left untouched.
                         std::iota(indices.begin(), indices.end(), 0);
-                        std::random_shuffle(indices.begin(), indices.end());
+                        std::shuffle(indices.begin(), indices.end(), gen);
                         alibis[j].resize(alibi.size(), -1);
                         for(int k = 0; k < VISIBLE_ALIBIS; ++k)
                             alibis[j][indices[k]] = alibi[indices[k]];
