@@ -5,7 +5,8 @@ PanelRenderer::PanelRenderer(sf::RenderWindow& window, ResourceManagers resource
     text_renderer(window, resources),
     button_renderer(window, resources),
     text_edit_renderer(window, resources),
-    checkbox_render(window, resources)
+    checkbox_render(window, resources),
+    table_widget_renderer(window, resources)
 {}
 
 void PanelRenderer::render(const Ui::Panel& panel, const float dt)
@@ -76,6 +77,12 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt)
             render(*sub_panel, dt);
             origin_pos = temp_pos;
             parent_size = temp_size;
+        }
+        else if(auto table_widget = dynamic_cast<Ui::TableWidget*>(widget))
+        {
+            table_widget_renderer.set_origin_pos(panel_position);
+            table_widget_renderer.set_parent_size(panel.get_size());
+            table_widget_renderer.render(*table_widget, dt);
         }
     }
 }
