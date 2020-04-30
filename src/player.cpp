@@ -59,7 +59,7 @@ void Player::generate_alibi(const GameBoard& game_board, int crime_room, int len
     // Initializing RNG
     static std::mt19937 gen(time(nullptr));
     std::uniform_real_distribution<> rand_percent(0, 100);
-    std::uniform_int_distribution<> rand_room(0, rooms_count - 1);
+    std::uniform_int_distribution<> rand_room(1, rooms_count - 1);
 
     int current_room = rand_room(gen);
     for(int i = 0; i < length; ++i)
@@ -97,5 +97,5 @@ bool Player::operator==(const Player& other) const
 
 bool Player::operator<(const Player& other) const
 {
-    return nickname < other.nickname || this < &other;
+    return nickname < other.nickname;
 }

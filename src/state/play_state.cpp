@@ -13,18 +13,30 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     game_board(std::move(game_board)),
     player_id(player_id),
     players_list(std::move(players_list)),
+    background_renderer(window, {textures, fonts}),
     player_renderer(window, {textures, fonts}),
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
     panel_renderer(window, {textures, fonts}),
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
 {
+    auto& font = fonts.get("IndieFlower-Regular");
+
     notepad_widget = new Ui::NotepadWidget(
-        Notepad(players_list, alibis, game_board), textures.get("paper_big"),
-        fonts.get("IndieFlower-Regular"), {}, {-50, 0},
+        Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),
+        font, {}, {-50, 0},
         Ui::Anchor::CenterRight, Ui::Anchor::CenterRight
     );
     user_interface.add_widget(notepad_widget);
+
+    notification_widget = new Ui::NotificationWidget(
+        font,
+        {0, 40}, {400, 100},
+        {sf::Color::White, 30, sf::Color::Black, 1},
+        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+    );
+    notification_widget->show_notification("Hello there general!", 2);
+    user_interface.add_widget(notification_widget);
 
     pause_menu = new Ui::Panel(
         {0, 0}, user_interface.get_size(),
@@ -39,8 +51,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         Ui::Anchor::Center, Ui::Anchor::Center
     );
     pause_menu->add_widget(pause_menu_panel);
-
-    auto& font = fonts.get("IndieFlower-Regular");
 
     pause_menu_panel->add_widget(
         new Ui::Text(
@@ -80,6 +90,18 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             Ui::Anchor::CenterTop, Ui::Anchor::Center
         )
     );
+
+    popup = new Ui::Popup(
+        textures.get("paper_small"),
+        font,
+        {-100, 0},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    user_interface.add_widget(popup);
+
+    popup->set_title("To jest popup!");
+    popup->set_description("To jest opis tego popupa.\nLorem ipsum dolor it samet.");
+    popup->show();
 }
 
 void PlayState::handle_input(sf::Event event)
@@ -155,6 +177,8 @@ void PlayState::update(float dt)
         if(packet != nullptr)
             packet_received(std::move(packet));
     }
+
+    user_interface.update(dt);
 }
 
 void PlayState::render(float dt)
@@ -176,6 +200,8 @@ void PlayState::render(float dt)
         Utils::lerp(camera_pos.x, camera_target_pos.x, dt / CAMERA_SMOOTH),
         Utils::lerp(camera_pos.y, camera_target_pos.y, dt / CAMERA_SMOOTH)
     };
+
+    background_renderer.render(textures.get("background"), dt);
 
     game_board_renderer.set_camera_pos(camera_pos);
     game_board_renderer.set_game_board_pos(game_board_pos);
@@ -245,6 +271,11 @@ void PlayState::exit_clicked(Ui::Button& button)
 {
     server_connection.send(DisconnectPacket());
     game_state_manager.pop_state();
+}
+
+void PlayState::popup_closed(Ui::Button& button)
+{
+    popup->set_enabled(false);
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)

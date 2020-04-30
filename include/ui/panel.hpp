@@ -24,6 +24,8 @@ namespace Ui
 
         void handle_event(sf::Event event, sf::Vector2f mouse_pos) override;
 
+        void update(const float dt) override;
+
         void add_widget(Widget* widget);
 
         void remove_widget(Widget* widget);

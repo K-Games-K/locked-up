@@ -17,7 +17,7 @@ Notepad::Notepad(const std::vector<Player>& players, const std::vector<std::vect
                 player_notes.push_back({"", false});
         }
 
-        notes.insert({player.get_nickname(), player_notes});
+        notes.insert({player, player_notes});
     }
 }
 

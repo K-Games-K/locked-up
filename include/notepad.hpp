@@ -3,7 +3,6 @@
 #include <map>
 
 #include "player.hpp"
-#include "ui/widgets.hpp"
 #include "render/renderer.hpp"
 
 class Notepad

@@ -11,19 +11,18 @@ class GameBoard
 {
 private:
     friend class GameBoardLoader;
+    friend class GameBoardPacket;
 
     int width;
     int height;
 
     std::vector<Room> rooms;
-    std::vector<std::reference_wrapper<Room>> tiles;
+    std::vector<int> tiles;
     std::vector<std::array<bool, 2>> collision_map;
     std::vector<std::vector<int>> neighbours_map;
 
 public:
     GameBoard() = default;
-
-    GameBoard(const GameBoard& other);
 
     int rooms_count() const;
 
@@ -40,6 +39,4 @@ public:
     int get_height() const;
 
     std::vector<int> get_neighbours(int room_id) const;
-
-    void operator=(const GameBoard& other);
 };

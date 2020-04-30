@@ -7,11 +7,9 @@ namespace Ui
         Callback callback, sf::Vector2f position, sf::Vector2f size, ButtonColors colors,
         TextSettings text_settings, Ui::Anchor origin, Ui::Anchor anchor)
         : Widget(position, size, origin, anchor),
-        text(text, font, {0, 0}, text_settings), colors(colors), callback(callback)
-    {
-        this->text.set_origin(Anchor::Center);
-        this->text.set_anchor(Anchor::Center);
-    }
+        text(text, font, {0, 0}, text_settings, Anchor::Center, Anchor::Center),
+        colors(colors), callback(callback)
+    {}
 
     void Button::handle_event(sf::Event event, sf::Vector2f mouse_pos)
     {

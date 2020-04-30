@@ -33,6 +33,20 @@ namespace Ui
         }
     }
 
+    void Panel::update(const float dt)
+    {
+        if(!is_enabled())
+            return;
+
+        for(auto& widget : widgets)
+        {
+            if(!widget->is_enabled())
+                continue;
+
+            widget->update(dt);
+        }
+    }
+
     void Panel::add_widget(Widget* widget)
     {
         widgets.push_back(widget);
