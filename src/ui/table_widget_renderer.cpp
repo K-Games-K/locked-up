@@ -1,11 +1,7 @@
 #include "render/table_widget_renderer.hpp"
 
 TableWidgetRenderer::TableWidgetRenderer(sf::RenderWindow& window, ResourceManagers resources)
-    : WidgetRenderer(window, resources),
-    text_renderer(window, resources),
-    button_renderer(window, resources),
-    text_edit_renderer(window, resources),
-    checkbox_render(window, resources)
+    : WidgetContainerRenderer(window, resources)
 {}
 
 void TableWidgetRenderer::render(const Ui::TableWidget& table_widget, const float dt)
@@ -47,42 +43,7 @@ void TableWidgetRenderer::render(const Ui::TableWidget& table_widget, const floa
             auto& widget = widgets[column][row];
             sf::Vector2f cell_size(column_widths[column], row_heights[row]);
 
-            if(auto text = dynamic_cast<Ui::Text*>(widget))
-            {
-                text_renderer.set_origin_pos(cell_pos);
-                text_renderer.set_parent_size(cell_size);
-                text_renderer.render(*text, dt);
-            }
-            else if(auto textured_button = dynamic_cast<Ui::TexturedButton*>(widget))
-            {
-                button_renderer.set_origin_pos(cell_pos);
-                button_renderer.set_parent_size(cell_size);
-                button_renderer.render(*textured_button, dt);
-            }
-            else if(auto button = dynamic_cast<Ui::Button*>(widget))
-            {
-                button_renderer.set_origin_pos(cell_pos);
-                button_renderer.set_parent_size(cell_size);
-                button_renderer.render(*button, dt);
-            }
-            else if(auto text_edit = dynamic_cast<Ui::TextEdit*>(widget))
-            {
-                text_edit_renderer.set_origin_pos(cell_pos);
-                text_edit_renderer.set_parent_size(cell_size);
-                text_edit_renderer.render(*text_edit, dt);
-            }
-            else if(auto textured_checkbox = dynamic_cast<Ui::TexturedCheckbox*>(widget))
-            {
-                checkbox_render.set_origin_pos(cell_pos);
-                checkbox_render.set_parent_size(cell_size);
-                checkbox_render.render(*textured_checkbox, dt);
-            }
-            else if(auto checkbox = dynamic_cast<Ui::Checkbox*>(widget))
-            {
-                checkbox_render.set_origin_pos(cell_pos);
-                checkbox_render.set_parent_size(cell_size);
-                checkbox_render.render(*checkbox, dt);
-            }
+            WidgetContainerRenderer::render(widget, dt, cell_pos, cell_size);
 
             cell_pos += sf::Vector2f(0, row_heights[row] + table_widget_settings.grid_thickness);
         }

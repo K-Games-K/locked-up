@@ -1,20 +1,10 @@
 #pragma once
 
-#include "widget_renderer.hpp"
-#include "text_renderer.hpp"
-#include "button_renderer.hpp"
-#include "text_edit_renderer.hpp"
-#include "checkbox_renderer.hpp"
+#include "widget_container_renderer.hpp"
 #include "ui/table_widget.hpp"
 
-class TableWidgetRenderer : public WidgetRenderer<Ui::TableWidget>
+class TableWidgetRenderer : public WidgetContainerRenderer<Ui::TableWidget>
 {
-private:
-    TextRenderer text_renderer;
-    ButtonRenderer button_renderer;
-    TextEditRenderer text_edit_renderer;
-    CheckboxRender checkbox_render;
-
 public:
     TableWidgetRenderer(sf::RenderWindow& window, ResourceManagers resources);
 

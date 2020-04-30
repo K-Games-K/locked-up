@@ -1,3 +1,4 @@
+#include "ui/panel.hpp"
 #include "ui/table_widget.hpp"
 
 namespace Ui
@@ -46,6 +47,9 @@ namespace Ui
 
     void TableWidget::add_widget(int column, int row, Widget* widget)
     {
+        if(dynamic_cast<Ui::Panel*>(widget))
+            throw std::invalid_argument("Cannot insert Panel inside TableWidget!");
+
         auto& existing = widgets.at(column).at(row);
         if(existing != nullptr)
             delete existing;
