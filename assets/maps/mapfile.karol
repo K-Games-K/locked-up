@@ -1,24 +1,24 @@
 50 28
 rooms:
 Outside:
-Kitchen:
-Bedroom (North):
-Bedroom (South):
-Bedroom (West):
-Library:
-Hall:
-Bathroom (North):
-Bathroom (South):
-Bathroom (West):
-Terrace (West):
-Terrace (East):
-Ballroom:
-Dining Room:
-Wardrobe:
-Closet (North):
-Closet (South):
-Closet (West):
-Corridor:
+Kitchen: Nóż,Tasak,Trucizna
+Bedroom (North): Mydelniczka,Grabie,Poduszka 
+Bedroom (South): Poduszka,Książka,Lina
+Bedroom (West): Poduszka,Lina,Puchar
+Library: Nóż,Książka,Wazon,
+Hall: Puchar,Książka,Ciężarek
+Bathroom (North): Tasak,Mydelniczka,Nożyczki
+Bathroom (South): Trucizna,Doniczka,Mydelniczka
+Bathroom (West): Wazon,Ciężarek,Nożyczki
+Terrace (West): Łopata,Grabie,Młotek
+Terrace (East): Łopata,Worek,Doniczka
+Ballroom: Nóż,Świecznik,Puchar
+Dining Room: Puchar,Trucizna,Nożyczki
+Wardrobe: Wieszak,Szpilka,Ciężarek
+Closet (North): Lina,Świecznik,Worek
+Closet (South): Tasak,Młotek,Lina 
+Closet (West): Młotek,Grabie,Worek
+Corridor: Świecznik,Wazon,Doniczka
 
 tiles:
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
