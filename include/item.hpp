@@ -11,7 +11,7 @@ public:
         Clue
     };
 
-    Item(std::string new_name, std::string new_destription, Type type);
+    Item(std::string name, std::string destription, Type type);
 
     std::string get_name() const;
 
@@ -23,5 +23,5 @@ private:
     std::string name;
     std::string description;
 
-    Type item_type;
+    Type type;
 };

@@ -18,29 +18,16 @@ GameBoard GameBoardPacket::get_game_board() const
 
 void GameBoardPacket::serialize(sf::Packet& data) const
 {
-    int width, height;
-    std::vector<Room> rooms;
-    std::vector<int> indices;
-    std::vector<std::array<bool, 2>> collision_map;
-    GameBoardLoader::save_in_memory(
-        game_board,
-        width,
-        height,
-        rooms,
-        indices,
-        collision_map
-    );
-
-    data << width << height << rooms.size();
-    for(auto& room : rooms)
+    data << game_board.width << game_board.height << game_board.rooms.size();
+    for(auto& room : game_board.rooms)
         data << room.get_name();
 
-    data << indices.size();
-    for(auto& idx : indices)
+    data << game_board.tiles.size();
+    for(auto& idx : game_board.tiles)
         data << idx;
 
-    data << collision_map.size();
-    for(auto& collision : collision_map)
+    data << game_board.collision_map.size();
+    for(auto& collision : game_board.collision_map)
         data << collision[0] << collision[1];
 }
 
@@ -60,14 +47,14 @@ void GameBoardPacket::deserialize(sf::Packet& data)
     }
 
     size_t indices_size;
-    std::vector<int> indices;
+    std::vector<int> tiles;
     data >> indices_size;
-    indices.reserve(indices_size);
+    tiles.reserve(indices_size);
     for(int i = 0; i < indices_size; ++i)
     {
         int idx;
         data >> idx;
-        indices.push_back(idx);
+        tiles.push_back(idx);
     }
 
     size_t collision_map_size;
@@ -81,12 +68,10 @@ void GameBoardPacket::deserialize(sf::Packet& data)
         collision_map.push_back({east, south});
     }
 
-    game_board = GameBoardLoader::load_from_memory(
-        width,
-        height,
-        rooms,
-        indices,
-        collision_map,
-        {}
-    );
+    game_board.width = width;
+    game_board.height = height;
+    game_board.rooms = std::move(rooms);
+    game_board.tiles = std::move(tiles);
+    game_board.collision_map = std::move(collision_map);
+    game_board.neighbours_map = {};
 }

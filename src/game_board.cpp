@@ -1,21 +1,5 @@
 #include "game_board.hpp"
 
-GameBoard::GameBoard(const GameBoard& other)
-        : width(other.width), height(other.height), rooms(other.rooms),
-          collision_map(other.collision_map), neighbours_map(other.neighbours_map)
-{
-    tiles.reserve(other.tiles.size());
-    for(auto& room_ref : other.tiles)
-    {
-        auto idx = std::distance(
-                other.rooms.begin(),
-                std::find(other.rooms.begin(), other.rooms.end(), room_ref.get())
-        );
-
-        tiles.push_back(rooms[idx]);
-    }
-}
-
 int GameBoard::rooms_count() const
 {
     return rooms.size();
@@ -33,7 +17,7 @@ const Room& GameBoard::get_room(int room_id) const
 
 Room& GameBoard::get_room(int x, int y)
 {
-    return tiles.at(x + y * width).get();
+    return rooms.at(tiles.at(x + y * width));
 }
 
 bool GameBoard::can_move(int x, int y, int dirx, int diry)
@@ -79,25 +63,4 @@ int GameBoard::get_height() const
 std::vector<int> GameBoard::get_neighbours(int room_id) const
 {
     return neighbours_map.at(room_id);
-}
-
-void GameBoard::operator=(const GameBoard& other)
-{
-    width = other.width;
-    height = other.height;
-    rooms = other.rooms;
-    collision_map = other.collision_map;
-    neighbours_map = other.neighbours_map;
-
-    tiles.clear();
-    tiles.reserve(other.tiles.size());
-    for(auto& room_ref : other.tiles)
-    {
-        auto idx = std::distance(
-                other.rooms.begin(),
-                std::find(other.rooms.begin(), other.rooms.end(), room_ref.get())
-        );
-
-        tiles.push_back(rooms[idx]);
-    }
 }
