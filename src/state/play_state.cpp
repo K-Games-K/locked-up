@@ -13,6 +13,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     game_board(std::move(game_board)),
     player_id(player_id),
     players_list(std::move(players_list)),
+    background_renderer(window, {textures, fonts}),
     player_renderer(window, {textures, fonts}),
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
@@ -176,6 +177,8 @@ void PlayState::render(float dt)
         Utils::lerp(camera_pos.x, camera_target_pos.x, dt / CAMERA_SMOOTH),
         Utils::lerp(camera_pos.y, camera_target_pos.y, dt / CAMERA_SMOOTH)
     };
+
+    background_renderer.render(textures.get("background"), dt);
 
     game_board_renderer.set_camera_pos(camera_pos);
     game_board_renderer.set_game_board_pos(game_board_pos);

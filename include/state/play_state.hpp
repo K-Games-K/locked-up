@@ -8,6 +8,7 @@
 #include "player.hpp"
 #include "resource_manager.hpp"
 #include "network/connection.hpp"
+#include "render/background_renderer.hpp"
 #include "render/debug_renderer.hpp"
 #include "render/player_renderer.hpp"
 #include "render/game_board_renderer.hpp"
@@ -47,6 +48,7 @@ private:
     GameBoardRenderer game_board_renderer;
     DebugRenderer debug_renderer;
     PanelRenderer panel_renderer;
+    BackgroundRenderer background_renderer;
 
     bool paused = false;
     bool debug_render = false;
