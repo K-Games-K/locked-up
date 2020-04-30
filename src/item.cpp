@@ -1,4 +1,4 @@
-#include "../item.hpp"
+#include "item.hpp"
 
 Item::Item(std::string new_name, std::string new_description, Type type)
 	: name(new_name), description(new_description), item_type(type)
