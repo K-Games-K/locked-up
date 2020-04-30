@@ -2,7 +2,7 @@
 
 #include "widget_renderer.hpp"
 #include "ui/item_widget.hpp"
-#include "items/item.hpp"
+#include "item.hpp"
 
 class ItemWidgetRenderer : public WidgetRenderer<std::vector<Ui::ItemWidget>>
 {

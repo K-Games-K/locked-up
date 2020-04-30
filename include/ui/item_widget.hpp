@@ -1,6 +1,6 @@
 #pragma once
 
-#include "items/item.hpp"
+#include "item.hpp"
 #include "widget.hpp"
 
 namespace Ui
