@@ -1,5 +1,6 @@
 #include <iostream>
 #include <functional>
+#include <sstream>
 
 #include "utils.hpp"
 #include "state/play_state.hpp"
@@ -7,7 +8,8 @@
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
     Connection server_connection, const GameBoard& game_board, int player_id,
-    const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis)
+    const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis,
+    int crime_room, Item crime_item)
     : GameState(window, game_state_manager),
     server_connection(server_connection),
     game_board(std::move(game_board)),
@@ -99,8 +101,11 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     );
     user_interface.add_widget(popup);
 
-    popup->set_title("To jest popup!");
-    popup->set_description("To jest opis tego popupa.\nLorem ipsum dolor it samet.");
+    popup->set_title("Dead body found!");
+    std::stringstream descr;
+    descr << "A dead body was found in " << game_board.get_room(crime_room).get_name() << ".\n";
+    descr << crime_item.get_name() << " was found by the side.";
+    popup->set_description(descr.str());
     popup->show();
 }
 
@@ -271,11 +276,6 @@ void PlayState::exit_clicked(Ui::Button& button)
 {
     server_connection.send(DisconnectPacket());
     game_state_manager.pop_state();
-}
-
-void PlayState::popup_closed(Ui::Button& button)
-{
-    popup->set_enabled(false);
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)

@@ -60,8 +60,6 @@ private:
 
     void exit_clicked(Ui::Button& button);
 
-    void popup_closed(Ui::Button& button);
-
     sf::Vector2f window_to_board_coords(sf::Vector2f window_coords);
 
     sf::Vector2f board_to_window_coords(sf::Vector2f window_coords);
@@ -69,7 +67,8 @@ private:
 public:
     PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
         Connection server_connection, const GameBoard& game_board, int player_id,
-        const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis);
+        const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis,
+        int crime_room, Item crime_item);
 
     void handle_input(sf::Event event) override;
 

@@ -11,6 +11,8 @@ public:
         Clue
     };
 
+    Item() = default;
+
     Item(std::string name, std::string destription, Type type);
 
     std::string get_name() const;

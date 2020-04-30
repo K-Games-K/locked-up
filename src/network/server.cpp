@@ -122,17 +122,20 @@ void Server::update()
             if(timer.getElapsedTime().asSeconds() < COUNTDOWN_INTERVAL)
                 break;
 
+            // Setting up new game.
+
             std::mt19937 gen(time(nullptr));
             std::uniform_int_distribution<> rand_room(0, game_board.rooms_count() - 1);
             int crime_room = rand_room(gen);
             std::cout << "Generating alibis. Crime room is "
                 << game_board.get_room(crime_room).get_name() << "." << std::endl;
             for(auto& player : players)
-            {
                 player.generate_alibi(game_board, crime_room, ALIBI_LENGTH);
-            }
 
-            std::uniform_int_distribution<> rand_alibi();
+            auto& items = game_board.get_room(crime_room).get_items();
+            std::uniform_int_distribution<> rand_tool(0, items.size() - 1);
+            Item crime_item = items[rand_tool(gen)];
+
             for(int i = 0; i < players.size(); ++i)
             {
                 std::vector<std::vector<int>> alibis(players.size());
@@ -154,9 +157,26 @@ void Server::update()
                     }
                 }
 
-                players[i].get_connection().send(GameStartPacket(i, i, alibis));
+                players[i].get_connection().send(
+                    GameStartPacket(i, i, alibis, crime_room, crime_item)
+                );
             }
 
+            auto& tiles = game_board.get_tiles();
+            std::vector<int> tiles_indices;
+            for(int i = 0; i < tiles.size(); ++i)
+            {
+                if(tiles[i] == crime_room)
+                    tiles_indices.push_back(i);
+            }
+            std::shuffle(tiles_indices.begin(), tiles_indices.end(), gen);
+            for(int i = 0; i < players.size(); ++i)
+            {
+                int16_t x = tiles_indices[i] % game_board.get_width();
+                int16_t y = tiles_indices[i] / game_board.get_width();
+                players[i].set_position(x, y);
+                broadcast(PlayerMovePacket(x, y, players[i].get_player_id(), false));
+            }
 
             game_stage = GameStage::NewTurn;
 

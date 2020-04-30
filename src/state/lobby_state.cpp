@@ -196,12 +196,14 @@ void LobbyState::packet_received(std::unique_ptr<Packet> packet)
             players_list.at(player_id).set_position(start_pos);
 
             auto& alibis = game_start_packet.get_alibis();
+            int crime_room = game_start_packet.get_crime_room();
+            Item crime_item = game_start_packet.get_crime_item();
 
             left_panel_title_text->set_string("Loading...");
             game_state_manager.push_state(
                 new PlayState(
                     window, game_state_manager, server_connection, game_board,
-                    player_id, players_list, alibis
+                    player_id, players_list, alibis, crime_room, crime_item
                 ), true
             );
         }
