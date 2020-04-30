@@ -97,5 +97,5 @@ bool Player::operator==(const Player& other) const
 
 bool Player::operator<(const Player& other) const
 {
-    return nickname < other.nickname || this < &other;
+    return nickname < other.nickname;
 }

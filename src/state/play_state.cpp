@@ -20,7 +20,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
 {
     notepad_widget = new Ui::NotepadWidget(
-        Notepad(players_list, alibis, game_board), textures.get("paper_big"),
+        Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),
         fonts.get("IndieFlower-Regular"), {}, {-50, 0},
         Ui::Anchor::CenterRight, Ui::Anchor::CenterRight
     );

@@ -30,9 +30,8 @@ namespace Ui
         Anchor anchor;
 
     protected:
-        Widget(sf::Vector2f position = {0, 0},
-            sf::Vector2f size = {0, 0}, Anchor origin = Anchor::TopLeft,
-            Anchor anchor = Anchor::TopLeft);
+        Widget(sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
+            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
 
     public:
         virtual ~Widget() = default;

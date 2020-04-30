@@ -15,7 +15,7 @@ private:
     std::vector<int> alibi;
 
 public:
-    Player(const std::string& nickname, int x = 0, int y = 0);
+    explicit Player(const std::string& nickname, int x = 0, int y = 0);
 
     Player(const std::string& nickname, sf::Vector2i position);
 
