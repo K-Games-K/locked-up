@@ -1,24 +1,24 @@
 50 28
 rooms:
 Outside:
-Kitchen: Nóż,Tasak,Trucizna
-Bedroom (North): Mydelniczka,Grabie,Poduszka 
-Bedroom (South): Poduszka,Książka,Lina
-Bedroom (West): Poduszka,Lina,Puchar
-Library: Nóż,Książka,Wazon,
-Hall: Puchar,Książka,Ciężarek
-Bathroom (North): Tasak,Mydelniczka,Nożyczki
-Bathroom (South): Trucizna,Doniczka,Mydelniczka
-Bathroom (West): Wazon,Ciężarek,Nożyczki
-Terrace (West): Łopata,Grabie,Młotek
-Terrace (East): Łopata,Worek,Doniczka
-Ballroom: Nóż,Świecznik,Puchar
-Dining Room: Puchar,Trucizna,Nożyczki
-Wardrobe: Wieszak,Szpilka,Ciężarek
-Closet (North): Lina,Świecznik,Worek
-Closet (South): Tasak,Młotek,Lina 
-Closet (West): Młotek,Grabie,Worek
-Corridor: Świecznik,Wazon,Doniczka
+Kitchen: Noz, Tasak, Trucizna
+Bedroom (North): Mydelniczka, Grabie, Poduszka 
+Bedroom (South): Poduszka, Ksiazka, Lina
+Bedroom (West): Poduszka, Lina, Puchar
+Library: Noz, Ksiazka, Wazon, 
+Hall: Puchar, Ksiazka, Ciezarek
+Bathroom (North): Tasak, Mydelniczka, Nozyczki
+Bathroom (South): Trucizna, Doniczka, Mydelniczka
+Bathroom (West): Wazon, Ciezarek, Nozyczki
+Terrace (West): Łopata, Grabie, Mlotek
+Terrace (East): Łopata, Worek, Doniczka
+Ballroom: Noz, Swiecznik, Puchar
+Dining Room: Puchar, Trucizna, Nozyczki
+Wardrobe: Wieszak, Szpilka, Ciezarek
+Closet (North): Lina, Swiecznik, Worek
+Closet (South): Tasak, Mlotek, Lina 
+Closet (West): Mlotek, Grabie, Worek
+Corridor: Swiecznik, Wazon, Doniczka
 
 tiles:
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
