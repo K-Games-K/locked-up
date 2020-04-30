@@ -6,7 +6,7 @@ namespace Ui
     TableWidget::TableWidget(int columns_count, int rows_count,
         const std::vector<float>& column_widths, const std::vector<float>& row_heights,
         sf::Vector2f position, TableWidgetSettings settings, Anchor origin, Anchor anchor)
-        : Widget(position, {}, origin, anchor),
+        : WidgetContainer(position, {}, origin, anchor),
         columns_count(columns_count), rows_count(rows_count), column_widths(column_widths),
         row_heights(row_heights), settings(settings)
     {
@@ -42,6 +42,24 @@ namespace Ui
                 cell_pos += sf::Vector2f(0, row_heights[row] + settings.grid_thickness);
             }
             cell_pos += sf::Vector2f(column_widths[column] + settings.grid_thickness, 0);
+        }
+    }
+
+    void TableWidget::update(const float dt)
+    {
+        if(!is_enabled())
+            return;
+
+        for(int column = 0; column < columns_count; ++column)
+        {
+            for(int row = 0; row < rows_count; ++row)
+            {
+                auto& widget = widgets[column][row];
+                if(widget == nullptr || !widget->is_enabled())
+                    continue;
+
+                widget->update(dt);
+            }
         }
     }
 

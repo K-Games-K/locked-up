@@ -12,5 +12,7 @@ namespace Ui
 
     public:
         virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) = 0;
+
+        virtual void update(const float dt) = 0;
     };
 }

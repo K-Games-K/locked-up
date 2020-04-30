@@ -5,6 +5,7 @@
 #include "button_renderer.hpp"
 #include "text_edit_renderer.hpp"
 #include "checkbox_renderer.hpp"
+#include "notification_widget_renderer.hpp"
 
 template<typename T>
 class WidgetContainerRenderer : public WidgetRenderer<T>
@@ -13,7 +14,8 @@ private:
     TextRenderer text_renderer;
     ButtonRenderer button_renderer;
     TextEditRenderer text_edit_renderer;
-    CheckboxRender checkbox_render;
+    CheckboxRenderer checkbox_renderer;
+    NotificationWidgetRenderer notification_widget_renderer;
 
 protected:
     WidgetContainerRenderer(sf::RenderWindow& window, ResourceManagers resources)
@@ -21,7 +23,8 @@ protected:
         text_renderer(window, resources),
         button_renderer(window, resources),
         text_edit_renderer(window, resources),
-        checkbox_render(window, resources)
+        checkbox_renderer(window, resources),
+        notification_widget_renderer(window, resources)
     {}
 
     void render(const Ui::Widget* widget, const float dt, sf::Vector2f origin_pos,
@@ -56,15 +59,21 @@ protected:
         }
         else if(auto textured_checkbox = dynamic_cast<const Ui::TexturedCheckbox*>(widget))
         {
-            checkbox_render.set_origin_pos(origin_pos);
-            checkbox_render.set_parent_size(parent_size);
-            checkbox_render.render(*textured_checkbox, dt);
+            checkbox_renderer.set_origin_pos(origin_pos);
+            checkbox_renderer.set_parent_size(parent_size);
+            checkbox_renderer.render(*textured_checkbox, dt);
         }
         else if(auto checkbox = dynamic_cast<const Ui::Checkbox*>(widget))
         {
-            checkbox_render.set_origin_pos(origin_pos);
-            checkbox_render.set_parent_size(parent_size);
-            checkbox_render.render(*checkbox, dt);
+            checkbox_renderer.set_origin_pos(origin_pos);
+            checkbox_renderer.set_parent_size(parent_size);
+            checkbox_renderer.render(*checkbox, dt);
+        }
+        else if(auto notification_widget = dynamic_cast<const Ui::NotificationWidget*>(widget))
+        {
+            notification_widget_renderer.set_origin_pos(origin_pos);
+            notification_widget_renderer.set_parent_size(parent_size);
+            notification_widget_renderer.render(*notification_widget, dt);
         }
     }
 };

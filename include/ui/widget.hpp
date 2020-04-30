@@ -36,7 +36,9 @@ namespace Ui
     public:
         virtual ~Widget() = default;
 
-        virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) {};
+        virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) {}
+
+        virtual void update(const float dt) {}
 
         void set_enabled(bool enabled);
 

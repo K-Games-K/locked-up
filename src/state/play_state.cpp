@@ -20,12 +20,23 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     panel_renderer(window, {textures, fonts}),
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
 {
+    auto& font = fonts.get("IndieFlower-Regular");
+
     notepad_widget = new Ui::NotepadWidget(
         Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),
-        fonts.get("IndieFlower-Regular"), {}, {-50, 0},
+        font, {}, {-50, 0},
         Ui::Anchor::CenterRight, Ui::Anchor::CenterRight
     );
     user_interface.add_widget(notepad_widget);
+
+    notification_widget = new Ui::NotificationWidget(
+        font,
+        {0, 40}, {400, 100},
+        {sf::Color::White, 30, sf::Color::Black, 1},
+        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+    );
+    notification_widget->show_notification("Hello there general!", 2);
+    user_interface.add_widget(notification_widget);
 
     pause_menu = new Ui::Panel(
         {0, 0}, user_interface.get_size(),
@@ -40,8 +51,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         Ui::Anchor::Center, Ui::Anchor::Center
     );
     pause_menu->add_widget(pause_menu_panel);
-
-    auto& font = fonts.get("IndieFlower-Regular");
 
     pause_menu_panel->add_widget(
         new Ui::Text(
@@ -156,6 +165,8 @@ void PlayState::update(float dt)
         if(packet != nullptr)
             packet_received(std::move(packet));
     }
+
+    user_interface.update(dt);
 }
 
 void PlayState::render(float dt)

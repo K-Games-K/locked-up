@@ -4,10 +4,10 @@
 #include "ui/checkbox.hpp"
 #include "ui/textured_checkbox.hpp"
 
-class CheckboxRender : public WidgetRenderer<Ui::Checkbox>
+class CheckboxRenderer : public WidgetRenderer<Ui::Checkbox>
 {
 public:
-    CheckboxRender(sf::RenderWindow& window, ResourceManagers resources);
+    CheckboxRenderer(sf::RenderWindow& window, ResourceManagers resources);
 
     void render(const Ui::Checkbox& checkbox, const float dt) override;
 

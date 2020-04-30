@@ -2,6 +2,8 @@
 
 #include "notepad.hpp"
 #include "widget.hpp"
+#include "textured_panel.hpp"
+#include "checkbox.hpp"
 
 namespace Ui
 {

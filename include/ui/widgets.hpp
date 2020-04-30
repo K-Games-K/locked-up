@@ -8,3 +8,6 @@
 #include "textured_panel.hpp"
 #include "checkbox.hpp"
 #include "textured_checkbox.hpp"
+#include "notepad_widget.hpp"
+#include "table_widget.hpp"
+#include "notification_widget.hpp"

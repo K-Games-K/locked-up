@@ -43,6 +43,7 @@ private:
     Ui::Panel user_interface;
     Ui::Panel* pause_menu;
     Ui::NotepadWidget* notepad_widget;
+    Ui::NotificationWidget* notification_widget;
 
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;

@@ -1,11 +1,11 @@
 #include "utils.hpp"
 #include "render/checkbox_renderer.hpp"
 
-CheckboxRender::CheckboxRender(sf::RenderWindow& window, ResourceManagers resources)
+CheckboxRenderer::CheckboxRenderer(sf::RenderWindow& window, ResourceManagers resources)
     : WidgetRenderer(window, resources)
 {}
 
-void CheckboxRender::render(const Ui::Checkbox& checkbox, const float dt)
+void CheckboxRenderer::render(const Ui::Checkbox& checkbox, const float dt)
 {
     if(!checkbox.is_enabled())
         return;
@@ -37,7 +37,7 @@ void CheckboxRender::render(const Ui::Checkbox& checkbox, const float dt)
     }
 }
 
-void CheckboxRender::render(const Ui::TexturedCheckbox& checkbox, const float dt)
+void CheckboxRenderer::render(const Ui::TexturedCheckbox& checkbox, const float dt)
 {
     if(!checkbox.is_enabled())
         return;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "widget.hpp"
+#include "widget_container.hpp"
 
 namespace Ui
 {
@@ -10,7 +10,7 @@ namespace Ui
         float grid_thickness = 1;
     };
 
-    class TableWidget : public Widget
+    class TableWidget : public WidgetContainer
     {
     private:
         const int columns_count;
@@ -34,6 +34,8 @@ namespace Ui
         ~TableWidget();
 
         void handle_event(sf::Event event, sf::Vector2f mouse_pos) override;
+
+        void update(const float dt) override;
 
         void add_widget(int column, int row, Widget* widget);
 
