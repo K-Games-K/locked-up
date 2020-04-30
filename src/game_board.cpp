@@ -60,7 +60,12 @@ int GameBoard::get_height() const
     return height;
 }
 
-std::vector<int> GameBoard::get_neighbours(int room_id) const
+const std::vector<int>& GameBoard::get_tiles() const
+{
+    return tiles;
+}
+
+const std::vector<int>& GameBoard::get_neighbours(int room_id) const
 {
     return neighbours_map.at(room_id);
 }

@@ -38,5 +38,7 @@ public:
 
     int get_height() const;
 
-    std::vector<int> get_neighbours(int room_id) const;
+    const std::vector<int>& get_tiles() const;
+
+    const std::vector<int>& get_neighbours(int room_id) const;
 };
