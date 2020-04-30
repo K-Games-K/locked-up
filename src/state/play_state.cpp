@@ -90,6 +90,18 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             Ui::Anchor::CenterTop, Ui::Anchor::Center
         )
     );
+
+    popup = new Ui::Popup(
+        textures.get("paper_small"),
+        font,
+        {-100, 0},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    user_interface.add_widget(popup);
+
+    popup->set_title("To jest popup!");
+    popup->set_description("To jest opis tego popupa.\nLorem ipsum dolor it samet.");
+    popup->show();
 }
 
 void PlayState::handle_input(sf::Event event)
@@ -259,6 +271,11 @@ void PlayState::exit_clicked(Ui::Button& button)
 {
     server_connection.send(DisconnectPacket());
     game_state_manager.pop_state();
+}
+
+void PlayState::popup_closed(Ui::Button& button)
+{
+    popup->set_enabled(false);
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)

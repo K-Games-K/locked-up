@@ -11,3 +11,4 @@
 #include "notepad_widget.hpp"
 #include "table_widget.hpp"
 #include "notification_widget.hpp"
+#include "popup.hpp"

@@ -13,8 +13,7 @@
 #include "render/player_renderer.hpp"
 #include "render/game_board_renderer.hpp"
 #include "render/panel_renderer.hpp"
-#include "ui/panel.hpp"
-#include "ui/notepad_widget.hpp"
+#include "ui/widgets.hpp"
 
 class PlayState : public GameState
 {
@@ -44,6 +43,7 @@ private:
     Ui::Panel* pause_menu;
     Ui::NotepadWidget* notepad_widget;
     Ui::NotificationWidget* notification_widget;
+    Ui::Popup* popup;
 
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
@@ -59,6 +59,8 @@ private:
     void resume_clicked(Ui::Button& button);
 
     void exit_clicked(Ui::Button& button);
+
+    void popup_closed(Ui::Button& button);
 
     sf::Vector2f window_to_board_coords(sf::Vector2f window_coords);
 
