@@ -1,4 +1,6 @@
+#include <iostream>
 #include "ui/notepad_widget.hpp"
+#include "ui/table_widget.hpp"
 
 namespace Ui
 {
@@ -9,6 +11,7 @@ namespace Ui
         notepad(notepad)
     {
         auto& players = notepad.get_players();
+        const int alibi_length = notepad.get_notes(players[0]).size();
         float button_width = get_size().x / (players.size() + 1);
         note_panels.reserve(players.size());
         for(int i = 0; i < players.size(); ++i)
@@ -42,6 +45,86 @@ namespace Ui
             );
             note_panel->set_enabled(false);
             add_widget(note_panel);
+
+            auto table_widget = new Ui::TableWidget(
+                3, alibi_length + 1,
+                {150, 300, 100},
+                std::vector<float>(alibi_length + 1, 45),
+                {0, 150},
+                {},
+                Anchor::CenterTop, Anchor::CenterTop
+            );
+            note_panel->add_widget(table_widget);
+
+            table_widget->add_widget(
+                0, 0, new Ui::Text(
+                    "Time",
+                    font,
+                    {},
+                    {sf::Color::Black, 26},
+                    Anchor::Center, Anchor::Center
+                )
+            );
+            table_widget->add_widget(
+                1, 0, new Ui::Text(
+                    "Room",
+                    font,
+                    {},
+                    {sf::Color::Black, 26},
+                    Anchor::Center, Anchor::Center
+                )
+            );
+            table_widget->add_widget(
+                2, 0, new Ui::Text(
+                    "Sure",
+                    font,
+                    {},
+                    {sf::Color::Black, 26},
+                    Anchor::Center, Anchor::Center
+                )
+            );
+
+            auto& notes = notepad.get_notes(players[i]);
+            for(int j = 0; j < notes.size(); ++j)
+            {
+                table_widget->add_widget(
+                    0, j + 1, new Ui::Text(
+                        hours.at(j),
+                        font,
+                        {},
+                        {sf::Color::Black},
+                        Anchor::Center, Anchor::Center
+                    )
+                );
+                auto text_edit = new Ui::TextEdit(
+                    font,
+                    {0, 0},
+                    {290, 40},
+                    {
+                        sf::Color::Transparent,
+                        sf::Color::Transparent,
+                        sf::Color::Black
+                    },
+                    24,
+                    Anchor::Center, Anchor::Center
+                );
+                text_edit->get_text().set_string(notes[j].room_name);
+                table_widget->add_widget(1, j + 1, text_edit);
+                table_widget->add_widget(
+                    2, j + 1, new Ui::Checkbox(
+                        {0, 0}, {30, 30},
+                        {
+                            sf::Color::Transparent,
+                            sf::Color::Black,
+                            1,
+                            sf::Color::Black,
+                            2
+                        },
+                        Anchor::Center, Anchor::Center
+                    )
+                );
+            }
+
             note_panels.push_back(note_panel);
         }
 
