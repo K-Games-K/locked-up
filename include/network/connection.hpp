@@ -24,6 +24,8 @@ public:
 
     bool is_connected() const;
 
+    void disconnect();
+
     bool send(const Packet& packet);
 
     std::unique_ptr<Packet> recv();

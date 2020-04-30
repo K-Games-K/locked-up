@@ -30,6 +30,12 @@ bool Connection::is_connected() const
     return connected;
 }
 
+void Connection::disconnect()
+{
+    socket->disconnect();
+    connected = false;
+}
+
 bool Connection::send(const Packet& packet)
 {
     if(!connected)
