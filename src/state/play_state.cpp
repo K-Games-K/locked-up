@@ -57,6 +57,15 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     );
     action_panel->add_widget(search_action_button);
 
+    current_room_text = new Ui::Text(
+        "",
+        font,
+        {-50, 20},
+        {sf::Color::White, 30},
+        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+    );
+    user_interface.add_widget(current_room_text);
+
     notification_widget = new Ui::NotificationWidget(
         font,
         {0, 40}, {400, 100},
@@ -163,7 +172,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 
     popup->set_title("Dead body found!");
     std::stringstream descr;
-    descr << "A dead body was found in " << game_board.get_room(crime_room).get_name() << ".\n";
+    descr << "A dead body was found in\n" << game_board.get_room(crime_room).get_name() << ".\n";
     descr << crime_item.get_name() << " was found by the side.";
     popup->set_description(descr.str());
     popup->show();
@@ -242,6 +251,12 @@ void PlayState::update(float dt)
         if(packet != nullptr)
             packet_received(std::move(packet));
     }
+
+    auto& current_room = game_board.get_room(
+        players_list.at(player_id).get_position().x,
+        players_list.at(player_id).get_position().y
+    );
+    current_room_text->set_string("Current room: " + current_room.get_name());
 
     user_interface.update(dt);
 }
@@ -323,7 +338,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             std::stringstream ss;
             ss << "New turn!\n";
             ss << "Current player: " << players_list.at(current_player_id).get_nickname();
-            notification_widget->show_notification(ss.str(), 5);
+            notification_widget->show_notification(ss.str(), 2.5);
 
             break;
         }
