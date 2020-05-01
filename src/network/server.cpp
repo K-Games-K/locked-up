@@ -125,7 +125,7 @@ void Server::update()
             // Setting up new game.
 
             std::mt19937 gen(time(nullptr));
-            std::uniform_int_distribution<> rand_room(0, game_board.rooms_count() - 1);
+            std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
             int crime_room = rand_room(gen);
             std::cout << "Generating alibis. Crime room is "
                 << game_board.get_room(crime_room).get_name() << "." << std::endl;
