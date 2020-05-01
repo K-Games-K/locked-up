@@ -128,7 +128,15 @@ void Server::update()
             std::cout << "Generating alibis. Crime room is "
                 << game_board.get_room(crime_room).get_name() << "." << std::endl;
             for(auto& player : players)
+            {
                 player.generate_alibi(game_board, crime_room, ALIBI_LENGTH);
+                auto& alibi = player.get_alibi();
+                for(int i = 0; i < alibi.size(); ++i)
+                {
+                    auto& room = game_board.get_room(alibi[i]);
+                    room.get_visitors().push_back({i, player.get_nickname()});
+                }
+            }
 
             auto& items = game_board.get_room(crime_room).get_items();
             std::uniform_int_distribution<> rand_tool(0, items.size() - 1);
@@ -333,8 +341,11 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
         }
         case ActionPacket::PACKET_ID:
         {
-            if(game_stage != GameStage::Action || current_player_id != player.get_player_id())
+            if(game_stage != GameStage::Action && game_stage != GameStage::Movement ||
+                current_player_id != player.get_player_id())
                 break;
+
+            game_stage = GameStage::Action;
 
             auto action_packet = dynamic_cast<ActionPacket&>(*packet);
             ActionType action_type = action_packet.get_action_type();
@@ -343,20 +354,21 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             {
                 case ActionType::SearchRoom:
                 {
-                    auto& items = game_board.get_room(
+                    auto& player_room = game_board.get_room(
                         player.get_position().x, player.get_position().y
-                    ).get_items();
+                    );
+                    auto clues = player_room.get_visitors();
 
-                    Item item;
-                    std::uniform_real_distribution<> rand_perc(0, 100);
-                    if(!items.empty() && rand_perc(gen) < 50)
+                    if(!clues.empty())
                     {
-                        std::shuffle(items.begin(), items.end(), gen);
-                        item = items[items.size() - 1];
-                        items.pop_back();
+                        std::shuffle(clues.begin(), clues.end(), gen);
+                        auto clue = clues.front();
+                        connection.send(ClueFoundPacket(clue.second, hours.at(clue.first)));
                     }
-
-                    connection.send(ItemFoundPacket(item));
+                    else
+                    {
+                        connection.send(ClueFoundPacket());
+                    }
 
                     actions_left--;
 

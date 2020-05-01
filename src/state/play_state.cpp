@@ -322,18 +322,18 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
 
             break;
         }
-        case ItemFoundPacket::PACKET_ID:
+        case ClueFoundPacket::PACKET_ID:
         {
-            auto item_found_packet = dynamic_cast<ItemFoundPacket&>(*packet);
-            Item item = item_found_packet.get_item();
+            auto clue_found_packet = dynamic_cast<ClueFoundPacket&>(*packet);
+            std::string clue = clue_found_packet.get_clue();
+            std::string time = clue_found_packet.get_time();
 
-            if(!item.get_name().empty())
+            if(!clue.empty())
             {
                 popup->set_title("Found an item!");
                 std::stringstream descr;
-                descr << "You found a ";
-                descr << (item.get_type() == Item::Type::Prove ? "prove" : "clue") << ":\n";
-                descr << item.get_name();
+                descr << "You found a clue that ";
+                descr << clue << " was here at " << time << "!";
                 popup->set_description(descr.str());
                 popup->show();
             }

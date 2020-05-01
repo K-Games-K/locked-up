@@ -114,27 +114,28 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     );
     avatars_table = new Ui::TableWidget(
         3, 2,
-        { 100, 100, 100 },
-        { 80, 80 },
-        { 0,210 },
+        {100, 100, 100},
+        {80, 80},
+        {0, 210},
         {},
         Ui::Anchor::Center,
         Ui::Anchor::Center
     );
     avatars_table->set_grid_thickness(0.001);
-    std::vector<std::string> avatar_name = {"Mr3", "Mr2","Mr1","Mrs3","Mrs2","Mrs1" };
-    for (int i = 0; i <= 1; ++i)
+    std::vector<std::string> avatar_name = {"Mr3", "Mr2", "Mr1", "Mrs3", "Mrs2", "Mrs1"};
+    for(int i = 0; i <= 1; ++i)
     {
-        for (int j = 0; j <= 2; ++j)
+        for(int j = 0; j <= 2; ++j)
         {
-            avatars_table->add_widget(j, i,
+            avatars_table->add_widget(
+                j, i,
                 new Ui::Button(
                     avatar_name.back(),
                     font,
                     std::bind(&MainMenuState::join_clicked, this, std::placeholders::_1),
-                    { 0, 0 }, { 80, 80 },
+                    {0, 0}, {80, 80},
                     button_colors,
-                    { sf::Color::Black },
+                    {sf::Color::Black},
                     Ui::Anchor::Center,
                     Ui::Anchor::Center
                 )
