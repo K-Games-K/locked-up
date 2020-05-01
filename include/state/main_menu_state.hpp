@@ -19,6 +19,7 @@ private:
     Ui::TextEdit* port_text_edit;
     Ui::Panel* join_game_panel;
     Ui::Text* connecting_text_widget;
+    Ui::TableWidget* avatars_table;
 
     AnimatedBackgroundRenderer background_renderer;
 
