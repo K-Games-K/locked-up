@@ -18,6 +18,11 @@ void Player::set_nickname(const std::string& nickname)
     this->nickname = nickname;
 }
 
+void Player::set_avatar(const std::string& avatar)
+{
+    this->avatar = avatar;
+}
+
 std::string Player::get_nickname() const
 {
     return nickname;

@@ -262,7 +262,10 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             auto join_game_packet = dynamic_cast<JoinGamePacket&>(*packet);
 
             std::string nickname = join_game_packet.get_nickname();
+            std::string avatar = join_game_packet.get_avatar();
             player.set_nickname(nickname);
+            player.set_avatar(avatar);
+            std::cout << avatar << std::endl;
 
             std::vector<Player> players_list(players.begin(), players.end());
             for(int i = 0; i < players.size(); ++i)

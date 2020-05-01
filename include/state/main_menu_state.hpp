@@ -24,12 +24,15 @@ private:
     AnimatedBackgroundRenderer background_renderer;
 
     std::string nickname;
+    std::string the_avatar;
     Connection server_connection;
     std::thread connection_thread;
 
     void join_clicked(Ui::Button& button);
 
     void exit_clicked(Ui::Button& button);
+
+    void avatar_clicked(std::string avatar_name);
 
     void connect_to_server(sf::IpAddress addr, unsigned short port);
 

@@ -10,7 +10,7 @@ class Player
 {
 private:
     std::string nickname;
-    std::string avatar = "Mr1";
+    std::string avatar;
     sf::Vector2i position;
 
     std::vector<int> alibi;
@@ -21,6 +21,9 @@ public:
     Player(const std::string& nickname, sf::Vector2i position);
 
     void set_nickname(const std::string& nickname);
+
+    void set_avatar(const std::string& avatar);
+
 
     std::string get_nickname() const;
 
