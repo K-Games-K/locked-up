@@ -23,6 +23,11 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     user_interface({0, 0}, (sf::Vector2f) window.getSize())
 {
     auto& font = fonts.get("IndieFlower-Regular");
+    Ui::ButtonColors button_colors = {
+        sf::Color(0, 0, 0, 140),
+        sf::Color(0, 0, 0, 190),
+        sf::Color(0, 0, 0, 210)
+    };
 
     walk_sound.setBuffer(sound_buffers.get("walk_sound"));
     walk_sound.setVolume(40);
@@ -33,6 +38,24 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         Ui::Anchor::CenterRight, Ui::Anchor::CenterRight
     );
     user_interface.add_widget(notepad_widget);
+
+    action_panel = new Ui::Panel(
+        {game_board_pos.x, -20}, {900, 50},
+        sf::Color::Transparent,
+        Ui::Anchor::BottomLeft, Ui::Anchor::BottomLeft
+    );
+    user_interface.add_widget(action_panel);
+
+    search_action_button = new Ui::Button(
+        "Search current room",
+        font,
+        std::bind(&PlayState::action_clicked, this, std::placeholders::_1),
+        {0, 0}, {300, 40},
+        button_colors,
+        {},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    action_panel->add_widget(search_action_button);
 
     notification_widget = new Ui::NotificationWidget(
         font,
@@ -66,12 +89,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
         )
     );
-
-    Ui::ButtonColors button_colors = {
-        sf::Color(0, 0, 0, 140),
-        sf::Color(0, 0, 0, 190),
-        sf::Color(0, 0, 0, 210)
-    };
 
     pause_menu_panel->add_widget(
         new Ui::Button(
@@ -120,26 +137,26 @@ void PlayState::handle_input(sf::Event event)
         game_state_manager.pop_state();
     }
 
-    // if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left &&
-    //     !paused)
-    // {
-    //     sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-    //     sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
-    //
-    //     if(game_board_rect.contains(mouse_pos))
-    //     {
-    //         sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
-    //
-    //         server_connection.send(
-    //             PlayerMovePacket(
-    //                 world_mouse_pos.x,
-    //                 world_mouse_pos.y,
-    //                 player_id,
-    //                 false
-    //             )
-    //         );
-    //     }
-    // }
+    if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left &&
+        !paused)
+    {
+        sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
+        sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
+
+        if(game_board_rect.contains(mouse_pos))
+        {
+            sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
+
+            server_connection.send(
+                PlayerMovePacket(
+                    world_mouse_pos.x,
+                    world_mouse_pos.y,
+                    player_id,
+                    false
+                )
+            );
+        }
+    }
 
     sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
     sf::Vector2f mouse_pos_rel = mouse_pos - user_interface.get_relative_position(
@@ -148,10 +165,8 @@ void PlayState::handle_input(sf::Event event)
     );
     user_interface.handle_event(event, mouse_pos_rel);
 
-    
     if(event.type == sf::Event::KeyPressed)
     {
-        
         switch(event.key.code)
         {
             case sf::Keyboard::Up:
@@ -282,6 +297,14 @@ void PlayState::exit_clicked(Ui::Button& button)
 {
     server_connection.send(DisconnectPacket());
     game_state_manager.pop_state();
+}
+
+void PlayState::action_clicked(Ui::Button& button)
+{
+    if(button == *search_action_button)
+    {
+        server_connection.send(ActionPacket(ActionType::SearchRoom));
+    }
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)
