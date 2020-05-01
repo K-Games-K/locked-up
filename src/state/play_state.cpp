@@ -384,6 +384,25 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             place_clue_action_button->set_enabled(true);
             break;
         }
+        case VotePacket::PACKET_ID:
+        {
+            voting_menu->set_enabled(true);
+            break;
+        }
+        case GameResultsPacket::PACKET_ID:
+        {
+            auto game_results_packet = dynamic_cast<GameResultsPacket&>(*packet);
+
+            std::string murderer = game_results_packet.get_murderer();
+            std::string voting_result = game_results_packet.get_voting_result();
+
+            popup->set_title("Game results:");
+            std::stringstream ss;
+            ss << murderer << " was the murderer.\n";
+            ss << "And you accused: " << voting_result << ".";
+            popup->set_description(ss.str());
+            popup->show();
+        }
         default:
             break;
     }
@@ -415,7 +434,18 @@ void PlayState::action_clicked(Ui::Button& button)
 
 void PlayState::vote_clicked(Ui::Button& button)
 {
+    if(voted)
+        return;
 
+    std::string nickname = button.get_text().get_string();
+    int vote_id = std::distance(
+        players_list.begin(),
+        std::find(players_list.begin(), players_list.end(), Player(nickname))
+    );
+
+    server_connection.send(VotePacket(vote_id));
+    voted = true;
+    voting_menu->set_enabled(false);
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)

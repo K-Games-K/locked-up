@@ -61,6 +61,7 @@ private:
 
     bool paused = false;
     bool debug_render = false;
+    bool voted = false;
 
     void packet_received(std::unique_ptr<Packet> packet);
 

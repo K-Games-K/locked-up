@@ -14,3 +14,5 @@
 #include "action_packet.hpp"
 #include "clue_found_packet.hpp"
 #include "murderer_packet.hpp"
+#include "vote_packet.hpp"
+#include "game_results_packet.hpp"

@@ -140,6 +140,7 @@ void Server::update()
 
             std::uniform_int_distribution<> rand_player(0, players.size() - 1);
             auto& murderer = players[rand_player(gen)];
+            murderer_id = murderer.get_player_id();
             std::vector<Item> items;
             for(int room_id : murderer.get_alibi())
             {
@@ -226,11 +227,48 @@ void Server::update()
         }
         case GameStage::EndTurn:
         {
-            game_stage = GameStage::NewTurn;
+            if(turn < TURNS_PER_GAME)
+            {
+                game_stage = GameStage::NewTurn;
+                break;
+            }
+
+            votes.clear();
+            votes.resize(players.size(), -1);
+
+            broadcast(VotePacket());
+            game_stage = GameStage::Voting;
             break;
         }
         case GameStage::Voting:
         {
+            bool voting_done = true;
+            for(int vote : votes)
+            {
+                if(vote == -1)
+                {
+                    voting_done = false;
+                    break;
+                }
+            }
+
+            if(voting_done)
+            {
+                std::vector<int> results(players.size(), 0);
+                for(int vote : votes)
+                    results[vote]++;
+
+                int voting_result = *std::max_element(results.begin(), results.end());
+                broadcast(
+                    GameResultsPacket(
+                        players.at(murderer_id).get_nickname(),
+                        players.at(voting_result).get_nickname()
+                    )
+                );
+
+                game_stage = GameStage::Results;
+            }
+
             break;
         }
         case GameStage::Results:
@@ -410,6 +448,17 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                     break;
                 }
             }
+
+            break;
+        }
+        case VotePacket::PACKET_ID:
+        {
+            if(game_stage != GameStage::Voting)
+                break;
+
+            auto vote_packet = dynamic_cast<VotePacket&>(*packet);
+            int vote_id = vote_packet.get_player_id();
+            votes.at(player.get_player_id()) = vote_id;
 
             break;
         }
