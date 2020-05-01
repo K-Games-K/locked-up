@@ -18,15 +18,15 @@ GameBoard GameBoardPacket::get_game_board() const
 
 void GameBoardPacket::serialize(sf::Packet& data) const
 {
-    data << game_board.width << game_board.height << (uint64_t)game_board.rooms.size();
+    data << game_board.width << game_board.height << (sf::Uint64)game_board.rooms.size();
     for(auto& room : game_board.rooms)
         data << room.get_name();
 
-    data << (uint64_t) game_board.tiles.size();
+    data << (sf::Uint64) game_board.tiles.size();
     for(auto& idx : game_board.tiles)
         data << idx;
 
-    data << (uint64_t) game_board.collision_map.size();
+    data << (sf::Uint64) game_board.collision_map.size();
     for(auto& collision : game_board.collision_map)
         data << collision[0] << collision[1];
 }
@@ -34,7 +34,7 @@ void GameBoardPacket::serialize(sf::Packet& data) const
 void GameBoardPacket::deserialize(sf::Packet& data)
 {
     int width, height;
-    uint64_t rooms_size;
+    sf::Uint64 rooms_size;
     std::vector<Room> rooms;
     data >> width >> height >> rooms_size;
 
@@ -46,7 +46,7 @@ void GameBoardPacket::deserialize(sf::Packet& data)
         rooms.emplace_back(room_name);
     }
 
-    uint64_t indices_size;
+    sf::Uint64 indices_size;
     std::vector<int> tiles;
     data >> indices_size;
     tiles.reserve(indices_size);
@@ -57,7 +57,7 @@ void GameBoardPacket::deserialize(sf::Packet& data)
         tiles.push_back(idx);
     }
 
-    uint64_t collision_map_size;
+    sf::Uint64 collision_map_size;
     std::vector<std::array<bool, 2>> collision_map;
     data >> collision_map_size;
     collision_map.reserve(collision_map_size);
