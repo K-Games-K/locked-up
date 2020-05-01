@@ -120,26 +120,26 @@ void PlayState::handle_input(sf::Event event)
         game_state_manager.pop_state();
     }
 
-    if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left &&
-        !paused)
-    {
-        sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-        sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
-
-        if(game_board_rect.contains(mouse_pos))
-        {
-            sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
-
-            server_connection.send(
-                PlayerMovePacket(
-                    world_mouse_pos.x,
-                    world_mouse_pos.y,
-                    player_id,
-                    false
-                )
-            );
-        }
-    }
+    // if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left &&
+    //     !paused)
+    // {
+    //     sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
+    //     sf::FloatRect game_board_rect(game_board_pos, GAME_BOARD_SIZE);
+    //
+    //     if(game_board_rect.contains(mouse_pos))
+    //     {
+    //         sf::Vector2i world_mouse_pos = (sf::Vector2i) window_to_board_coords(mouse_pos);
+    //
+    //         server_connection.send(
+    //             PlayerMovePacket(
+    //                 world_mouse_pos.x,
+    //                 world_mouse_pos.y,
+    //                 player_id,
+    //                 false
+    //             )
+    //         );
+    //     }
+    // }
 
     sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
     sf::Vector2f mouse_pos_rel = mouse_pos - user_interface.get_relative_position(
