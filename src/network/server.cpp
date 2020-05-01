@@ -361,6 +361,7 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
 
             auto action_packet = dynamic_cast<ActionPacket&>(*packet);
             ActionType action_type = action_packet.get_action_type();
+            actions_left--;
 
             switch(action_type)
             {
@@ -385,12 +386,27 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                         connection.send(ClueFoundPacket());
                     }
 
-                    actions_left--;
-
                     break;
                 }
                 case ActionType::PlaceFalseClue:
                 {
+                    std::uniform_int_distribution<> rand_player(0, players.size() - 1);
+                    int player_id = player.get_player_id();
+                    while(player_id == player.get_player_id())
+                        player_id = rand_player(gen);
+
+                    auto& player_room = game_board.get_room(
+                        player.get_position().x, player.get_position().y
+                    );
+
+                    std::uniform_int_distribution<> rand_hour(0, hours.size() - 1);
+                    player_room.get_visitors().push_back(
+                        {rand_hour(gen), players[player_id].get_nickname()}
+                    );
+
+                    for(auto& a : player_room.get_visitors())
+                        std::cout << a.first << ":" << a.second << std::endl;
+
                     break;
                 }
             }

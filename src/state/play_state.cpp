@@ -30,7 +30,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     };
 
     walk_sound.setBuffer(sound_buffers.get("walk_sound"));
-    walk_sound.setVolume(40);
+    walk_sound.setVolume(20);
 
     notepad_widget = new Ui::NotepadWidget(
         Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),
@@ -50,12 +50,24 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         "Search current room",
         font,
         std::bind(&PlayState::action_clicked, this, std::placeholders::_1),
-        {0, 0}, {300, 40},
+        {-160, 0}, {300, 40},
         button_colors,
         {},
         Ui::Anchor::Center, Ui::Anchor::Center
     );
     action_panel->add_widget(search_action_button);
+
+    place_clue_action_button = new Ui::Button(
+        "Place fake clue",
+        font,
+        std::bind(&PlayState::action_clicked, this, std::placeholders::_1),
+        {160, 0}, {300, 40},
+        button_colors,
+        {},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    place_clue_action_button->set_enabled(false);
+    action_panel->add_widget(place_clue_action_button);
 
     current_room_text = new Ui::Text(
         "",
@@ -335,10 +347,10 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             auto new_turn_packet = dynamic_cast<NewTurnPacket&>(*packet);
             current_player_id = new_turn_packet.get_current_player_id();
 
-            std::stringstream ss;
-            ss << "New turn!\n";
-            ss << "Current player: " << players_list.at(current_player_id).get_nickname();
-            notification_widget->show_notification(ss.str(), 2.5);
+            // std::stringstream ss;
+            // ss << "New turn!\n";
+            // ss << "Current player: " << players_list.at(current_player_id).get_nickname();
+            // notification_widget->show_notification(ss.str(), 2.5);
 
             break;
         }
@@ -352,7 +364,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             {
                 popup->set_title("Found an item!");
                 std::stringstream descr;
-                descr << "You found a clue that ";
+                descr << "You found a clue that\n";
                 descr << clue << " was here at " << time << "!";
                 popup->set_description(descr.str());
                 popup->show();
@@ -364,6 +376,12 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
                 popup->show();
             }
 
+            break;
+        }
+        case MurdererPacket::PACKET_ID:
+        {
+            notification_widget->show_notification("You are the MURDERER!", 5);
+            place_clue_action_button->set_enabled(true);
             break;
         }
         default:
@@ -388,6 +406,10 @@ void PlayState::action_clicked(Ui::Button& button)
     if(button == *search_action_button)
     {
         server_connection.send(ActionPacket(ActionType::SearchRoom));
+    }
+    else if(button == *place_clue_action_button)
+    {
+        server_connection.send(ActionPacket(ActionType::PlaceFalseClue));
     }
 }
 

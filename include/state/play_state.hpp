@@ -46,6 +46,7 @@ private:
     Ui::Panel* action_panel;
     Ui::Text* current_room_text;
     Ui::Button* search_action_button;
+    Ui::Button* place_clue_action_button;
     Ui::NotepadWidget* notepad_widget;
     Ui::NotificationWidget* notification_widget;
     Ui::Popup* popup;
