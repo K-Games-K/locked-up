@@ -57,6 +57,15 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     );
     action_panel->add_widget(search_action_button);
 
+    current_room_text = new Ui::Text(
+        "",
+        font,
+        {-50, 20},
+        {sf::Color::White, 30},
+        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+    );
+    user_interface.add_widget(current_room_text);
+
     notification_widget = new Ui::NotificationWidget(
         font,
         {0, 40}, {400, 100},
@@ -65,6 +74,54 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     );
     notification_widget->show_notification("Hello there general!", 2);
     user_interface.add_widget(notification_widget);
+
+    popup = new Ui::Popup(
+        textures.get("paper_small"),
+        font,
+        {-100, 0},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    user_interface.add_widget(popup);
+
+    voting_menu = new Ui::Panel(
+        {0, 0}, user_interface.get_size(),
+        sf::Color(0, 0, 0, 220)
+    );
+    voting_menu->set_enabled(false);
+    user_interface.add_widget(voting_menu);
+
+    auto voting_menu_panel = new Ui::TexturedPanel(
+        textures.get("paper"),
+        {0, 0},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    voting_menu->add_widget(voting_menu_panel);
+
+    voting_menu_panel->add_widget(
+        new Ui::Text(
+            "Police has arrived!\nNow you'll need to vote\nwho are you going to accuse:",
+            font,
+            {0, 40},
+            {sf::Color::Black, 28},
+            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+        )
+    );
+
+    for(int i = 0; i < this->players_list.size(); ++i)
+    {
+        auto& player = players_list[i];
+        voting_menu_panel->add_widget(
+            new Ui::Button(
+                player.get_nickname(),
+                font,
+                std::bind(&PlayState::vote_clicked, this, std::placeholders::_1),
+                {0, (i * 50.0f) - ((this->players_list.size() - 1) * 25.0f)}, {420, 40},
+                button_colors,
+                {sf::Color::Black},
+                Ui::Anchor::Center, Ui::Anchor::Center
+            )
+        );
+    }
 
     pause_menu = new Ui::Panel(
         {0, 0}, user_interface.get_size(),
@@ -113,17 +170,9 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         )
     );
 
-    popup = new Ui::Popup(
-        textures.get("paper_small"),
-        font,
-        {-100, 0},
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    user_interface.add_widget(popup);
-
     popup->set_title("Dead body found!");
     std::stringstream descr;
-    descr << "A dead body was found in " << game_board.get_room(crime_room).get_name() << ".\n";
+    descr << "A dead body was found in\n" << game_board.get_room(crime_room).get_name() << ".\n";
     descr << crime_item.get_name() << " was found by the side.";
     popup->set_description(descr.str());
     popup->show();
@@ -203,6 +252,12 @@ void PlayState::update(float dt)
             packet_received(std::move(packet));
     }
 
+    auto& current_room = game_board.get_room(
+        players_list.at(player_id).get_position().x,
+        players_list.at(player_id).get_position().y
+    );
+    current_room_text->set_string("Current room: " + current_room.get_name());
+
     user_interface.update(dt);
 }
 
@@ -280,20 +335,25 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             auto new_turn_packet = dynamic_cast<NewTurnPacket&>(*packet);
             current_player_id = new_turn_packet.get_current_player_id();
 
+            std::stringstream ss;
+            ss << "New turn!\n";
+            ss << "Current player: " << players_list.at(current_player_id).get_nickname();
+            notification_widget->show_notification(ss.str(), 2.5);
+
             break;
         }
-        case ItemFoundPacket::PACKET_ID:
+        case ClueFoundPacket::PACKET_ID:
         {
-            auto item_found_packet = dynamic_cast<ItemFoundPacket&>(*packet);
-            Item item = item_found_packet.get_item();
+            auto clue_found_packet = dynamic_cast<ClueFoundPacket&>(*packet);
+            std::string clue = clue_found_packet.get_clue();
+            std::string time = clue_found_packet.get_time();
 
-            if(!item.get_name().empty())
+            if(!clue.empty())
             {
                 popup->set_title("Found an item!");
                 std::stringstream descr;
-                descr << "You found a ";
-                descr << (item.get_type() == Item::Type::Prove ? "prove" : "clue") << ":\n";
-                descr << item.get_name();
+                descr << "You found a clue that ";
+                descr << clue << " was here at " << time << "!";
                 popup->set_description(descr.str());
                 popup->show();
             }
@@ -329,6 +389,11 @@ void PlayState::action_clicked(Ui::Button& button)
     {
         server_connection.send(ActionPacket(ActionType::SearchRoom));
     }
+}
+
+void PlayState::vote_clicked(Ui::Button& button)
+{
+
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)

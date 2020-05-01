@@ -13,10 +13,15 @@ class Server
 private:
     const float COUNTDOWN_INTERVAL = 0.5;
     const size_t MIN_PLAYERS_COUNT = 1;
-    const int MOVES_PER_TURN = 3;
+    const int MOVES_PER_TURN = 6;
     const int ACTIONS_PER_TURN = 1;
     const int ALIBI_LENGTH = 12;
     const int VISIBLE_ALIBIS = 3;
+
+    const std::vector<std::string> hours {
+        "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00",
+        "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"
+    };
 
     bool enabled = false;
     bool teleport_allowed = false;

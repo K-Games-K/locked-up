@@ -114,16 +114,16 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     );
     avatars_table = new Ui::TableWidget(
         3, 2,
-        { 100, 100, 100 },
-        { 80, 80 },
-        { 0,210 },
+        {100, 100, 100},
+        {80, 80},
+        {0, 210},
         {},
         Ui::Anchor::Center,
         Ui::Anchor::Center
     );
     avatars_table->set_grid_thickness(0.001);
 
-    
+
     avatars_table->add_widget(0,0,
         new Ui::Button(
             "Mrs1",
@@ -196,7 +196,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             Ui::Anchor::Center
         )
     );
-    
+
 
     join_game_panel->add_widget(avatars_table);
 
