@@ -24,6 +24,10 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 {
     auto& font = fonts.get("IndieFlower-Regular");
 
+    walk.loadFromFile("assets/sounds/walk_sound.wav");
+
+    walk_sound.setBuffer(walk);
+    walk_sound.play();
     notepad_widget = new Ui::NotepadWidget(
         Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),
         font, {}, {-50, 0},
@@ -145,20 +149,26 @@ void PlayState::handle_input(sf::Event event)
     );
     user_interface.handle_event(event, mouse_pos_rel);
 
+    
     if(event.type == sf::Event::KeyPressed)
     {
+        
         switch(event.key.code)
         {
             case sf::Keyboard::Up:
+                walk_sound.play();
                 server_connection.send(PlayerMovePacket(0, -1, player_id));
                 break;
             case sf::Keyboard::Down:
+                walk_sound.play();
                 server_connection.send(PlayerMovePacket(0, 1, player_id));
                 break;
             case sf::Keyboard::Left:
+                walk_sound.play();
                 server_connection.send(PlayerMovePacket(-1, 0, player_id));
                 break;
             case sf::Keyboard::Right:
+                walk_sound.play();
                 server_connection.send(PlayerMovePacket(1, 0, player_id));
                 break;
             case sf::Keyboard::Tilde:
