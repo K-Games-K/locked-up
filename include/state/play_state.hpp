@@ -19,7 +19,7 @@
 class PlayState : public GameState
 {
 private:
-    const sf::Vector2f GAME_BOARD_SIZE = {1000, 1000};
+    const sf::Vector2f GAME_BOARD_SIZE = {900, 900};
 
     const sf::Color CLEAR_COLOR = sf::Color::Black;
     const float CAMERA_SMOOTH = 0.2;
@@ -43,6 +43,8 @@ private:
     Connection server_connection;
 
     Ui::Panel user_interface;
+    Ui::Panel* action_panel;
+    Ui::Button* search_action_button;
     Ui::Panel* pause_menu;
     Ui::NotepadWidget* notepad_widget;
     Ui::NotificationWidget* notification_widget;
@@ -62,6 +64,8 @@ private:
     void resume_clicked(Ui::Button& button);
 
     void exit_clicked(Ui::Button& button);
+
+    void action_clicked(Ui::Button& button);
 
     sf::Vector2f window_to_board_coords(sf::Vector2f window_coords);
 
