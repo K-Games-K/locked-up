@@ -28,8 +28,9 @@ private:
     GameBoard game_board;
 
     sf::Sound walk_sound;
-    sf::SoundBuffer walk;
-    sf::SoundBuffer paper;
+    sf::Sound paper_sound;
+    sf::SoundBuffer walk_buffer;
+    sf::SoundBuffer paper_buffer;
     sf::Vector2f camera_pos;
     sf::Vector2f window_viewport = {(float) window.getSize().x, (float) window.getSize().y};
     sf::Vector2f game_board_pos = {
