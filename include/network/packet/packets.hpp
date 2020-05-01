@@ -13,3 +13,4 @@
 #include "new_turn_packet.hpp"
 #include "action_packet.hpp"
 #include "clue_found_packet.hpp"
+#include "murderer_packet.hpp"

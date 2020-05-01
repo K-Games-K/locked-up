@@ -29,6 +29,8 @@ std::unique_ptr<Packet> PacketFactory::create(uint16_t packet_id)
             return std::make_unique<ActionPacket>();
         case ClueFoundPacket::PACKET_ID:
             return std::make_unique<ClueFoundPacket>();
+        case MurdererPacket::PACKET_ID:
+            return std::make_unique<MurdererPacket>();
         default:
             return nullptr;
     }

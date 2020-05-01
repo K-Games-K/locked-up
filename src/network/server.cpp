@@ -138,7 +138,14 @@ void Server::update()
                 }
             }
 
-            auto& items = game_board.get_room(crime_room).get_items();
+            std::uniform_int_distribution<> rand_player(0, players.size() - 1);
+            auto& murderer = players[rand_player(gen)];
+            std::vector<Item> items;
+            for(int room_id : murderer.get_alibi())
+            {
+                auto& room = game_board.get_room(room_id);
+                items.insert(items.end(), room.get_items().begin(), room.get_items().end());
+            }
             std::uniform_int_distribution<> rand_tool(0, items.size() - 1);
             Item crime_item = items[rand_tool(gen)];
 
@@ -167,6 +174,8 @@ void Server::update()
                     GameStartPacket(i, i, alibis, crime_room, crime_item)
                 );
             }
+
+            murderer.get_connection().send(MurdererPacket());
 
             auto& tiles = game_board.get_tiles();
             std::vector<int> tiles_indices;
