@@ -1,15 +1,14 @@
 #include <numeric>
 #include <algorithm>
 #include <iostream>
-#include <random>
 #include <ctime>
-
 
 #include "game_board_loader.hpp"
 #include "network/server.hpp"
 #include "network/packet/packets.hpp"
 
 Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
+    : gen((time(nullptr)))
 {
     bool game_board_loaded = GameBoardLoader::load_from_file(
         game_board, "assets/maps/mapfile.karol"
@@ -124,7 +123,6 @@ void Server::update()
 
             // Setting up new game.
 
-            std::mt19937 gen(time(nullptr));
             std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
             int crime_room = rand_room(gen);
             std::cout << "Generating alibis. Crime room is "
@@ -193,7 +191,7 @@ void Server::update()
 
             broadcast(NewTurnPacket(current_player_id));
             moves_left = MOVES_PER_TURN;
-            actions_left = 0;
+            actions_left = ACTIONS_PER_TURN;
             game_stage = GameStage::Movement;
             break;
         }
@@ -333,6 +331,45 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
 
             break;
         }
+        case ActionPacket::PACKET_ID:
+        {
+            if(game_stage != GameStage::Action || current_player_id != player.get_player_id())
+                break;
+
+            auto action_packet = dynamic_cast<ActionPacket&>(*packet);
+            ActionType action_type = action_packet.get_action_type();
+
+            switch(action_type)
+            {
+                case ActionType::SearchRoom:
+                {
+                    auto& items = game_board.get_room(
+                        player.get_position().x, player.get_position().y
+                    ).get_items();
+
+                    Item item;
+                    std::uniform_real_distribution<> rand_perc(0, 100);
+                    if(!items.empty() && rand_perc(gen) < 50)
+                    {
+                        std::shuffle(items.begin(), items.end(), gen);
+                        item = items[items.size() - 1];
+                        items.pop_back();
+                    }
+
+                    connection.send(ItemFoundPacket(item));
+
+                    actions_left--;
+
+                    break;
+                }
+                case ActionType::PlaceFalseClue:
+                {
+                    break;
+                }
+            }
+
+            break;
+        }
         default:
             break;
     }
@@ -345,5 +382,3 @@ void Server::disconnected(RemotePlayer& player, const std::string& reason)
     std::cout << "[" << connection.get_addr() << "] " << player.get_nickname()
         << " left because: " << reason << std::endl;
 }
-
-

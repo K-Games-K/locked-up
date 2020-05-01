@@ -282,6 +282,30 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
 
             break;
         }
+        case ItemFoundPacket::PACKET_ID:
+        {
+            auto item_found_packet = dynamic_cast<ItemFoundPacket&>(*packet);
+            Item item = item_found_packet.get_item();
+
+            if(!item.get_name().empty())
+            {
+                popup->set_title("Found an item!");
+                std::stringstream descr;
+                descr << "You found a ";
+                descr << (item.get_type() == Item::Type::Prove ? "prove" : "clue") << ":\n";
+                descr << item.get_name();
+                popup->set_description(descr.str());
+                popup->show();
+            }
+            else
+            {
+                popup->set_title("Oops!");
+                popup->set_description("You didn't find anything here.");
+                popup->show();
+            }
+
+            break;
+        }
         default:
             break;
     }

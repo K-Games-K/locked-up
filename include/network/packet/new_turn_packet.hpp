@@ -12,7 +12,7 @@ public:
 
     NewTurnPacket();
 
-    NewTurnPacket(uint16_t current_player_id);
+    explicit NewTurnPacket(uint16_t current_player_id);
 
     int get_current_player_id() const;
 
