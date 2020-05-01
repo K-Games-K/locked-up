@@ -24,9 +24,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 {
     auto& font = fonts.get("IndieFlower-Regular");
 
-
-    paper_buffer.loadFromFile("assets/sounds/paper_sound.wav");
-
     walk_sound.setBuffer(walk_buffer);
 
     notepad_widget = new Ui::NotepadWidget(
