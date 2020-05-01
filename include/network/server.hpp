@@ -11,7 +11,7 @@
 class Server
 {
 private:
-    const float COUNTDOWN_INTERVAL = 0.5;
+    const float COUNTDOWN_INTERVAL = 5;
     const size_t MIN_PLAYERS_COUNT = 1;
     const int MOVES_PER_TURN = 6;
     const int ACTIONS_PER_TURN = 1;
