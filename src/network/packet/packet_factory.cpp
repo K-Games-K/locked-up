@@ -31,6 +31,10 @@ std::unique_ptr<Packet> PacketFactory::create(uint16_t packet_id)
             return std::make_unique<ClueFoundPacket>();
         case MurdererPacket::PACKET_ID:
             return std::make_unique<MurdererPacket>();
+        case VotePacket::PACKET_ID:
+            return std::make_unique<VotePacket>();
+        case GameResultsPacket::PACKET_ID:
+            return std::make_unique<GameResultsPacket>();
         default:
             return nullptr;
     }

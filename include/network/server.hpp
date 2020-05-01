@@ -17,6 +17,7 @@ private:
     const int ACTIONS_PER_TURN = 1;
     const int ALIBI_LENGTH = 12;
     const int VISIBLE_ALIBIS = 3;
+    const int TURNS_PER_GAME = 2;
 
     const std::vector<std::string> hours {
         "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00",
@@ -38,6 +39,9 @@ private:
     int actions_left;
 
     GameBoard game_board;
+
+    int murderer_id;
+    std::vector<int> votes;
 
     enum class GameStage
     {
