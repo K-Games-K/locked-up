@@ -72,7 +72,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     current_room_text = new Ui::Text(
         "",
         font,
-        {-50, 20},
+        {-200, 20},
         {sf::Color::White, 30},
         Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
     );
@@ -268,7 +268,11 @@ void PlayState::update(float dt)
         players_list.at(player_id).get_position().x,
         players_list.at(player_id).get_position().y
     );
-    current_room_text->set_string("Current room: " + current_room.get_name());
+
+    current_room_text->set_string(
+        "Current player: " + players_list[current_player_id].get_nickname() + "    Current room: " +
+            current_room.get_name()
+    );
 
     user_interface.update(dt);
 }

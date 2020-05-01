@@ -231,9 +231,9 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     user_interface.add_widget(connecting_text_widget);
 
     // For easier debug fill login menu
-    nickname_text_edit->get_text().set_string("Debugger");
-    address_text_edit->get_text().set_string("localhost");
-    port_text_edit->get_text().set_string("2704");
+    // nickname_text_edit->get_text().set_string("Debugger");
+    // address_text_edit->get_text().set_string("localhost");
+    // port_text_edit->get_text().set_string("2704");
 }
 
 MainMenuState::~MainMenuState()

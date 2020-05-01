@@ -256,7 +256,7 @@ void Server::update()
             {
                 std::vector<int> results(players.size(), 0);
                 for(int vote : votes)
-                    results[vote]++;
+                    results.at(vote)++;
 
                 int voting_result = *std::max_element(results.begin(), results.end());
                 broadcast(
