@@ -22,6 +22,11 @@ std::string Player::get_nickname() const
 {
     return nickname;
 }
+std::string Player::get_avatar() const
+{
+    return avatar;
+}
+
 
 void Player::set_position(int x, int y)
 {

@@ -139,11 +139,9 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
                     Ui::Anchor::Center
                 )
             );
-
             avatar_name.pop_back();
         }
     }
-
     join_game_panel->add_widget(avatars_table);
 
     user_interface.add_widget(
