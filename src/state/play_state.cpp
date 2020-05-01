@@ -327,7 +327,7 @@ void PlayState::action_clicked(Ui::Button& button)
 {
     if(button == *search_action_button)
     {
-        //server_connection.send(ActionPacket(ActionType::SearchRoom));
+        server_connection.send(ActionPacket(ActionType::SearchRoom));
     }
 }
 
