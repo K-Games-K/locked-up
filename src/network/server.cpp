@@ -369,12 +369,15 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                     auto& player_room = game_board.get_room(
                         player.get_position().x, player.get_position().y
                     );
-                    auto clues = player_room.get_visitors();
+                    auto& visitors = player_room.get_visitors();
+                    auto clues = visitors;
 
-                    if(!clues.empty())
+                    std::uniform_real_distribution<> rand_perc(0, 100);
+                    if(!clues.empty() && rand_perc(gen) < 35)
                     {
                         std::shuffle(clues.begin(), clues.end(), gen);
                         auto clue = clues.front();
+                        visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
                         connection.send(ClueFoundPacket(clue.second, hours.at(clue.first)));
                     }
                     else
