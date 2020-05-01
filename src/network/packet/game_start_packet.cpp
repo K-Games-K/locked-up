@@ -38,10 +38,10 @@ Item GameStartPacket::get_crime_item() const
 void GameStartPacket::serialize(sf::Packet& data) const
 {
     data << start_x << start_y;
-    data << alibis.size();
+    data << (sf::Uint64)alibis.size();
     for(auto& alibi : alibis)
     {
-        data << alibi.size();
+        data << (sf::Uint64)alibi.size();
         for(auto room : alibi)
             data << room;
     }
@@ -54,13 +54,13 @@ void GameStartPacket::serialize(sf::Packet& data) const
 void GameStartPacket::deserialize(sf::Packet& data)
 {
     data >> start_x >> start_y;
-    size_t alibis_size;
+    sf::Uint64 alibis_size;
     data >> alibis_size;
     alibis.reserve(alibis_size);
     for(int i = 0; i < alibis_size; ++i)
     {
         std::vector<int32_t> alibi;
-        size_t alibi_length;
+        sf::Uint64 alibi_length;
         data >> alibi_length;
         alibi.reserve(alibi_length);
         for(int j = 0; j < alibi_length; ++j)
