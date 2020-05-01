@@ -24,8 +24,8 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 {
     auto& font = fonts.get("IndieFlower-Regular");
 
-
     walk_sound.setBuffer(sound_buffers.get("walk_sound"));
+    walk_sound.setVolume(40);
 
     notepad_widget = new Ui::NotepadWidget(
         Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),
@@ -155,19 +155,15 @@ void PlayState::handle_input(sf::Event event)
         switch(event.key.code)
         {
             case sf::Keyboard::Up:
-                walk_sound.play();
                 server_connection.send(PlayerMovePacket(0, -1, player_id));
                 break;
             case sf::Keyboard::Down:
-                walk_sound.play();
                 server_connection.send(PlayerMovePacket(0, 1, player_id));
                 break;
             case sf::Keyboard::Left:
-                walk_sound.play();
                 server_connection.send(PlayerMovePacket(-1, 0, player_id));
                 break;
             case sf::Keyboard::Right:
-                walk_sound.play();
                 server_connection.send(PlayerMovePacket(1, 0, player_id));
                 break;
             case sf::Keyboard::Tilde:
@@ -256,6 +252,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             uint16_t player_id = player_move_packet.get_player_id();
             Player& player = players_list.at(player_id);
 
+            walk_sound.play();
             if(player_move_packet.is_relative())
                 player.move(player_move_packet.get_x(), player_move_packet.get_y());
             else

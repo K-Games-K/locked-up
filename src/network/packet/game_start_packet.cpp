@@ -47,7 +47,7 @@ void GameStartPacket::serialize(sf::Packet& data) const
     }
 
     data << crime_room;
-    data << (uint8_t) (crime_item.get_type() == Item::Type::Prove ? 1 : 0);
+    data << static_cast<uint8_t>(crime_item.get_type());
     data << crime_item.get_name() << crime_item.get_description();
 }
 
@@ -79,7 +79,7 @@ void GameStartPacket::deserialize(sf::Packet& data)
     std::string crime_item_name, crime_item_description;
     data >> crime_item_name >> crime_item_description;
     crime_item = Item(
-        crime_item_name, crime_item_description, type == 1 ? Item::Type::Prove : Item::Type::Clue
+        crime_item_name, crime_item_description, static_cast<Item::Type>(type)
     );
 }
 
