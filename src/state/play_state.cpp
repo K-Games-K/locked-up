@@ -66,6 +66,54 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     notification_widget->show_notification("Hello there general!", 2);
     user_interface.add_widget(notification_widget);
 
+    popup = new Ui::Popup(
+        textures.get("paper_small"),
+        font,
+        {-100, 0},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    user_interface.add_widget(popup);
+
+    voting_menu = new Ui::Panel(
+        {0, 0}, user_interface.get_size(),
+        sf::Color(0, 0, 0, 220)
+    );
+    voting_menu->set_enabled(false);
+    user_interface.add_widget(voting_menu);
+
+    auto voting_menu_panel = new Ui::TexturedPanel(
+        textures.get("paper"),
+        {0, 0},
+        Ui::Anchor::Center, Ui::Anchor::Center
+    );
+    voting_menu->add_widget(voting_menu_panel);
+
+    voting_menu_panel->add_widget(
+        new Ui::Text(
+            "Police has arrived!\nNow you'll need to vote\nwho are you going to accuse:",
+            font,
+            {0, 40},
+            {sf::Color::Black, 28},
+            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+        )
+    );
+
+    for(int i = 0; i < this->players_list.size(); ++i)
+    {
+        auto& player = players_list[i];
+        voting_menu_panel->add_widget(
+            new Ui::Button(
+                player.get_nickname(),
+                font,
+                std::bind(&PlayState::vote_clicked, this, std::placeholders::_1),
+                {0, (i * 50.0f) - ((this->players_list.size() - 1) * 25.0f)}, {420, 40},
+                button_colors,
+                {sf::Color::Black},
+                Ui::Anchor::Center, Ui::Anchor::Center
+            )
+        );
+    }
+
     pause_menu = new Ui::Panel(
         {0, 0}, user_interface.get_size(),
         sf::Color(0, 0, 0, 180)
@@ -112,14 +160,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             Ui::Anchor::CenterTop, Ui::Anchor::Center
         )
     );
-
-    popup = new Ui::Popup(
-        textures.get("paper_small"),
-        font,
-        {-100, 0},
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    user_interface.add_widget(popup);
 
     popup->set_title("Dead body found!");
     std::stringstream descr;
@@ -327,8 +367,13 @@ void PlayState::action_clicked(Ui::Button& button)
 {
     if(button == *search_action_button)
     {
-        //server_connection.send(ActionPacket(ActionType::SearchRoom));
+        server_connection.send(ActionPacket(ActionType::SearchRoom));
     }
+}
+
+void PlayState::vote_clicked(Ui::Button& button)
+{
+
 }
 
 sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)
