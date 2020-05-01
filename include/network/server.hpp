@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <random>
 #include <unordered_map>
 #include <SFML/Network.hpp>
 
@@ -18,12 +19,14 @@ private:
     const int VISIBLE_ALIBIS = 3;
 
     bool enabled = false;
-    bool teleport_allowed = true;
+    bool teleport_allowed = false;
 
     sf::TcpListener listener;
 
     int current_player_id = 0;
     std::vector<RemotePlayer> players;
+
+    std::mt19937 gen;
 
     int turn = 0;
     int moves_left;
