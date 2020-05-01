@@ -348,14 +348,15 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                     ).get_items();
 
                     Item item;
-                    if(!items.empty())
+                    std::uniform_real_distribution<> rand_perc(0, 100);
+                    if(!items.empty() && rand_perc(gen) < 50)
                     {
                         std::shuffle(items.begin(), items.end(), gen);
                         item = items[items.size() - 1];
                         items.pop_back();
                     }
 
-                    std::cout << player.get_nickname() << " found " << item.get_name() << std::endl;
+                    connection.send(ItemFoundPacket(item));
 
                     actions_left--;
 
