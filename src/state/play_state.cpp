@@ -24,7 +24,8 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 {
     auto& font = fonts.get("IndieFlower-Regular");
 
-    walk_sound.setBuffer(walk_buffer);
+
+    walk_sound.setBuffer(sound_buffers.get("walk_sound"));
 
     notepad_widget = new Ui::NotepadWidget(
         Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),

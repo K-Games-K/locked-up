@@ -4,6 +4,6 @@ GameState::GameState(sf::RenderWindow& window, GameStateManager& game_state_mana
     : window(window), game_state_manager(game_state_manager),
     textures("assets/sprites", "png"),
     fonts("assets/fonts", "ttf"),
-    sound_buffers("assets/sounds", "wav");
+    sound_buffers("assets/sounds", "wav")
 {}
 
