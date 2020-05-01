@@ -320,6 +320,11 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             auto new_turn_packet = dynamic_cast<NewTurnPacket&>(*packet);
             current_player_id = new_turn_packet.get_current_player_id();
 
+            std::stringstream ss;
+            ss << "New turn!\n";
+            ss << "Current player: " << players_list.at(current_player_id).get_nickname();
+            notification_widget->show_notification(ss.str(), 5);
+
             break;
         }
         case ClueFoundPacket::PACKET_ID:
