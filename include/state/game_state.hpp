@@ -13,6 +13,7 @@ protected:
 
     ResourceManager<sf::Texture> textures;
     ResourceManager<sf::Font> fonts;
+    ResourceManager<sf::SoundBuffer> sound_buffers;
 
 public:
     GameState(sf::RenderWindow& window, GameStateManager& game_state_manager);
