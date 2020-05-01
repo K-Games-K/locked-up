@@ -30,7 +30,7 @@ protected:
     void render(const Ui::Widget* widget, const float dt, sf::Vector2f origin_pos,
         sf::Vector2f parent_size)
     {
-        if(!widget->is_enabled())
+        if(widget == nullptr || !widget->is_enabled())
             return;
 
         if(auto text = dynamic_cast<const Ui::Text*>(widget))
