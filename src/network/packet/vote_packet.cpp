@@ -5,7 +5,7 @@ VotePacket::VotePacket()
 {}
 
 VotePacket::VotePacket(uint16_t player_id)
-    : Packet(PACKET_ID)
+    : Packet(PACKET_ID), player_id(player_id)
 {}
 
 uint16_t VotePacket::get_player_id() const
