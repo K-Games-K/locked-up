@@ -258,7 +258,10 @@ void Server::update()
                 for(int vote : votes)
                     results.at(vote)++;
 
-                int voting_result = *std::max_element(results.begin(), results.end());
+                int voting_result = std::distance(
+                    results.begin(),
+                    std::max_element(results.begin(), results.end())
+                );
                 broadcast(
                     GameResultsPacket(
                         players.at(murderer_id).get_nickname(),
