@@ -1,78 +1,21 @@
-#include "ui/panel.hpp"
 #include "ui/table_widget.hpp"
 
 namespace Ui
 {
-    TableWidget::TableWidget(int columns_count, int rows_count,
-        const std::vector<float>& column_widths, const std::vector<float>& row_heights,
-        sf::Vector2f position, TableWidgetSettings settings, Anchor origin, Anchor anchor)
-        : WidgetContainer(position, {}, origin, anchor),
-        columns_count(columns_count), rows_count(rows_count), column_widths(column_widths),
-        row_heights(row_heights), settings(settings)
+    TableWidget::TableWidget(int columns_count, int rows_count)
+        : columns_count(columns_count), rows_count(rows_count),
+        column_widths(std::vector<float>(columns_count)),
+        row_heights(std::vector<float>(rows_count))
     {
         update_size();
     }
 
-    TableWidget::~TableWidget()
+    Widget* TableWidget::add_widget(unsigned int column, unsigned int row, const Widget& widget)
     {
-        for(auto& column : widgets)
-            for(auto& widget : column)
-                delete widget;
-    }
+        if(column < columns_count && row < rows_count)
+            return get_children().at(column + row * columns_count)->add_widget(widget);
 
-    void TableWidget::handle_event(sf::Event event, sf::Vector2f mouse_pos)
-    {
-        if(!is_enabled())
-            return;
-
-        sf::Vector2f cell_pos;
-        for(int column = 0; column < columns_count; ++column)
-        {
-            cell_pos.y = 0;
-            for(int row = 0; row < rows_count; ++row)
-            {
-                auto& widget = widgets[column][row];
-                if(widget == nullptr || !widget->is_enabled())
-                    continue;
-
-                sf::Vector2f cell_size(column_widths[column], row_heights[row]);
-                widget->handle_event(
-                    event, mouse_pos - widget->get_relative_position(cell_pos, cell_size)
-                );
-                cell_pos += sf::Vector2f(0, row_heights[row] + settings.grid_thickness);
-            }
-            cell_pos += sf::Vector2f(column_widths[column] + settings.grid_thickness, 0);
-        }
-    }
-
-    void TableWidget::update(const float dt)
-    {
-        if(!is_enabled())
-            return;
-
-        for(int column = 0; column < columns_count; ++column)
-        {
-            for(int row = 0; row < rows_count; ++row)
-            {
-                auto& widget = widgets[column][row];
-                if(widget == nullptr || !widget->is_enabled())
-                    continue;
-
-                widget->update(dt);
-            }
-        }
-    }
-
-    void TableWidget::add_widget(int column, int row, Widget* widget)
-    {
-        if(dynamic_cast<Ui::Panel*>(widget))
-            throw std::invalid_argument("Cannot insert Panel inside TableWidget!");
-
-        auto& existing = widgets.at(column).at(row);
-        if(existing != nullptr)
-            delete existing;
-
-        widgets[column][row] = widget;
+        return nullptr;
     }
 
     int TableWidget::get_rows_count() const
@@ -85,29 +28,50 @@ namespace Ui
         return columns_count;
     }
 
-    const std::vector<std::vector<Widget*>>& TableWidget::get_widgets() const
+    TableWidget& TableWidget::set_grid_color(Color grid_color)
     {
-        return widgets;
+        this->grid_color = grid_color;
+
+        return *this;
     }
 
-    void TableWidget::set_grid_color(sf::Color grid_color)
+    Color TableWidget::get_grid_color() const
     {
-        settings.grid_color = grid_color;
+        return grid_color;
     }
 
-    void TableWidget::set_grid_thickness(float grid_thickness)
+    TableWidget& TableWidget::set_grid_thickness(float grid_thickness)
     {
-        settings.grid_thickness = grid_thickness;
+        this->grid_thickness = grid_thickness;
+        update_size();
+
+        return *this;
     }
 
-    TableWidgetSettings TableWidget::get_settings() const
+    float TableWidget::get_grid_thickness() const
     {
-        return settings;
+        return grid_thickness;
+    }
+
+    TableWidget& TableWidget::set_column_widths(const std::vector<float>& column_widths)
+    {
+        this->column_widths = column_widths;
+        update_size();
+
+        return *this;
     }
 
     const std::vector<float>& TableWidget::get_column_widths() const
     {
         return column_widths;
+    }
+
+    TableWidget& TableWidget::set_row_heights(const std::vector<float>& row_heights)
+    {
+        this->row_heights = row_heights;
+        update_size();
+
+        return *this;
     }
 
     const std::vector<float>& TableWidget::get_row_heights() const
@@ -117,16 +81,42 @@ namespace Ui
 
     void TableWidget::update_size()
     {
-        widgets.resize(columns_count);
-        for(auto& column : widgets)
-            column.resize(rows_count, nullptr);
+        // Resize children instead of recreating them.
+        get_children().clear();
+        sf::Vector2f cell_pos = {0, 0};
+        for(int row = 0; row < rows_count; ++row)
+        {
+            cell_pos.x = 0;
+            for(int column = 0; column < columns_count; ++column)
+            {
+                Widget::add_widget(
+                    Item()
+                        .set_position(cell_pos)
+                        .set_size({column_widths[column], row_heights[row]})
+                        .set_origin(Origin::TopLeft)
+                        .set_anchor(Anchor::TopLeft)
+                );
+                cell_pos += sf::Vector2f(column_widths[column] + grid_thickness, 0);
+            }
+            cell_pos += sf::Vector2f(0, row_heights[row] + grid_thickness);
+        }
 
-        sf::Vector2f size;
-        for(int i = 0; i < columns_count; ++i)
-            size += {(float)column_widths[i], 0};
-        for(int i = 0; i < rows_count; ++i)
-            size += {0, (float)row_heights[i]};
-        size += sf::Vector2f(columns_count - 1, rows_count - 1) * settings.grid_thickness;
+        sf::Vector2f size = {0, 0};
+        for(float column_width : column_widths)
+            size += {column_width, 0};
+        for(float row_height : row_heights)
+            size += {0, row_height};
+        size += sf::Vector2f(columns_count - 1, rows_count - 1) * this->grid_thickness;
         set_size(size);
+    }
+
+    TableWidget* TableWidget::clone() const
+    {
+        return new TableWidget(*this);
+    }
+
+    TableWidget::Item* TableWidget::Item::clone() const
+    {
+        return new Item(*this);
     }
 }

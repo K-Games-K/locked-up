@@ -4,7 +4,7 @@
 
 namespace Ui
 {
-    enum class Anchor
+    enum class Origin
     {
         TopLeft,
         TopRight,
@@ -17,53 +17,95 @@ namespace Ui
         CenterLeft
     };
 
+    using Anchor = Origin;
+    using Color = sf::Color;
+
     /// Base class for all UI widgets.
     class Widget
     {
-    private:
-        bool enabled = true;
-
-        sf::Vector2f position;
-        sf::Vector2f size;
-
-        Anchor origin;
-        Anchor anchor;
-
-    protected:
-        Widget(sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
-
     public:
-        virtual ~Widget() = default;
+        Widget() = default;
 
-        virtual void handle_event(sf::Event event, sf::Vector2f mouse_pos) {}
+        Widget(const Widget& other);
 
-        virtual void update(const float dt) {}
+        virtual bool handle_event(const sf::Event& event, sf::Vector2f mouse_pos,
+            sf::Vector2f parent_pos, sf::Vector2f parent_size);
 
-        void set_enabled(bool enabled);
+        virtual void update(const float dt);
+
+        /// Returns pointer to newly added child.
+        Widget* add_widget(const Widget& widget);
+
+        void remove_widget(const Widget& widget);
+
+        template <typename T>
+        T& get_child()
+        {
+            for(auto& child : children)
+            {
+                if(auto found = dynamic_cast<T*>(child.get()))
+                    return *found;
+            }
+
+            return dynamic_cast<T&>(*children[0]);
+        }
+
+        template <typename T>
+        T& get_child(size_t n)
+        {
+            return dynamic_cast<T&>(*children[n]);
+        }
+
+        std::vector<std::unique_ptr<Widget>>& get_children();
+
+        const std::vector<std::unique_ptr<Widget>>& get_children() const;
+
+        Widget& set_enabled(bool enabled);
 
         bool is_enabled() const;
 
-        void set_position(sf::Vector2f position);
+        Widget& set_position(sf::Vector2f position, bool position_relative = false);
+
+        Widget& move(sf::Vector2f offset);
 
         sf::Vector2f get_local_position() const;
 
-        sf::Vector2f get_relative_position(sf::Vector2f origin_pos, sf::Vector2f parent_size) const;
+        sf::Vector2f
+        get_global_position(sf::Vector2f parent_pos, sf::Vector2f parent_size) const;
 
-        void set_size(sf::Vector2f size);
+        Widget& set_size(sf::Vector2f size, bool size_relative = false);
 
-        sf::Vector2f get_size() const;
+        sf::Vector2f get_local_size() const;
 
-        void set_origin(Anchor origin);
+        sf::Vector2f get_global_size(sf::Vector2f parent_size) const;
+
+        Widget& set_origin(Origin origin);
 
         Anchor get_origin() const;
 
-        void set_anchor(Anchor anchor);
+        Widget& set_anchor(Anchor anchor);
 
         Anchor get_anchor() const;
 
-        virtual void reset() {};
+        virtual void reset();
 
         bool operator==(const Widget& other) const;
+
+        Widget& operator=(const Widget& other);
+
+        virtual Widget* clone() const = 0;
+
+    private:
+        bool enabled = true;
+
+        sf::Vector2f position = {0, 0};
+        bool position_relative = false;
+        sf::Vector2f size = {0, 0};
+        bool size_relative = false;
+
+        Origin origin = Origin::Center;
+        Anchor anchor = Origin::Center;
+
+        std::vector<std::unique_ptr<Widget>> children;
     };
 }

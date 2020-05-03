@@ -7,14 +7,13 @@
 
 class ButtonRenderer : public WidgetRenderer<Ui::Button>
 {
-private:
-    TextRenderer text_renderer;
-
 public:
-    ButtonRenderer(sf::RenderWindow& window, ResourceManagers resources);
+    ButtonRenderer(sf::RenderWindow& window);
 
-    void render(const Ui::Button& button, const float dt) override;
+    void render(const Ui::Button& button, const float dt, sf::Vector2f parent_pos,
+        sf::Vector2f parent_size) override;
 
-    void render(const Ui::TexturedButton& button, const float dt);
+    void render(const Ui::TexturedButton& button, const float dt, sf::Vector2f parent_pos,
+        sf::Vector2f parent_size);
 };
 

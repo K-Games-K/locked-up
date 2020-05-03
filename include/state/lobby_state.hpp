@@ -7,7 +7,7 @@
 #include "game_state.hpp"
 #include "network/connection.hpp"
 #include "ui/widgets.hpp"
-#include "render/panel_renderer.hpp"
+#include "render/master_widget_renderer.hpp"
 #include "render/animated_background_renderer.hpp"
 
 class LobbyState : public GameState
@@ -18,12 +18,12 @@ private:
     Connection server_connection;
 
     Ui::Panel user_interface;
-    PanelRenderer panel_renderer;
     Ui::TexturedPanel* left_panel;
     Ui::TexturedPanel* right_panel;
     Ui::Text* left_panel_title_text;
     Ui::Text* players_list_text;
 
+    MasterWidgetRenderer master_widget_renderer;
     AnimatedBackgroundRenderer background_renderer;
 
     int player_id = -1;

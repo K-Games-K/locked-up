@@ -2,7 +2,7 @@
 #include "ui/text.hpp"
 
 PlayerRenderer::PlayerRenderer(sf::RenderWindow& window, ResourceManagers resources)
-    : CameraRenderer(window, resources), text_renderer(window, resources)
+    : CameraRenderer(window, resources), text_renderer(window)
 {}
 
 void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
@@ -41,16 +41,14 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
         player_pos += sf::Vector2f(TILE_SIZE / 2, TILE_SIZE) -
             sf::Vector2f(player_size.x / 2, texture.getSize().y);
 
-        Ui::Text nickname(
-            player.get_nickname(),
-            resources.fonts.get("IndieFlower-Regular"),
-            {0, 0},
-            {sf::Color::White, 20, sf::Color::Black, 1},
-            Ui::Anchor::CenterTop, Ui::Anchor::CenterBottom
-        );
+        Ui::Text nickname_text(resources.fonts.get("IndieFlower-Regular"), player.get_nickname());
+        nickname_text.set_color(Ui::Color::White)
+            .set_font_size(20)
+            .set_outline_color(Ui::Color::Black)
+            .set_outline_thickness(1)
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterBottom);
 
-        text_renderer.set_origin_pos(player_pos + game_board_pos);
-        text_renderer.set_parent_size(player_size);
-        text_renderer.render(nickname, dt);
+        text_renderer.render(nickname_text, dt, player_pos + game_board_pos, player_size);
     }
 }

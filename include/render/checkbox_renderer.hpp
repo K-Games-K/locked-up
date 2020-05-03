@@ -7,9 +7,9 @@
 class CheckboxRenderer : public WidgetRenderer<Ui::Checkbox>
 {
 public:
-    CheckboxRenderer(sf::RenderWindow& window, ResourceManagers resources);
+    CheckboxRenderer(sf::RenderWindow& window);
 
-    void render(const Ui::Checkbox& checkbox, const float dt) override;
+    void render(const Ui::Checkbox& checkbox, const float dt, sf::Vector2f parent_pos, sf::Vector2f parent_size) override;
 
-    void render(const Ui::TexturedCheckbox& checkbox, const float dt);
+    void render(const Ui::TexturedCheckbox& checkbox, const float dt, sf::Vector2f parent_pos, sf::Vector2f parent_size);
 };

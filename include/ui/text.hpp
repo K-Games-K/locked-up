@@ -7,47 +7,58 @@
 
 namespace Ui
 {
-    struct TextSettings
-    {
-        sf::Color color = sf::Color::White;
-        unsigned int font_size = 24;
-        sf::Color outline_color = sf::Color::Black;
-        float outline_thickness = 0;
-    };
+    using TextStyle = sf::Text::Style;
 
     class Text : public Widget
     {
+    public:
+        Text(const sf::Font& font, const std::string& string = "");
+
+        Text& set_string(const std::string& string);
+
+        std::string get_string() const;
+
+        Text& set_font(const sf::Font& font);
+
+        const sf::Font& get_font() const;
+
+        Text& set_max_width(float max_width);
+
+        float get_max_width() const;
+
+        Text& set_color(Color color);
+
+        Color get_color() const;
+
+        Text& set_font_size(unsigned int font_size);
+
+        unsigned int get_font_size() const;
+
+        Text& set_outline_color(Color outline_color);
+
+        Color get_outline_color() const;
+
+        Text& set_outline_thickness(float outline_thickness);
+
+        float get_outline_thickness() const;
+
+        Text& set_style(TextStyle style);
+
+        TextStyle get_style() const;
+
     private:
         std::string string;
         const sf::Font* font;
 
-        TextSettings settings;
+        float max_width = 0;
+        Color color = Color::Black;
+        unsigned int font_size = 24;
+        Color outline_color = Color::Black;
+        float outline_thickness = 0;
+        TextStyle style = TextStyle::Regular;
 
         void update_size();
 
-    public:
-        Text(const std::string& text, const sf::Font& font, sf::Vector2f position = {0, 0},
-            TextSettings text_settings = TextSettings(), Anchor origin = Anchor::TopLeft,
-            Anchor anchor = Anchor::TopLeft);
-
-        void set_string(const std::string& text);
-
-        std::string get_string() const;
-
-        void set_font(const sf::Font& font);
-
-        const sf::Font& get_font() const;
-
-        void set_color(sf::Color color);
-
-        void set_font_size(unsigned int font_size);
-
-        void set_outline_color(sf::Color outline_color);
-
-        void set_outline_thickness(float outline_thickness);
-
-        void set_settings(TextSettings settings);
-
-        TextSettings get_settings() const;
+        Text* clone() const override;
     };
 }

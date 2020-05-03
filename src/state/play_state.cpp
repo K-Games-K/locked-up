@@ -19,175 +19,163 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     player_renderer(window, {textures, fonts}),
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
-    panel_renderer(window, {textures, fonts}),
-    user_interface({0, 0}, (sf::Vector2f) window.getSize())
+    master_widget_renderer(window)
 {
     auto& font = fonts.get("IndieFlower-Regular");
-    Ui::ButtonColors button_colors = {
-        sf::Color(0, 0, 0, 140),
-        sf::Color(0, 0, 0, 190),
-        sf::Color(0, 0, 0, 210)
-    };
+    auto default_color = Ui::Color(0, 0, 0, 140);
+    auto hover_color = Ui::Color(0, 0, 0, 190);
+    auto active_color = Ui::Color(0, 0, 0, 210);
 
     walk_sound.setBuffer(sound_buffers.get("walk_sound"));
-    walk_sound.setVolume(20);
+    walk_sound.setVolume(40);
 
-    notepad_widget = new Ui::NotepadWidget(
-        Notepad(this->players_list, alibis, game_board), textures.get("paper_big"),
-        font, {}, {-50, 0},
-        Ui::Anchor::CenterRight, Ui::Anchor::CenterRight
-    );
-    user_interface.add_widget(notepad_widget);
+    user_interface.set_size({1, 1}, true);
 
-    action_panel = new Ui::Panel(
-        {game_board_pos.x, -20}, {900, 50},
-        sf::Color::Transparent,
-        Ui::Anchor::BottomLeft, Ui::Anchor::BottomLeft
-    );
-    user_interface.add_widget(action_panel);
-
-    search_action_button = new Ui::Button(
-        "Search current room",
-        font,
-        std::bind(&PlayState::action_clicked, this, std::placeholders::_1),
-        {-160, 0}, {300, 40},
-        button_colors,
-        {},
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    action_panel->add_widget(search_action_button);
-
-    place_clue_action_button = new Ui::Button(
-        "Place fake clue",
-        font,
-        std::bind(&PlayState::action_clicked, this, std::placeholders::_1),
-        {160, 0}, {300, 40},
-        button_colors,
-        {},
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    place_clue_action_button->set_enabled(false);
-    action_panel->add_widget(place_clue_action_button);
-
-    current_room_text = new Ui::Text(
-        "",
-        font,
-        {-200, 20},
-        {sf::Color::White, 30},
-        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
-    );
-    user_interface.add_widget(current_room_text);
-
-    notification_widget = new Ui::NotificationWidget(
-        font,
-        {0, 40}, {400, 100},
-        {sf::Color::White, 30, sf::Color::Black, 1},
-        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
-    );
-    notification_widget->show_notification("Hello there general!", 2);
-    user_interface.add_widget(notification_widget);
-
-    popup = new Ui::Popup(
-        textures.get("paper_small"),
-        font,
-        {-100, 0},
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    user_interface.add_widget(popup);
-
-    voting_menu = new Ui::Panel(
-        {0, 0}, user_interface.get_size(),
-        sf::Color(0, 0, 0, 220)
-    );
-    voting_menu->set_enabled(false);
-    user_interface.add_widget(voting_menu);
-
-    auto voting_menu_panel = new Ui::TexturedPanel(
-        textures.get("paper"),
-        {0, 0},
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    voting_menu->add_widget(voting_menu_panel);
-
-    voting_menu_panel->add_widget(
-        new Ui::Text(
-            "Police has arrived!\nNow you'll need to vote\nwho are you going to accuse:",
-            font,
-            {0, 40},
-            {sf::Color::Black, 28},
-            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+    notepad_widget = (Ui::NotepadWidget*) user_interface.add_widget(
+        Ui::NotepadWidget(
+            Notepad(this->players_list, alibis, game_board),
+            textures.get("paper_big"),
+            font
         )
+            .set_position({-50, 0})
+            .set_origin(Ui::Origin::CenterRight)
+            .set_anchor(Ui::Anchor::CenterRight)
+    );
+
+    action_panel = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel()
+            .set_position({game_board_pos.x, -20})
+            .set_size({900, 50})
+            .set_origin(Ui::Origin::BottomLeft)
+            .set_anchor(Ui::Anchor::BottomLeft)
+    );
+
+    search_action_button = (Ui::Button*) action_panel->add_widget(
+        Ui::Button()
+            .set_callback(std::bind(&PlayState::action_clicked, this, std::placeholders::_1))
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({-160, 0})
+            .set_size({300, 40})
+    );
+    search_action_button->add_widget(
+        Ui::Text(font, "Search current room")
+            .set_color(Ui::Color::White)
+    );
+
+    place_clue_action_button = (Ui::Button*) action_panel->add_widget(
+        Ui::Button()
+            .set_callback(std::bind(&PlayState::action_clicked, this, std::placeholders::_1))
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({160, 0})
+            .set_size({300, 40})
+            .set_enabled(false)
+    );
+    place_clue_action_button->add_widget(
+        Ui::Text(font, "Place fake clue")
+            .set_color(Ui::Color::White)
+    );
+
+    current_room_text = (Ui::Text*) user_interface.add_widget(
+        Ui::Text(font)
+            .set_color(Ui::Color::White)
+            .set_font_size(30)
+            .set_position({-200, 20})
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterTop)
+    );
+
+    notification_widget = (Ui::NotificationWidget*) user_interface.add_widget(
+        Ui::NotificationWidget(font)
+            .set_position({0, 40})
+            .set_size({400, 100})
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterTop)
+    );
+    notification_widget->get_text()
+        .set_color(Ui::Color::White)
+        .set_font_size(30)
+        .set_outline_thickness(1);
+
+    popup = (Ui::Popup*) user_interface.add_widget(
+        Ui::Popup(textures.get("paper_small"), font)
+            .set_position({-100, 0})
+    );
+
+    voting_menu = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel()
+            .set_background_color(Ui::Color(0, 0, 0, 200))
+            .set_size({1, 1}, true)
+            .set_enabled(false)
+    );
+    auto voting_menu_panel = voting_menu->add_widget(Ui::TexturedPanel(textures.get("paper")));
+    voting_menu_panel->add_widget(
+        Ui::Text(font, "Police has arrived!\nNow you'll need to vote\nwho are you going to accuse:")
+            .set_font_size(28)
+            .set_position({0, 40})
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterTop)
     );
 
     for(int i = 0; i < this->players_list.size(); ++i)
     {
         auto& player = players_list[i];
-        voting_menu_panel->add_widget(
-            new Ui::Button(
-                player.get_nickname(),
-                font,
-                std::bind(&PlayState::vote_clicked, this, std::placeholders::_1),
-                {0, (i * 50.0f) - ((this->players_list.size() - 1) * 25.0f)}, {420, 40},
-                button_colors,
-                {sf::Color::Black},
-                Ui::Anchor::Center, Ui::Anchor::Center
-            )
+        auto button = voting_menu_panel->add_widget(
+            Ui::Button()
+                .set_callback(std::bind(&PlayState::vote_clicked, this, std::placeholders::_1))
+                .set_default_color(default_color)
+                .set_hover_color(hover_color)
+                .set_active_color(active_color)
+                .set_position({0, (i * 50.0f) - ((this->players_list.size() - 1) * 25.0f)})
+                .set_size({420, 40})
         );
+        button->add_widget(Ui::Text(font, player.get_nickname()));
     }
 
-    pause_menu = new Ui::Panel(
-        {0, 0}, user_interface.get_size(),
-        sf::Color(0, 0, 0, 180)
+    pause_menu = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel()
+            .set_background_color(Ui::Color(0, 0, 0, 180))
+            .set_size({1, 1}, true)
+            .set_enabled(false)
     );
-    pause_menu->set_enabled(false);
-    user_interface.add_widget(pause_menu);
-
-    auto pause_menu_panel = new Ui::TexturedPanel(
-        textures.get("paper"),
-        {0, 0},
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    pause_menu->add_widget(pause_menu_panel);
-
+    auto pause_menu_panel = pause_menu->add_widget(Ui::TexturedPanel(textures.get("paper")));
     pause_menu_panel->add_widget(
-        new Ui::Text(
-            "Game Paused",
-            font,
-            {0, 30},
-            {sf::Color::Black, 50},
-            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
-        )
+        Ui::Text(font, "Game Paused")
+            .set_font_size(50)
+            .set_position({0, 30})
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterTop)
     );
+    auto resume_button = pause_menu_panel->add_widget(
+        Ui::Button()
+            .set_callback(std::bind(&PlayState::resume_clicked, this, std::placeholders::_1))
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({0, -10})
+            .set_size({420, 40})
+            .set_origin(Ui::Origin::CenterBottom)
+    );
+    resume_button->add_widget(Ui::Text(font, "Resume"));
+    auto exit_button = pause_menu_panel->add_widget(
+        Ui::Button()
+            .set_callback(std::bind(&PlayState::exit_clicked, this, std::placeholders::_1))
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({0, 10})
+            .set_size({420, 40})
+            .set_origin(Ui::Origin::CenterTop)
+    );
+    exit_button->add_widget(Ui::Text(font, "Exit"));
 
-    pause_menu_panel->add_widget(
-        new Ui::Button(
-            "Resume",
-            font,
-            std::bind(&PlayState::resume_clicked, this, std::placeholders::_1),
-            {0, -10}, {420, 40},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::CenterBottom, Ui::Anchor::Center
-        )
-    );
-    pause_menu_panel->add_widget(
-        new Ui::Button(
-            "Exit",
-            font,
-            std::bind(&PlayState::exit_clicked, this, std::placeholders::_1),
-            {0, 10}, {420, 40},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::CenterTop, Ui::Anchor::Center
-        )
-    );
-
-    popup->set_title("Dead body found!");
     std::stringstream descr;
     descr << "A dead body was found in\n" << game_board.get_room(crime_room).get_name() << ".\n";
     descr << crime_item.get_name() << " was found by the side.";
-    popup->set_description(descr.str());
-    popup->show();
+    popup->show("Dead body found!", descr.str());
 }
 
 void PlayState::handle_input(sf::Event event)
@@ -219,12 +207,10 @@ void PlayState::handle_input(sf::Event event)
         }
     }
 
-    sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-    sf::Vector2f mouse_pos_rel = mouse_pos - user_interface.get_relative_position(
-        {0, 0},
-        (sf::Vector2f) window.getSize()
+    user_interface.handle_event(
+        event, (sf::Vector2f) sf::Mouse::getPosition(window),
+        {0, 0}, (sf::Vector2f) window.getSize()
     );
-    user_interface.handle_event(event, mouse_pos_rel);
 
     if(event.type == sf::Event::KeyPressed)
     {
@@ -309,8 +295,6 @@ void PlayState::render(float dt)
     player_renderer.set_game_board_size(GAME_BOARD_SIZE);
     player_renderer.render(players_list, dt);
 
-    panel_renderer.render(user_interface, dt);
-
     if(debug_render)
     {
         debug_renderer.set_camera_pos(camera_pos);
@@ -318,6 +302,8 @@ void PlayState::render(float dt)
         debug_renderer.set_game_board_size(GAME_BOARD_SIZE);
         debug_renderer.render({player_id, players_list.at(player_id), game_board}, dt);
     }
+
+    master_widget_renderer.render(user_interface, dt, {0, 0}, (sf::Vector2f) window.getSize());
 }
 
 void PlayState::packet_received(std::unique_ptr<Packet> packet)
@@ -366,25 +352,21 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
 
             if(!clue.empty())
             {
-                popup->set_title("Found an item!");
                 std::stringstream descr;
                 descr << "You found a clue that\n";
                 descr << clue << " was here at " << time << "!";
-                popup->set_description(descr.str());
-                popup->show();
+                popup->show("Found an item!", descr.str());
             }
             else
             {
-                popup->set_title("Oops!");
-                popup->set_description("You didn't find anything here.");
-                popup->show();
+                popup->show("Oops!", "You didn't find anything here.");
             }
 
             break;
         }
         case MurdererPacket::PACKET_ID:
         {
-            notification_widget->show_notification("You are the MURDERER!", 5);
+            notification_widget->show("You are the MURDERER!", 5);
             place_clue_action_button->set_enabled(true);
             break;
         }
@@ -400,12 +382,10 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             std::string murderer = game_results_packet.get_murderer();
             std::string voting_result = game_results_packet.get_voting_result();
 
-            popup->set_title("Game results:");
-            std::stringstream ss;
-            ss << murderer << " was the murderer.\n";
-            ss << "And you accused: " << voting_result << ".";
-            popup->set_description(ss.str());
-            popup->show();
+            std::stringstream descr;
+            descr << murderer << " was the murderer.\n";
+            descr << "And you accused: " << voting_result << ".";
+            popup->show("Game results:", descr.str());
         }
         default:
             break;
@@ -441,7 +421,7 @@ void PlayState::vote_clicked(Ui::Button& button)
     if(voted)
         return;
 
-    std::string nickname = button.get_text().get_string();
+    std::string nickname = button.get_child<Ui::Text>().get_string();
     int vote_id = std::distance(
         players_list.begin(),
         std::find(players_list.begin(), players_list.end(), Player(nickname))

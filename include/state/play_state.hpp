@@ -13,7 +13,7 @@
 #include "render/debug_renderer.hpp"
 #include "render/player_renderer.hpp"
 #include "render/game_board_renderer.hpp"
-#include "render/panel_renderer.hpp"
+#include "render/master_widget_renderer.hpp"
 #include "ui/widgets.hpp"
 
 class PlayState : public GameState
@@ -56,7 +56,7 @@ private:
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
     DebugRenderer debug_renderer;
-    PanelRenderer panel_renderer;
+    MasterWidgetRenderer master_widget_renderer;
     BackgroundRenderer background_renderer;
 
     bool paused = false;

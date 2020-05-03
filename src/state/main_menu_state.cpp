@@ -9,231 +9,129 @@
 
 MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_state_manager)
     : GameState(window, game_state_manager),
-    user_interface(
-        textures.get("paper"),
-        {0, 0},
-        Ui::Anchor::Center,
-        Ui::Anchor::Center
-    ),
-    panel_renderer(window, {textures, fonts}),
+    user_interface(textures.get("paper")),
+    master_widget_renderer(window),
     background_renderer(window, {textures, fonts})
 {
-    panel_renderer.set_origin_pos({0, 0});
-    panel_renderer.set_parent_size((sf::Vector2f) window.getSize());
-
     // Preload background texture.
     textures.get("map");
 
-    sf::Font& font = fonts.get("IndieFlower-Regular");
-    user_interface.add_widget(
-        new Ui::Text(
-            "Locked Up!",
-            font,
-            {0, 30},
-            {sf::Color::Black, 95},
-            Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
-        )
-    );
-
-    join_game_panel = new Ui::Panel(
-        {0, 0}, {420, 100},
-        sf::Color::Transparent,
-        Ui::Anchor::CenterBottom,
-        Ui::Anchor::Center
-    );
-    join_game_panel->add_widget(
-        new Ui::Text(
-            "Nickname:",
-            font,
-            {-210, -80},
-            {sf::Color::Black},
-            Ui::Anchor::CenterLeft, Ui::Anchor::Center
-        )
-    );
-    nickname_text_edit = new Ui::TextEdit(
-        font,
-        {0, -40}, {420, 40},
-        Ui::TextEditColors(),
-        24,
-        Ui::Anchor::Center, Ui::Anchor::Center
-    );
-    join_game_panel->add_widget(nickname_text_edit);
-    join_game_panel->add_widget(
-        new Ui::Text(
-            "Server address:",
-            font,
-            {-210, 0},
-            {sf::Color::Black},
-            Ui::Anchor::CenterLeft, Ui::Anchor::Center
-        )
-    );
-    address_text_edit = new Ui::TextEdit(
-        font,
-        {90, 40}, {300, 40},
-        Ui::TextEditColors(),
-        17,
-        Ui::Anchor::CenterRight, Ui::Anchor::Center
-    );
-    join_game_panel->add_widget(address_text_edit);
-    join_game_panel->add_widget(
-        new Ui::Text(
-            "Port:",
-            font,
-            {110, 0},
-            {sf::Color::Black},
-            Ui::Anchor::CenterLeft, Ui::Anchor::Center
-        )
-    );
-    port_text_edit = new Ui::TextEdit(
-        font,
-        {110, 40}, {100, 40},
-        Ui::TextEditColors(),
-        5,
-        Ui::Anchor::CenterLeft, Ui::Anchor::Center
-    );
-    join_game_panel->add_widget(port_text_edit);
-    user_interface.add_widget(join_game_panel);
-
-    Ui::ButtonColors button_colors = {
-        sf::Color(0, 0, 0, 140),
-        sf::Color(0, 0, 0, 190),
-        sf::Color(0, 0, 0, 210)
-    };
-
-    join_game_panel->add_widget(
-        new Ui::Button(
-            "Join the game",
-            font,
-            std::bind(&MainMenuState::join_clicked, this, std::placeholders::_1),
-            {0, 100}, {420, 40},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::Center,
-            Ui::Anchor::Center
-        )
-    );
-    avatars_table = new Ui::TableWidget(
-        3, 2,
-        {100, 100, 100},
-        {80, 80},
-        {0, 210},
-        {},
-        Ui::Anchor::Center,
-        Ui::Anchor::Center
-    );
-    avatars_table->set_grid_thickness(0.001);
-
-
-    avatars_table->add_widget(
-        0, 0,
-        new Ui::Button(
-            "Mrs1",
-            font,
-            [this](Ui::Button& button) { avatar_clicked("mrs1"); },
-            {0, 0}, {80, 80},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::Center,
-            Ui::Anchor::Center
-        )
-    );
-    avatars_table->add_widget(
-        1, 0,
-        new Ui::Button(
-            "Mrs2",
-            font,
-            [this](Ui::Button& button) { avatar_clicked("mrs2"); },
-            {0, 0}, {80, 80},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::Center,
-            Ui::Anchor::Center
-        )
-    );
-    avatars_table->add_widget(
-        2, 0,
-        new Ui::Button(
-            "Mrs3",
-            font,
-            [this](Ui::Button& button) { avatar_clicked("mrs3"); },
-            {0, 0}, {80, 80},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::Center,
-            Ui::Anchor::Center
-        )
-    );
-    avatars_table->add_widget(
-        0, 1,
-        new Ui::Button(
-            "Mr1",
-            font,
-            [this](Ui::Button& button) { avatar_clicked("mr1"); },
-            {0, 0}, {80, 80},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::Center,
-            Ui::Anchor::Center
-        )
-    );
-    avatars_table->add_widget(
-        1, 1,
-        new Ui::Button(
-            "Mr2",
-            font,
-            [this](Ui::Button& button) { avatar_clicked("mr2"); },
-            {0, 0}, {80, 80},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::Center,
-            Ui::Anchor::Center
-        )
-    );
-    avatars_table->add_widget(
-        2, 1,
-        new Ui::Button(
-            "Mr3",
-            font,
-            [this](Ui::Button& button) { avatar_clicked("mr3"); },
-            {0, 0}, {80, 80},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::Center,
-            Ui::Anchor::Center
-        )
-    );
-
-    join_game_panel->add_widget(avatars_table);
+    auto& font = fonts.get("IndieFlower-Regular");
+    auto default_color = Ui::Color(0, 0, 0, 140);
+    auto hover_color = Ui::Color(0, 0, 0, 190);
+    auto active_color = Ui::Color(0, 0, 0, 210);
 
     user_interface.add_widget(
-        new Ui::Button(
-            "Exit",
-            font,
-            std::bind(&MainMenuState::exit_clicked, this, std::placeholders::_1),
-            {0, -50},
-            {420, 40},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::CenterBottom,
-            Ui::Anchor::CenterBottom
-        )
+        Ui::Text(font, "Locked Up!")
+            .set_font_size(95)
+            .set_position({0, 30})
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterTop)
     );
 
-    connecting_text_widget = new Ui::Text(
-        "Connecting to the server...",
-        font,
-        {0, 0},
-        {sf::Color::Black},
-        Ui::Anchor::Center,
-        Ui::Anchor::Center
+    join_game_panel = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel()
+            .set_size({420, 100})
+            .set_origin(Ui::Origin::CenterBottom)
     );
-    connecting_text_widget->set_enabled(false);
-    user_interface.add_widget(connecting_text_widget);
+
+    join_game_panel->add_widget(
+        Ui::Text(font, "Nickname:")
+            .set_position({-210, -80})
+            .set_origin(Ui::Origin::CenterLeft)
+    );
+    nickname_line_edit = (Ui::LineEdit*) join_game_panel->add_widget(
+        Ui::LineEdit(font)
+            .set_position({0, -40})
+            .set_size({420, 40})
+    );
+
+    join_game_panel->add_widget(
+        Ui::Text(font, "Server address:")
+            .set_position({-210, 0})
+            .set_origin(Ui::Origin::CenterLeft)
+    );
+    address_line_edit = (Ui::LineEdit*) join_game_panel->add_widget(
+        Ui::LineEdit(font)
+            .set_max_length(17)
+            .set_position({90, 40})
+            .set_size({300, 40})
+            .set_origin(Ui::Origin::CenterRight)
+    );
+
+    join_game_panel->add_widget(
+        Ui::Text(font, "Port:")
+            .set_position({110, 0})
+            .set_origin(Ui::Origin::CenterLeft)
+    );
+    port_line_edit = (Ui::LineEdit*) join_game_panel->add_widget(
+        Ui::LineEdit(font)
+            .set_max_length(5)
+            .set_position({110, 40})
+            .set_size({100, 40})
+            .set_origin(Ui::Origin::CenterLeft)
+    );
+
+    auto join_button = join_game_panel->add_widget(
+        Ui::Button()
+            .set_callback(std::bind(&MainMenuState::join_clicked, this, std::placeholders::_1))
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({0, 100})
+            .set_size({420, 40})
+    );
+    join_button->add_widget(Ui::Text(font, "Join the game"));
+
+    auto avatars_table = (Ui::TableWidget*) join_game_panel->add_widget(
+        Ui::TableWidget(3, 2)
+            .set_column_widths({80, 80, 80})
+            .set_row_heights({80, 80})
+            .set_grid_thickness(0)
+            .set_position({0, 210})
+    );
+
+    for(int row = 0; row < 2; ++row)
+    {
+        for(int column = 0; column < 3; ++column)
+        {
+            auto avatar_name = avatars[column + row * 3];
+            auto button = avatars_table->add_widget(
+                column, row, Ui::Button()
+                    .set_callback(
+                        [this, avatar_name](Ui::Button& button) { avatar_clicked(avatar_name); }
+                    )
+                    .set_default_color(default_color)
+                    .set_hover_color(hover_color)
+                    .set_active_color(active_color)
+                    .set_size({80, 80})
+            );
+            button->add_widget(Ui::TexturedPanel(textures.get(avatar_name)));
+        }
+    }
+
+    auto exit_button = user_interface.add_widget(
+        Ui::Button()
+            .set_callback(std::bind(&MainMenuState::exit_clicked, this, std::placeholders::_1))
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({0, -50})
+            .set_size({420, 40})
+            .set_origin(Ui::Origin::CenterBottom)
+            .set_anchor(Ui::Anchor::CenterBottom)
+    );
+    exit_button->add_widget(Ui::Text(font, "Exit"));
+
+    connecting_text_widget = (Ui::Text*) user_interface.add_widget(
+        Ui::Text(font, "Connecting to the server...")
+            .set_enabled(false)
+    );
 
     // For easier debug fill login menu
-    // nickname_text_edit->get_text().set_string("Debugger");
-    // address_text_edit->get_text().set_string("localhost");
-    // port_text_edit->get_text().set_string("2704");
+    nickname_line_edit->set_text("Debugger");
+    address_line_edit->set_text("localhost");
+    port_line_edit->set_text("2704");
 }
 
 MainMenuState::~MainMenuState()
@@ -247,12 +145,10 @@ void MainMenuState::handle_input(sf::Event event)
     if(event.type == sf::Event::Closed)
         game_state_manager.pop_state();
 
-    sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-    sf::Vector2f mouse_pos_rel = mouse_pos - user_interface.get_relative_position(
-        {0, 0},
-        (sf::Vector2f) window.getSize()
+    user_interface.handle_event(
+        event, (sf::Vector2f) sf::Mouse::getPosition(window),
+        {0, 0}, (sf::Vector2f) window.getSize()
     );
-    user_interface.handle_event(event, mouse_pos_rel);
 }
 
 void MainMenuState::update(float dt)
@@ -273,14 +169,14 @@ void MainMenuState::render(float dt)
 
     background_renderer.render(textures.get("map"), dt);
 
-    panel_renderer.render(user_interface, dt);
+    master_widget_renderer.render(user_interface, dt, {0, 0}, (sf::Vector2f) window.getSize());
 }
 
 void MainMenuState::join_clicked(Ui::Button& button)
 {
-    nickname = nickname_text_edit->get_text().get_string();
-    std::string addr_str = address_text_edit->get_text().get_string();
-    std::string port_str = port_text_edit->get_text().get_string();
+    nickname = nickname_line_edit->get_text().get_string();
+    std::string addr_str = address_line_edit->get_text().get_string();
+    std::string port_str = port_line_edit->get_text().get_string();
     if(addr_str.empty() || port_str.empty() || nickname.empty() ||
         !Utils::is_printable(nickname) || !Utils::is_number(port_str))
         return;
@@ -318,5 +214,5 @@ void MainMenuState::connect_to_server(sf::IpAddress addr, unsigned short port)
 
 void MainMenuState::avatar_clicked(std::string avatar_name)
 {
-    avatar = avatar_name;
+    this->avatar = avatar_name;
 }

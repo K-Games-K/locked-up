@@ -4,44 +4,46 @@
 
 namespace Ui
 {
-    struct CheckboxSettings
-    {
-        sf::Color background_color = sf::Color::Black;
-        sf::Color outline_color = sf::Color::White;
-        float outline_thickness = 1;
-        sf::Color tick_color = sf::Color::White;
-        float tick_thickness = 2;
-    };
-
     class Checkbox : public Widget
     {
-    protected:
-        bool checked = false;
-
-    private:
-        CheckboxSettings settings;
-
     public:
-        Checkbox(sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0},
-            CheckboxSettings settings = CheckboxSettings(), Anchor origin = Anchor::TopLeft,
-            Anchor anchor = Anchor::TopLeft);
+        Checkbox(bool checked = false);
 
-        void handle_event(sf::Event event, sf::Vector2f mouse_pos) override;
+        bool handle_event(const sf::Event& event, sf::Vector2f mouse_pos,
+            sf::Vector2f parent_pos, sf::Vector2f parent_size) override;
 
         bool is_checked() const;
 
-        void set_background_color(sf::Color background_color);
+        Checkbox& set_background_color(Color background_color);
 
-        void set_outline_color(sf::Color outline_color);
+        Color get_background_color() const;
 
-        void set_outline_thickness(float outline_thickness);
+        Checkbox& set_outline_color(Color outline_color);
 
-        void set_tick_color(sf::Color tick_color);
+        Color get_outline_color() const;
 
-        void set_tick_thickness(float tick_thickness);
+        Checkbox& set_outline_thickness(float outline_thickness);
 
-        void set_settings(CheckboxSettings settings);
+        float get_outline_thickness() const;
 
-        CheckboxSettings get_settings() const;
+        Checkbox& set_tick_color(Color tick_color);
+
+        Color get_tick_color() const;
+
+        Checkbox& set_tick_thickness(float tick_thickness);
+
+        float get_tick_thickness() const;
+
+    protected:
+        bool checked;
+
+    private:
+        Color background_color = Color::Black;
+        Color outline_color = Color::White;
+        float outline_thickness = 1;
+        Color tick_color = Color::White;
+        float tick_thickness = 2;
+
+        Checkbox* clone() const override;
     };
 }

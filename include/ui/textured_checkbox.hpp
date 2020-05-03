@@ -4,21 +4,22 @@
 
 namespace Ui
 {
-    struct CheckboxTextures
-    {
-        const sf::Texture& unchecked_texture;
-        const sf::Texture& checked_texture;
-    };
-
     class TexturedCheckbox : public Checkbox
     {
-    private:
-        CheckboxTextures textures;
-
     public:
-        TexturedCheckbox(CheckboxTextures textures, sf::Vector2f position = {0, 0},
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+        TexturedCheckbox(const sf::Texture& unchecked_texture, const sf::Texture& checked_texture,
+            bool checked = false);
+
+        TexturedCheckbox& set_unchecked_texture(const sf::Texture& unchecked_texture);
+
+        TexturedCheckbox& set_checked_texture(const sf::Texture& checked_texture);
 
         const sf::Texture& get_texture() const;
+
+    private:
+        const sf::Texture* unchecked_texture;
+        const sf::Texture* checked_texture;
+
+        TexturedCheckbox* clone() const override;
     };
 }

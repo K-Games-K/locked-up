@@ -10,7 +10,8 @@ private:
     TextRenderer text_renderer;
 
 public:
-    NotificationWidgetRenderer(sf::RenderWindow& window, ResourceManagers resources);
+    NotificationWidgetRenderer(sf::RenderWindow& window);
 
-    void render(const Ui::NotificationWidget& notification_widget, const float dt);
+    void render(const Ui::NotificationWidget& notification_widget, const float dt,
+        sf::Vector2f parent_pos, sf::Vector2f parent_size);
 };

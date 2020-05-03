@@ -9,85 +9,71 @@
 LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
     Connection server_connection)
     : GameState(window, game_state_manager), server_connection(server_connection),
-    user_interface({0, 0}, (sf::Vector2f) window.getSize()),
-    panel_renderer(window, {textures, fonts}),
+    master_widget_renderer(window),
     background_renderer(window, {textures, fonts})
 {
     // Preload background texture.
     textures.get("map");
-    sf::Font& font = fonts.get("IndieFlower-Regular");
-    Ui::ButtonColors button_colors = {
-        sf::Color(0, 0, 0, 140),
-        sf::Color(0, 0, 0, 190),
-        sf::Color(0, 0, 0, 210)
-    };
 
-    left_panel = new Ui::TexturedPanel(
-        textures.get("paper"),
-        {-40, 0},
-        Ui::Anchor::CenterRight, Ui::Anchor::Center
-    );
-    user_interface.add_widget(left_panel);
+    auto& font = fonts.get("IndieFlower-Regular");
+    auto base_button = Ui::Button()
+        .set_default_color(Ui::Color(0, 0, 0, 140))
+        .set_hover_color(Ui::Color(0, 0, 0, 190))
+        .set_active_color(Ui::Color(0, 0, 0, 210));
 
-    left_panel_title_text = new Ui::Text(
-        "",
-        font,
-        {0, 40},
-        {sf::Color::Black, 50},
-        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
-    );
-    left_panel->add_widget(left_panel_title_text);
+    user_interface.set_size({1, 1}, true);
 
-    left_panel->add_widget(
-        new Ui::Button(
-            "Not ready",
-            font,
-            std::bind(&LobbyState::ready_clicked, this, std::placeholders::_1),
-            {0, -100},
-            {420, 40},
-            button_colors,
-            {sf::Color::Red},
-            Ui::Anchor::CenterBottom, Ui::Anchor::CenterBottom
-        )
+    left_panel = (Ui::TexturedPanel*) user_interface.add_widget(
+        Ui::TexturedPanel(textures.get("paper"))
+            .set_position({-40, 0})
+            .set_origin(Ui::Origin::CenterRight)
     );
 
-    left_panel->add_widget(
-        new Ui::Button(
-            "Exit server",
-            font,
-            std::bind(&LobbyState::exit_clicked, this, std::placeholders::_1),
-            {0, -40},
-            {420, 40},
-            button_colors,
-            {sf::Color::Black},
-            Ui::Anchor::CenterBottom, Ui::Anchor::CenterBottom
-        )
+    left_panel_title_text = (Ui::Text*) left_panel->add_widget(
+        Ui::Text(font)
+            .set_font_size(50)
+            .set_position({0, 40})
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterTop)
     );
 
-    players_list_text = new Ui::Text(
-        "",
-        font,
-        {0, 150},
-        {sf::Color::Black},
-        Ui::Anchor::CenterTop, Ui::Anchor::CenterTop
+    auto ready_button = left_panel->add_widget(
+        base_button
+            .set_callback(std::bind(&LobbyState::ready_clicked, this, std::placeholders::_1))
+            .set_position({0, -100})
+            .set_size({420, 40})
+            .set_origin(Ui::Origin::CenterBottom)
+            .set_anchor(Ui::Anchor::CenterBottom)
     );
-    left_panel->add_widget(players_list_text);
-
-    right_panel = new Ui::TexturedPanel(
-        textures.get("paper"),
-        {40, 0},
-        Ui::Anchor::CenterLeft, Ui::Anchor::Center
+    ready_button->add_widget(
+        Ui::Text(font, "Not ready")
+            .set_color(Ui::Color::Red)
     );
-    user_interface.add_widget(right_panel);
 
+    auto exit_button = left_panel->add_widget(
+        base_button
+            .set_callback(std::bind(&LobbyState::exit_clicked, this, std::placeholders::_1))
+            .set_position({0, -40})
+            .set_size({420, 40})
+    );
+    exit_button->add_widget(Ui::Text(font, "Exit server"));
+
+    players_list_text = (Ui::Text*) left_panel->add_widget(
+        Ui::Text(font)
+            .set_position({0, 150})
+            .set_origin(Ui::Origin::CenterTop)
+            .set_anchor(Ui::Anchor::CenterTop)
+    );
+
+    right_panel = (Ui::TexturedPanel*) user_interface.add_widget(
+        Ui::TexturedPanel(textures.get("paper"))
+            .set_position({40, 0})
+            .set_origin(Ui::Origin::CenterLeft)
+            .set_anchor(Ui::Anchor::Center)
+    );
     right_panel->add_widget(
-        new Ui::Text(
-            "Chat coming soonTM...",
-            font,
-            {0, 0},
-            {sf::Color::Black, 50},
-            Ui::Anchor::Center, Ui::Anchor::Center
-        )
+        Ui::Text(font, "Chat coming soonTM...")
+            .set_font_size(50)
     );
 }
 
@@ -99,12 +85,10 @@ void LobbyState::handle_input(sf::Event event)
         game_state_manager.pop_state();
     }
 
-    sf::Vector2f mouse_pos = (sf::Vector2f) sf::Mouse::getPosition(window);
-    sf::Vector2f mouse_pos_rel = mouse_pos - user_interface.get_relative_position(
-        {0, 0},
-        (sf::Vector2f) window.getSize()
+    user_interface.handle_event(
+        event, (sf::Vector2f) sf::Mouse::getPosition(window),
+        {0, 0}, (sf::Vector2f) window.getSize()
     );
-    user_interface.handle_event(event, mouse_pos_rel);
 }
 
 void LobbyState::update(float dt)
@@ -138,7 +122,7 @@ void LobbyState::render(float dt)
 
     background_renderer.render(textures.get("map"), dt);
 
-    panel_renderer.render(user_interface, dt);
+    master_widget_renderer.render(user_interface, dt, {0, 0}, (sf::Vector2f) window.getSize());
 }
 
 void LobbyState::packet_received(std::unique_ptr<Packet> packet)
@@ -219,9 +203,9 @@ void LobbyState::ready_clicked(Ui::Button& button)
 
     ready = !ready;
     time = 0;
-    button.get_text().set_string(ready ? "I'm ready!" : "Not ready");
+    button.get_child<Ui::Text>().set_string(ready ? "I'm ready!" : "Not ready");
     server_connection.send(PlayerReadyPacket(player_id, ready));
-    button.get_text().set_color(ready ? sf::Color::Green : sf::Color::Red);
+    button.get_child<Ui::Text>().set_color(ready ? Ui::Color::Green : Ui::Color::Red);
 }
 
 void LobbyState::exit_clicked(Ui::Button& button)

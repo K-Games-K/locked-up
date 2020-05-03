@@ -4,18 +4,18 @@
 
 namespace Ui
 {
-    Text::Text(const std::string& text, const sf::Font& font, sf::Vector2f position,
-        TextSettings settings, Anchor origin, Anchor anchor)
-        : Widget(position, {0, 0}, origin, anchor),
-        string(text), font(&font), settings(settings)
+    Text::Text(const sf::Font& font, const std::string& string)
+        : font(&font), string(string)
     {
         update_size();
     }
 
-    void Text::set_string(const std::string& text)
+    Text& Text::set_string(const std::string& string)
     {
-        this->string = text;
+        this->string = string;
         update_size();
+
+        return *this;
     }
 
     std::string Text::get_string() const
@@ -23,9 +23,12 @@ namespace Ui
         return string;
     }
 
-    void Text::set_font(const sf::Font& font)
+    Text& Text::set_font(const sf::Font& font)
     {
         this->font = &font;
+        update_size();
+
+        return *this;
     }
 
     const sf::Font& Text::get_font() const
@@ -33,41 +36,107 @@ namespace Ui
         return *font;
     }
 
-    void Text::set_color(sf::Color color)
+    Text& Text::set_max_width(float max_width)
     {
-        settings.color = color;
-    }
-
-    void Text::set_font_size(unsigned int font_size)
-    {
-        settings.font_size = font_size;
+        this->max_width = max_width;
         update_size();
+
+        return *this;
     }
 
-    void Text::set_outline_color(sf::Color outline_color)
+    float Text::get_max_width() const
     {
-        settings.outline_color = outline_color;
+        return max_width;
     }
 
-    void Text::set_outline_thickness(float outline_thickness)
+    Text& Text::set_color(Color color)
     {
-        settings.outline_thickness = outline_thickness;
+        this->color = color;
+
+        return *this;
     }
 
-    void Text::set_settings(TextSettings settings)
+    Color Text::get_color() const
     {
-        this->settings = settings;
+        return color;
     }
 
-    TextSettings Text::get_settings() const
+    Text& Text::set_font_size(unsigned int font_size)
     {
-        return settings;
+        this->font_size = font_size;
+        update_size();
+
+        return *this;
+    }
+
+    unsigned int Text::get_font_size() const
+    {
+        return font_size;
+    }
+
+    Text& Text::set_outline_color(Color outline_color)
+    {
+        this->outline_color = outline_color;
+
+        return *this;
+    }
+
+    Color Text::get_outline_color() const
+    {
+        return outline_color;
+    }
+
+    Text& Text::set_outline_thickness(float outline_thickness)
+    {
+        this->outline_thickness = outline_thickness;
+
+        return *this;
+    }
+
+    float Text::get_outline_thickness() const
+    {
+        return outline_thickness;
+    }
+
+    Text& Text::set_style(TextStyle style)
+    {
+        this->style = style;
+
+        return *this;
+    }
+
+    TextStyle Text::get_style() const
+    {
+        return style;
     }
 
     void Text::update_size()
     {
-        sf::Text sf_text(string, *font, settings.font_size);
+        if(max_width > 0)
+        {
+            std::string str;
+            str.reserve(string.size());
+            sf::Text sf_text("", *font, font_size);
+            for(char ch : string)
+            {
+                sf_text.setString(str += ch);
+                sf::FloatRect bounds = sf_text.getLocalBounds();
+                sf::Vector2f size = {bounds.width + bounds.left, bounds.height + bounds.top};
+
+                if(size.x > max_width)
+                    str.insert(str.size() - 2, 1, '\n');
+            }
+
+            string = str;
+        }
+
+        sf::Text sf_text(string, *font, font_size);
         sf::FloatRect bounds = sf_text.getLocalBounds();
-        set_size({bounds.width + bounds.left, (float) settings.font_size});
+        set_size({bounds.width + bounds.left, bounds.height + bounds.top});
+    }
+
+    Text* Text::clone() const
+    {
+        return new Text(*this);
     }
 }

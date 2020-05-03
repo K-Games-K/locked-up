@@ -2,65 +2,65 @@
 
 namespace Ui
 {
-
-    Popup::Popup(const sf::Texture& texture, const sf::Font& font, sf::Vector2f position,
-        Anchor origin, Anchor anchor)
-        : TexturedPanel(texture, position, origin, anchor)
+    Popup::Popup(const sf::Texture& background_texture, const sf::Font& font)
+        : TexturedPanel(background_texture)
     {
         set_enabled(false);
 
-        title_text = new Ui::Text(
-            "",
-            font,
-            {0, 50},
-            {sf::Color::Black, 32},
-            Anchor::Center, Anchor::CenterTop
+        title_text = (Ui::Text*) add_widget(
+            Ui::Text(font)
+                .set_font_size(32)
+                .set_position({0, 50})
+                .set_anchor(Anchor::CenterTop)
         );
-        add_widget(title_text);
 
-        description_text = new Ui::Text(
-            "",
-            font,
-            {0, 10},
-            {sf::Color::Black},
-            Anchor::Center, Anchor::Center
+        description_text = (Ui::Text*) add_widget(
+            Ui::Text(font)
+                .set_position({0, 10})
         );
-        add_widget(description_text);
 
-        add_widget(
-            new Ui::Button(
-                "X",
-                font,
-                std::bind(&Popup::close_clicked, this, std::placeholders::_1),
-                {-8, 8}, {30, 30},
-                {
-                    sf::Color::Transparent,
-                    sf::Color(0, 0, 0, 100),
-                    sf::Color(0, 0, 0, 200)
-                },
-                {sf::Color::Black, 30},
-                Ui::Anchor::TopRight, Ui::Anchor::TopRight
-            )
+        close_button = (Ui::Button*) add_widget(
+            Ui::Button()
+                .set_callback(std::bind(&Popup::close_clicked, this))
+                .set_hover_color(Color(0, 0, 0, 100))
+                .set_active_color(Color(0, 0, 0, 200))
+                .set_position({-10, 10})
+                .set_size({30, 30})
+                .set_origin(Origin::TopRight)
+                .set_anchor(Anchor::TopRight)
+        );
+        close_button->add_widget(
+            Text(font, "X")
+                .set_color(Color::Black)
+                .set_font_size(30)
+                .set_origin(Origin::Center)
+                .set_anchor(Anchor::Center)
         );
     }
 
-    void Popup::show()
+    Popup::Popup(const Popup& other)
+        : TexturedPanel(other)
     {
+        title_text = &get_child<Ui::Text>(0);
+        description_text = &get_child<Ui::Text>(1);
+        close_button = &get_child<Ui::Button>(2);
+        close_button->set_callback(std::bind(&Popup::close_clicked, this));
+    }
+
+    void Popup::show(const std::string& title, const std::string& description)
+    {
+        title_text->set_string(title);
+        description_text->set_string(description);
         set_enabled(true);
     }
 
-    void Popup::set_title(const std::string& title)
-    {
-        title_text->set_string(title);
-    }
-
-    void Popup::set_description(const std::string& description)
-    {
-        description_text->set_string(description);
-    }
-
-    void Popup::close_clicked(Button& button)
+    void Popup::close_clicked()
     {
         set_enabled(false);
+    }
+
+    Popup* Popup::clone() const
+    {
+        return new Popup(*this);
     }
 }

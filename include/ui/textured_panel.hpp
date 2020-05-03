@@ -6,15 +6,16 @@ namespace Ui
 {
     class TexturedPanel : public Panel
     {
-    private:
-        const sf::Texture* texture;
-
     public:
-        TexturedPanel(const sf::Texture& texture, sf::Vector2f position = {0, 0},
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+        TexturedPanel(const sf::Texture& background_texture);
 
-        void set_texture(const sf::Texture& texture);
+        TexturedPanel& set_background_texture(const sf::Texture& background_texture);
 
-        const sf::Texture& get_texture() const;
+        const sf::Texture& get_background_texture() const;
+
+    private:
+        const sf::Texture* background_texture;
+
+        TexturedPanel* clone() const override;
     };
 }

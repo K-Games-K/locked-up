@@ -2,21 +2,26 @@
 
 namespace Ui
 {
-    TexturedPanel::TexturedPanel(const sf::Texture& texture, sf::Vector2f position, Anchor origin,
-        Anchor anchor)
-        : Panel(position, (sf::Vector2f) texture.getSize(),
-        sf::Color::Transparent, origin, anchor
-    ), texture(&texture)
+    TexturedPanel::TexturedPanel(const sf::Texture& background_texture)
+        : background_texture(&background_texture)
     {
+        set_size((sf::Vector2f) background_texture.getSize());
     }
 
-    void TexturedPanel::set_texture(const sf::Texture& texture)
+    TexturedPanel& TexturedPanel::set_background_texture(const sf::Texture& background_texture)
     {
-        this->texture = &texture;
+        this->background_texture = &background_texture;
+
+        return *this;
     }
 
-    const sf::Texture& TexturedPanel::get_texture() const
+    const sf::Texture& TexturedPanel::get_background_texture() const
     {
-        return *texture;
+        return *background_texture;
+    }
+
+    TexturedPanel* TexturedPanel::clone() const
+    {
+        return new TexturedPanel(*this);
     }
 }

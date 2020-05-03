@@ -2,19 +2,21 @@
 
 namespace Ui
 {
-    Checkbox::Checkbox(sf::Vector2f position, sf::Vector2f size, CheckboxSettings settings,
-        Anchor origin, Anchor anchor)
-        : Widget(position, size, origin, anchor),
-        settings(settings)
-    {}
+    Checkbox::Checkbox(bool checked)
+        : checked(checked) {}
 
-    void Checkbox::handle_event(sf::Event event, sf::Vector2f mouse_pos)
+    bool Checkbox::handle_event(const sf::Event& event, sf::Vector2f mouse_pos,
+        sf::Vector2f parent_pos, sf::Vector2f parent_size)
     {
-        sf::FloatRect widget_box({0, 0}, get_size());
+        sf::Vector2f widget_pos = get_global_position(parent_pos, parent_size);
+        sf::Vector2f widget_size = get_global_size(parent_size);
+        sf::FloatRect widget_box(widget_pos, widget_size);
 
         if(event.type == sf::Event::MouseButtonPressed &&
             widget_box.contains(mouse_pos))
             checked = !checked;
+
+        return Widget::handle_event(event, mouse_pos, widget_pos, widget_size);
     }
 
     bool Checkbox::is_checked() const
@@ -22,38 +24,68 @@ namespace Ui
         return checked;
     }
 
-    void Checkbox::set_background_color(sf::Color background_color)
+    Checkbox& Checkbox::set_background_color(Color background_color)
     {
-        settings.background_color = background_color;
+        this->background_color = background_color;
+
+        return *this;
     }
 
-    void Checkbox::set_outline_color(sf::Color outline_color)
+    Color Checkbox::get_background_color() const
     {
-        settings.outline_color = outline_color;
+        return background_color;
     }
 
-    void Checkbox::set_outline_thickness(float outline_thickness)
+    Checkbox& Checkbox::set_outline_color(Color outline_color)
     {
-        settings.outline_thickness = outline_thickness;
+        this->outline_color = outline_color;
+
+        return *this;
     }
 
-    void Checkbox::set_tick_color(sf::Color tick_color)
+    Color Checkbox::get_outline_color() const
     {
-        settings.tick_color = tick_color;
+        return outline_color;
     }
 
-    void Checkbox::set_tick_thickness(float tick_thickness)
+    Checkbox& Checkbox::set_outline_thickness(float outline_thickness)
     {
-        settings.tick_thickness = tick_thickness;
+        this->outline_thickness = outline_thickness;
+
+        return *this;
     }
 
-    void Checkbox::set_settings(CheckboxSettings settings)
+    float Checkbox::get_outline_thickness() const
     {
-        this->settings = settings;
+        return outline_thickness;
     }
 
-    CheckboxSettings Checkbox::get_settings() const
+    Checkbox& Checkbox::set_tick_color(Color tick_color)
     {
-        return settings;
+        this->tick_color = tick_color;
+
+        return *this;
+    }
+
+    Color Checkbox::get_tick_color() const
+    {
+        return tick_color;
+    }
+
+    Checkbox& Checkbox::set_tick_thickness(float tick_thickness)
+    {
+        this->tick_thickness = tick_thickness;
+
+        return *this;
+    }
+
+    float Checkbox::get_tick_thickness() const
+    {
+        return tick_thickness;
+    }
+
+    Checkbox* Checkbox::clone() const
+    {
+        return new Checkbox(*this);
     }
 }

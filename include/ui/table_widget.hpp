@@ -1,58 +1,56 @@
 #pragma once
 
-#include "widget_container.hpp"
+#include "widget.hpp"
 
 namespace Ui
 {
-    struct TableWidgetSettings
+    class TableWidget : public Widget
     {
-        sf::Color grid_color = sf::Color::Black;
-        float grid_thickness = 1;
-    };
-
-    class TableWidget : public WidgetContainer
-    {
-    private:
-        const int columns_count;
-        const int rows_count;
-
-        TableWidgetSettings settings;
-
-        std::vector<std::vector<Widget*>> widgets;
-        std::vector<float> column_widths;
-        std::vector<float> row_heights;
-
-        void update_size();
-
     public:
-        TableWidget(int columns_count = 0, int rows_count = 0,
-            const std::vector<float>& column_widths = {},
-            const std::vector<float>& row_heights = {},
-            sf::Vector2f position = {0, 0}, TableWidgetSettings settings = TableWidgetSettings(),
-            Anchor origin = Anchor::TopLeft, Anchor anchor = Anchor::TopLeft);
+        TableWidget(int columns_count, int rows_count);
 
-        ~TableWidget();
+        void add_widget(const Widget& widget) = delete;
 
-        void handle_event(sf::Event event, sf::Vector2f mouse_pos) override;
-
-        void update(const float dt) override;
-
-        void add_widget(int column, int row, Widget* widget);
+        Widget* add_widget(unsigned int column, unsigned int row, const Widget& widget);
 
         int get_rows_count() const;
 
         int get_columns_count() const;
 
-        void set_grid_color(sf::Color grid_color);
+        TableWidget& set_grid_color(Color grid_color);
 
-        void set_grid_thickness(float grid_thickness);
+        Color get_grid_color() const;
 
-        TableWidgetSettings get_settings() const;
+        TableWidget& set_grid_thickness(float grid_thickness);
+
+        float get_grid_thickness() const;
+
+        TableWidget& set_column_widths(const std::vector<float>& column_widths);
 
         const std::vector<float>& get_column_widths() const;
 
+        TableWidget& set_row_heights(const std::vector<float>& row_heights);
+
         const std::vector<float>& get_row_heights() const;
 
-        const std::vector<std::vector<Widget*>>& get_widgets() const;
+    private:
+        class Item : public Widget
+        {
+        private:
+            Item* clone() const override;
+        };
+
+        const int columns_count;
+        const int rows_count;
+
+        Color grid_color = Color::Black;
+        float grid_thickness = 1;
+
+        std::vector<float> column_widths;
+        std::vector<float> row_heights;
+
+        void update_size();
+
+        TableWidget* clone() const override;
     };
 }

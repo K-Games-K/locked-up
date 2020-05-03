@@ -11,13 +11,13 @@
 class Server
 {
 private:
-    const float COUNTDOWN_INTERVAL = 5;
-    const size_t MIN_PLAYERS_COUNT = 2;
+    const float COUNTDOWN_INTERVAL = 1;
+    const size_t MIN_PLAYERS_COUNT = 1;
     const int MOVES_PER_TURN = 6;
     const int ACTIONS_PER_TURN = 1;
     const int ALIBI_LENGTH = 12;
     const int VISIBLE_ALIBIS = 3;
-    const int TURNS_PER_GAME = 32;
+    const int TURNS_PER_GAME = 2;
 
     const std::vector<std::string> hours {
         "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00",
