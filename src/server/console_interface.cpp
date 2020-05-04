@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "utils.hpp"
+#include "logging.hpp"
 #include "server/console_interface.hpp"
 
 ConsoleInterfrace::ConsoleInterfrace()
@@ -42,13 +43,13 @@ void ConsoleInterfrace::console_interface_worker()
         else if(commands.find(args[0]) != commands.end())
             commands.at(args[0])(args);
         else
-            std::cout << "Wrong command. Type \"help\" for list of available comamnds." << std::endl;
+            Log::warn() << "Wrong command. Type \"help\" for list of available comamnds." << std::endl;
     }
 }
 
 void ConsoleInterfrace::print_help()
 {
-    std::cout << "Available commands:" << std::endl;
+    Log::info() << "Available commands:" << std::endl;
     for(auto& command : commands)
-        std::cout << " - " << command.first << std::endl;
+        Log::info() << " - " << command.first << std::endl;
 }

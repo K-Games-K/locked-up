@@ -1,6 +1,7 @@
 #include <ctime>
 
 #include "game_board_loader.hpp"
+#include "utils.hpp"
 #include "logging.hpp"
 #include "server/game_manager.hpp"
 #include "network/packet/packets.hpp"
@@ -28,6 +29,9 @@ GameManager::GameManager()
     Log::info() << "Loaded mapfile: " << mapfile << std::endl;
 
     Log::info() << "Registering console interface commands..." << std::endl;
+    console_interfrace.register_command(
+        "set", std::bind(&GameManager::set, this, std::placeholders::_1)
+    );
     console_interfrace.register_command("stop", std::bind(&GameManager::stop, this));
     Log::info() << "Console interface ready!" << std::endl;
 
@@ -385,6 +389,40 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
         }
         default:
             break;
+    }
+}
+
+void GameManager::set(const std::vector<std::string>& args)
+{
+    if(args[1] == "countdown_interval")
+    {
+        this->COUNTDOWN_INTERVAL = std::stof(args[2]);
+    }
+    else if(args[1] == "min_players")
+    {
+        this->MIN_PLAYERS_COUNT = std::stoi(args[2]);
+    }
+    else if(args[1] == "moves")
+    {
+        this->MOVES_PER_TURN = std::stoi(args[2]);
+    }
+    else if(args[1] == "actions")
+    {
+        this->ACTIONS_PER_TURN = std::stoi(args[2]);
+    }
+    else if(args[1] == "turns")
+    {
+        this->TURNS_PER_GAME = std::stoi(args[2]);
+    }
+    else if(args[1] == "visible_alibis")
+    {
+        this->VISIBLE_ALIBIS = std::stoi(args[2]);
+    }
+    else
+    {
+        Log::warn()
+            << "Usage: set countdown_interval/min_players/moves/actions/turns/visible_alibis <value>"
+            << std::endl;
     }
 }
 

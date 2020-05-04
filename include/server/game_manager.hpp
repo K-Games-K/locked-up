@@ -19,13 +19,13 @@ private:
     // Server config
     const unsigned short SERVER_PORT = 2704;
     const sf::IpAddress SERVER_ADDR = sf::IpAddress::Any;
-    const float COUNTDOWN_INTERVAL = 1;
-    const size_t MIN_PLAYERS_COUNT = 1;
-    const int MOVES_PER_TURN = 6;
-    const int ACTIONS_PER_TURN = 1;
-    const int ALIBI_LENGTH = 13;
-    const int VISIBLE_ALIBIS = 3;
-    const int TURNS_PER_GAME = 2;
+    float COUNTDOWN_INTERVAL = 1;
+    size_t MIN_PLAYERS_COUNT = 1;
+    int MOVES_PER_TURN = 6;
+    int ACTIONS_PER_TURN = 1;
+    int ALIBI_LENGTH = 13;
+    int VISIBLE_ALIBIS = 3;
+    int TURNS_PER_GAME = 2;
     const std::vector<std::string> hours {
         "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00",
         "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"
@@ -62,6 +62,8 @@ private:
     std::vector<int> votes;
 
     void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
+
+    void set(const std::vector<std::string>& args);
 
     void stop();
 };
