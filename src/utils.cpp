@@ -58,3 +58,13 @@ bool Utils::is_printable(const std::string& string)
 
     return true;
 }
+
+std::string Utils::to_lower_case(const std::string& string)
+{
+    std::string result(string.size(), ' ');
+    std::transform(
+        string.begin(), string.end(), result.begin(), [](char c) { return std::tolower(c); }
+    );
+
+    return result;
+}

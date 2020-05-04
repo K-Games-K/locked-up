@@ -19,4 +19,6 @@ namespace Utils
     bool is_number(const std::string& string);
 
     bool is_printable(const std::string& string);
+
+    std::string to_lower_case(const std::string& string);
 }

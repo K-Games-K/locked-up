@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "utils.hpp"
 #include "server/console_interface.hpp"
 
 ConsoleInterfrace::ConsoleInterfrace()
@@ -33,10 +34,7 @@ void ConsoleInterfrace::console_interface_worker()
         {
             std::string arg;
             ss >> arg;
-            std::transform(
-                arg.begin(), arg.end(), arg.begin(), [](char c) { return std::tolower(c); }
-            );
-            args.push_back(arg);
+            args.push_back(Utils::to_lower_case(arg));
         }
 
         if(args[0] == "help")
