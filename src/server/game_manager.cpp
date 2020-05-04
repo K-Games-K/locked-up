@@ -24,6 +24,10 @@ GameManager::GameManager()
     }
     Log::info() << "Loaded mapfile: " << mapfile << std::endl;
 
+    Log::info() << "Registering console interface commands..." << std::endl;
+    console_interfrace.register_command("stop", std::bind(&GameManager::stop, this));
+    Log::info() << "Console interface ready!" << std::endl;
+
     enabled = true;
     Log::info() << "Game manager initialized successfully!" << std::endl;
 }
@@ -236,6 +240,7 @@ void GameManager::run()
         }
     }
 
+    console_interfrace.shutdown();
     Log::info() << "Goodbye!" << std::endl;
 }
 
@@ -376,4 +381,9 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
         default:
             break;
     }
+}
+
+void GameManager::stop()
+{
+    enabled = false;
 }

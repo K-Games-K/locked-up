@@ -4,6 +4,7 @@
 #include <random>
 #include <unordered_map>
 
+#include "console_interface.hpp"
 #include "remote_player.hpp"
 #include "server.hpp"
 
@@ -15,6 +16,8 @@ public:
     void run();
 
     void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
+
+    void stop();
 
 private:
     // Server config
@@ -34,8 +37,10 @@ private:
 
     bool teleport_allowed = false;
 
-    bool enabled = false;
+    volatile bool enabled = false;
     Server game_server;
+
+    ConsoleInterfrace console_interfrace;
 
     enum class GameStage
     {
@@ -50,7 +55,6 @@ private:
     } game_stage = GameStage::Lobby;
 
     int current_player_id = 0;
-    std::vector<RemotePlayer> players;
 
     std::mt19937 gen;
     sf::Clock timer;
