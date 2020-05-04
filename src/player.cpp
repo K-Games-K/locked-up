@@ -6,8 +6,7 @@
 #include "player.hpp"
 
 Player::Player(const std::string& nickname, const std::string& avatar_name)
-    : nickname(nickname), avatar_name(avatar_name)
-{}
+    : nickname(nickname), avatar_name(avatar_name) {}
 
 void Player::set_nickname(const std::string& nickname)
 {
@@ -54,27 +53,28 @@ const std::vector<int>& Player::get_alibi() const
     return alibi;
 }
 
-void Player::generate_alibi(const GameBoard& game_board, int crime_room, int length)
+void Player::generate_alibi(const GameBoard& game_board, int starting_room, int alibi_length)
 {
     size_t rooms_count = game_board.rooms_count();
     std::vector<int> visit_count(rooms_count);
 
     alibi.clear();
-    alibi.push_back(crime_room);
+    alibi.push_back(starting_room);
 
     // Initializing RNG
     static std::mt19937 gen(time(nullptr));
     std::uniform_real_distribution<> rand_percent(0, 100);
     std::uniform_int_distribution<> rand_room(1, rooms_count - 1);
 
-    int current_room = rand_room(gen);
-    for(int i = 0; i < length; ++i)
+    int current_room = starting_room;
+    for(int i = 0; i < alibi_length - 1; ++i)
     {
         std::uniform_int_distribution<> rand_neighour(
             0, game_board.get_neighbours(current_room).size() - 1
         );
-        int stay = rand_percent(gen);
-        if(stay < 25.0 || (alibi.size() >= 2 && alibi[alibi.size() - 2] == alibi[alibi.size() - 1]))
+        int stay_prob = rand_percent(gen);
+        if(stay_prob < 40.0
+            || (alibi.size() >= 2 && alibi[alibi.size() - 2] == alibi[alibi.size() - 1]))
         {
             int neighbour;
             do
@@ -84,9 +84,9 @@ void Player::generate_alibi(const GameBoard& game_board, int crime_room, int len
             while(game_board.get_neighbours(current_room).size() > 1 && visit_count[neighbour] > 2);
 
             current_room = neighbour;
-            visit_count[neighbour]++;
         }
 
+        visit_count[current_room]++;
         alibi.push_back(current_room);
     }
 

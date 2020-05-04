@@ -36,7 +36,7 @@ public:
 
     const std::vector<int>& get_alibi() const;
 
-    void generate_alibi(const GameBoard& game_board, int crime_room, int length);
+    void generate_alibi(const GameBoard& game_board, int starting_room, int alibi_length);
 
     bool operator==(const Player& other) const;
 
