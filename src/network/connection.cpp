@@ -1,16 +1,15 @@
 #include "network/connection.hpp"
 #include "network/packet/packet_factory.hpp"
 
-
-Connection::Connection(std::shared_ptr<sf::TcpSocket>& socket)
-        : socket(std::move(socket))
+Connection::Connection(std::unique_ptr<sf::TcpSocket>&& socket)
+    : socket(std::move(socket))
 {
     this->socket->setBlocking(false);
     connected = true;
 }
 
 Connection::Connection(sf::IpAddress remote_addr, unsigned short remote_port)
-        : socket(std::make_shared<sf::TcpSocket>())
+    : socket(std::make_unique<sf::TcpSocket>())
 {
     auto result = socket->connect(remote_addr, remote_port);
     if(result != sf::Socket::Done)
@@ -18,6 +17,12 @@ Connection::Connection(sf::IpAddress remote_addr, unsigned short remote_port)
 
     socket->setBlocking(false);
     connected = true;
+}
+
+Connection::Connection(Connection&& other)
+    : socket(std::move(other.socket)), connected(other.connected)
+{
+    other.connected = false;
 }
 
 sf::IpAddress Connection::get_addr() const
@@ -78,5 +83,14 @@ std::unique_ptr<Packet> Connection::recv()
 bool Connection::operator==(const Connection& other) const
 {
     return socket == other.socket;
+}
+
+Connection& Connection::operator=(Connection&& other)
+{
+    socket = std::move(other.socket);
+    connected = other.connected;
+    other.connected = false;
+
+    return *this;
 }
 

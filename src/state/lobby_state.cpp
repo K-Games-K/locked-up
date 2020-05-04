@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 #include "state/lobby_state.hpp"
 #include "state/play_state.hpp"
@@ -7,8 +8,8 @@
 #include "network/packet/packets.hpp"
 
 LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-    Connection server_connection)
-    : GameState(window, game_state_manager), server_connection(server_connection),
+    Connection&& server_connection)
+    : GameState(window, game_state_manager), server_connection(std::move(server_connection)),
     master_widget_renderer(window),
     background_renderer(window, {textures, fonts})
 {
@@ -183,7 +184,7 @@ void LobbyState::packet_received(std::unique_ptr<Packet> packet)
             left_panel_title_text->set_string("Loading...");
             game_state_manager.push_state(
                 new PlayState(
-                    window, game_state_manager, server_connection, game_board,
+                    window, game_state_manager, std::move(server_connection), game_board,
                     player_id, players_list, alibis, crime_room, crime_item
                 ), true
             );

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <functional>
 #include <sstream>
 
@@ -8,11 +7,11 @@
 #include "network/packet/packets.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-    Connection server_connection, const GameBoard& game_board, int player_id,
+    Connection&& server_connection, const GameBoard& game_board, int player_id,
     const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis,
     int crime_room, Item crime_item)
     : GameState(window, game_state_manager),
-    server_connection(server_connection),
+    server_connection(std::move(server_connection)),
     game_board(std::move(game_board)),
     player_id(player_id),
     players_list(std::move(players_list)),

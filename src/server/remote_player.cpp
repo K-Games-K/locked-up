@@ -1,8 +1,8 @@
-#include "remote_player.hpp"
+#include "server/remote_player.hpp"
 
-RemotePlayer::RemotePlayer(int player_id, Connection connection)
-        : Player("[invalid]"), player_id(player_id), connection(connection)
-{}
+RemotePlayer::RemotePlayer(int player_id, const std::string& nickname,
+    const std::string& avatar_name, Connection&& connection)
+    : Player(nickname, avatar_name), player_id(player_id), connection(std::move(connection)) {}
 
 void RemotePlayer::set_player_id(int player_id)
 {

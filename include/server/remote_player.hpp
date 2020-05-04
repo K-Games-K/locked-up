@@ -12,7 +12,8 @@ private:
     bool ready = false;
 
 public:
-    explicit RemotePlayer(int player_id, Connection connection);
+    RemotePlayer(int player_id, const std::string& nickname, const std::string& avatar_name,
+        Connection&& connection);
 
     void set_player_id(int player_id);
 

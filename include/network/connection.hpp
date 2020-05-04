@@ -9,16 +9,18 @@
 class Connection
 {
 private:
-    std::shared_ptr<sf::TcpSocket> socket;
+    std::unique_ptr<sf::TcpSocket> socket;
 
     bool connected = false;
 
 public:
     Connection() = default;
 
-    explicit Connection(std::shared_ptr<sf::TcpSocket>& socket);
+    Connection(std::unique_ptr<sf::TcpSocket>&& socket);
 
     Connection(sf::IpAddress remote_addr, unsigned short remote_port);
+
+    Connection(Connection&& other);
 
     sf::IpAddress get_addr() const;
 
@@ -29,6 +31,8 @@ public:
     bool send(const Packet& packet);
 
     std::unique_ptr<Packet> recv();
+
+    Connection& operator=(Connection&& other);
 
     bool operator==(const Connection& other) const;
 };

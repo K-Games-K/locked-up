@@ -5,12 +5,8 @@
 
 #include "player.hpp"
 
-Player::Player(const std::string& nickname, int x, int y)
-    : nickname(nickname), position(x, y)
-{}
-
-Player::Player(const std::string& nickname, sf::Vector2i position)
-    : nickname(nickname), position(position)
+Player::Player(const std::string& nickname, const std::string& avatar_name)
+    : nickname(nickname), avatar_name(avatar_name)
 {}
 
 void Player::set_nickname(const std::string& nickname)
@@ -18,9 +14,9 @@ void Player::set_nickname(const std::string& nickname)
     this->nickname = nickname;
 }
 
-void Player::set_avatar(const std::string& avatar)
+void Player::set_avatar_name(const std::string& avatar_name)
 {
-    this->avatar = avatar;
+    this->avatar_name = avatar_name;
 }
 
 std::string Player::get_nickname() const
@@ -28,9 +24,9 @@ std::string Player::get_nickname() const
     return nickname;
 }
 
-std::string Player::get_avatar() const
+std::string Player::get_avatar_name() const
 {
-    return avatar;
+    return avatar_name;
 }
 
 void Player::set_position(int x, int y)

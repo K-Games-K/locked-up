@@ -41,7 +41,7 @@ private:
 
 public:
     LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-        Connection server_connection);
+        Connection&& server_connection);
 
     void handle_input(sf::Event event) override;
 

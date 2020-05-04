@@ -23,7 +23,7 @@ void PlayersListPacket::serialize(sf::Packet& data) const
     uint16_t players_count = players_list.size();
     data << player_id << players_count;
     for(auto& player : players_list)
-        data << player.get_nickname() << player.get_position().x << player.get_position().y << player.get_avatar();
+        data << player.get_nickname() << player.get_position().x << player.get_position().y << player.get_avatar_name();
 }
 
 void PlayersListPacket::deserialize(sf::Packet& data)
@@ -34,12 +34,12 @@ void PlayersListPacket::deserialize(sf::Packet& data)
     for(int i = 0; i < players_count; ++i)
     {
         std::string nickname;
-        std::string avatar;
+        std::string avatar_name;
         int x, y;
-        data >> nickname >> x >> y >> avatar;
+        data >> nickname >> x >> y >> avatar_name;
 
-        players_list.emplace_back(nickname, x, y);
-        players_list[players_list.size() - 1].set_avatar(avatar);
+        players_list.emplace_back(nickname, avatar_name);
+        players_list[players_list.size() - 1].set_position(x, y);
     }
 }
 

@@ -157,7 +157,7 @@ void MainMenuState::update(float dt)
     {
         server_connection.send(JoinGamePacket(nickname, avatar));
         game_state_manager.push_state(
-            new LobbyState(window, game_state_manager, server_connection),
+            new LobbyState(window, game_state_manager, std::move(server_connection)),
             true
         );
     }

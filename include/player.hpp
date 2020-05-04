@@ -10,24 +10,21 @@ class Player
 {
 private:
     std::string nickname;
-    std::string avatar;
+    std::string avatar_name;
     sf::Vector2i position;
 
     std::vector<int> alibi;
 
 public:
-    explicit Player(const std::string& nickname, int x = 0, int y = 0);
-
-    Player(const std::string& nickname, sf::Vector2i position);
+    explicit Player(const std::string& nickname, const std::string& avatar_name = "mr1");
 
     void set_nickname(const std::string& nickname);
 
-    void set_avatar(const std::string& avatar);
-
-
     std::string get_nickname() const;
 
-    std::string get_avatar() const;
+    void set_avatar_name(const std::string& avatar_name);
+
+    std::string get_avatar_name() const;
 
     void set_position(int x, int y);
 

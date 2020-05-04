@@ -19,7 +19,7 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
         if(!game_board_rect.contains(player_pos))
             continue;
 
-        auto& texture = resources.textures.get(player.get_avatar());
+        auto& texture = resources.textures.get(player.get_avatar_name());
         sf::Sprite player_sprite(texture);
         player_sprite.setOrigin(texture.getSize().x / 2, texture.getSize().y - TILE_SIZE / 2);
         player_sprite.setPosition(player_pos + game_board_pos);
@@ -36,7 +36,7 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
         if(!game_board_rect.contains(player_pos))
             continue;
 
-        auto& texture = resources.textures.get(player.get_avatar());
+        auto& texture = resources.textures.get(player.get_avatar_name());
         sf::Vector2f player_size(texture.getSize());
         player_pos += sf::Vector2f(TILE_SIZE / 2, TILE_SIZE) -
             sf::Vector2f(player_size.x / 2, texture.getSize().y);
