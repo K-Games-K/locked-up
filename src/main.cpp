@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 #include "game.hpp"
-#include "network/server.hpp"
+#include "server/server.hpp"
 
 int main(int argc, char* argv[])
 {

@@ -95,9 +95,6 @@ void Player::generate_alibi(const GameBoard& game_board, int crime_room, int len
     }
 
     std::reverse(alibi.begin(), alibi.end());
-    for(auto room : alibi)
-        std::cout << room << " ";
-    std::cout << std::endl;
 }
 
 bool Player::operator==(const Player& other) const

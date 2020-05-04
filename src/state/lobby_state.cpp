@@ -127,9 +127,6 @@ void LobbyState::render(float dt)
 
 void LobbyState::packet_received(std::unique_ptr<Packet> packet)
 {
-    std::cout << "[" << server_connection.get_addr() << "] sent a packet of id: "
-        << packet->get_id() << std::endl;
-
     switch(packet->get_id())
     {
         case PlayersListPacket::PACKET_ID:

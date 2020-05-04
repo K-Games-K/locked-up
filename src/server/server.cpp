@@ -1,22 +1,21 @@
 #include <numeric>
 #include <algorithm>
-#include <iostream>
 #include <ctime>
 
 #include "game_board_loader.hpp"
-#include "network/server.hpp"
+#include "logging.hpp"
+#include "server/server.hpp"
 #include "network/packet/packets.hpp"
 
 Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
     : gen((time(nullptr)))
 {
-    bool game_board_loaded = GameBoardLoader::load_from_file(
-        game_board, "assets/maps/mapfile.karol"
-    );
+    const std::string mapfile = "assets/maps/mapfile.karol";
+    bool game_board_loaded = GameBoardLoader::load_from_file(game_board, mapfile);
 
     if(!game_board_loaded)
     {
-        std::cerr << "Failed to read mapfile!" << std::endl;
+        Log::error() << "Failed to read mapfile: " << mapfile << "!" << std::endl;
         return;
     }
 
@@ -26,11 +25,11 @@ Server::Server(unsigned short bind_port, sf::IpAddress bind_addr)
     std::string bind_str = bind_addr.toString() + ":" + std::to_string(bind_port);
     if(status != sf::Socket::Done)
     {
-        std::cerr << "Failed to bind to " << bind_str << "!" << std::endl;
+        Log::error() << "Failed to bind to " << bind_str << "!" << std::endl;
         return;
     }
 
-    std::cout << "Server listening on " << bind_str << "..." << std::endl;
+    Log::info() << "Server listening on " << bind_str << "..." << std::endl;
     enabled = true;
 }
 
@@ -125,7 +124,7 @@ void Server::update()
 
             std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
             int crime_room = rand_room(gen);
-            std::cout << "Generating alibis. Crime room is "
+            Log::info() << "Generating alibis. Crime room is "
                 << game_board.get_room(crime_room).get_name() << "." << std::endl;
             for(auto& player : players)
             {
@@ -291,7 +290,7 @@ void Server::broadcast(const Packet& packet)
 
 void Server::new_connection(Connection connection)
 {
-    std::cout << "New connection from: " << connection.get_addr() << std::endl;
+    Log::info() << "New connection from: " << connection.get_addr() << std::endl;
 
     players.emplace_back(players.size(), connection);
 }
@@ -299,16 +298,14 @@ void Server::new_connection(Connection connection)
 void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packet)
 {
     Connection& connection = player.get_connection();
-    std::cout << "[" << connection.get_addr() << "] sent a packet of id: "
-        << packet->get_id() << std::endl;
 
     switch(packet->get_id())
     {
         case DebugPacket::PACKET_ID:
         {
             auto debug_packet = dynamic_cast<DebugPacket&>(*packet);
-            std::cout << "[Debug:" << connection.get_addr() << "]: "
-                << debug_packet.get_message() << std::endl;
+            Log::debug() << connection.get_addr() << ": " << debug_packet.get_message()
+                << std::endl;
 
             break;
         }
@@ -323,7 +320,6 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
             std::string avatar = join_game_packet.get_avatar();
             player.set_nickname(nickname);
             player.set_avatar(avatar);
-            std::cout << avatar << std::endl;
 
             std::vector<Player> players_list(players.begin(), players.end());
             for(int i = 0; i < players.size(); ++i)
@@ -445,9 +441,6 @@ void Server::packet_received(RemotePlayer& player, std::unique_ptr<Packet> packe
                         {rand_hour(gen), players[player_id].get_nickname()}
                     );
 
-                    for(auto& a : player_room.get_visitors())
-                        std::cout << a.first << ":" << a.second << std::endl;
-
                     break;
                 }
             }
@@ -474,6 +467,6 @@ void Server::disconnected(RemotePlayer& player, const std::string& reason)
 {
     Connection& connection = player.get_connection();
 
-    std::cout << "[" << connection.get_addr() << "] " << player.get_nickname()
-        << " left because: " << reason << std::endl;
+    Log::info() << "Player " << player.get_nickname() << " (" << connection.get_addr()
+        << ") left. Cause: " << reason << std::endl;
 }

@@ -2,6 +2,7 @@
 #include <functional>
 #include <sstream>
 
+#include "logging.hpp"
 #include "utils.hpp"
 #include "state/play_state.hpp"
 #include "network/packet/packets.hpp"
@@ -313,8 +314,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
         case DebugPacket::PACKET_ID:
         {
             auto debug_packet = dynamic_cast<DebugPacket&>(*packet);
-            std::cout << "[Debug:" << server_connection.get_addr() << "]: "
-                << debug_packet.get_message() << std::endl;
+            Log::debug() << "Server: " << debug_packet.get_message() << std::endl;
 
             break;
         }
