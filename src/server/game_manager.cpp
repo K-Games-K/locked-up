@@ -90,7 +90,7 @@ void GameManager::run()
                 std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
                 for(auto& player : connected_players)
                 {
-                    player.generate_alibi(game_board, 2/*rand_room(gen)*/, ALIBI_LENGTH);
+                    player.generate_alibi(game_board, rand_room(gen), ALIBI_LENGTH);
                     auto& alibi = player.get_alibi();
                     for(int i = 0; i < alibi.size(); ++i)
                     {
