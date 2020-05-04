@@ -1,3 +1,5 @@
+#include <ctime>
+
 #include "game_board_loader.hpp"
 #include "logging.hpp"
 #include "server/game_manager.hpp"
@@ -6,7 +8,8 @@
 GameManager::GameManager()
     : game_server(
     SERVER_ADDR, SERVER_PORT,
-    std::bind(&GameManager::packet_received, this, std::placeholders::_1, std::placeholders::_2))
+    std::bind(&GameManager::packet_received, this, std::placeholders::_1, std::placeholders::_2)),
+    gen(time(nullptr))
 {
     if(!game_server.is_enabled())
     {
@@ -36,6 +39,7 @@ void GameManager::run()
 {
     if(!enabled)
         Log::error() << "Failed to initialize game manager!" << std::endl;
+
 
     while(enabled)
     {
@@ -80,12 +84,13 @@ void GameManager::run()
                 if(timer.getElapsedTime().asSeconds() < COUNTDOWN_INTERVAL)
                     break;
 
+                game_server.set_allow_new_connections(false);
+
                 // Setting up new game.
                 std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
-                int crime_room = rand_room(gen);
                 for(auto& player : connected_players)
                 {
-                    player.generate_alibi(game_board, crime_room, ALIBI_LENGTH);
+                    player.generate_alibi(game_board, 2/*rand_room(gen)*/, ALIBI_LENGTH);
                     auto& alibi = player.get_alibi();
                     for(int i = 0; i < alibi.size(); ++i)
                     {
@@ -104,7 +109,8 @@ void GameManager::run()
                     items.insert(items.end(), room.get_items().begin(), room.get_items().end());
                 }
                 std::uniform_int_distribution<> rand_tool(0, items.size() - 1);
-                Item crime_item = items[rand_tool(gen)];
+                auto& crime_item = items[rand_tool(gen)];
+                int crime_room = murderer.get_alibi()[ALIBI_LENGTH - 1];
 
                 for(int i = 0; i < connected_players.size(); ++i)
                 {
@@ -118,9 +124,7 @@ void GameManager::run()
                         else
                         {
                             std::vector<int> alibi = connected_players[j].get_alibi();
-                            std::vector<int> indices(
-                                alibi.size() - 1
-                            ); // Last alibi is left untouched.
+                            std::vector<int> indices(alibi.size() - 1);
                             std::iota(indices.begin(), indices.end(), 0);
                             std::shuffle(indices.begin(), indices.end(), gen);
                             alibis[j].resize(alibi.size(), -1);
@@ -137,20 +141,21 @@ void GameManager::run()
                 murderer.get_connection().send(MurdererPacket());
 
                 auto& tiles = game_board.get_tiles();
-                std::vector<int> tiles_indices;
-                for(int i = 0; i < tiles.size(); ++i)
+                for(auto& player : connected_players)
                 {
-                    if(tiles[i] == crime_room)
-                        tiles_indices.push_back(i);
-                }
-                std::shuffle(tiles_indices.begin(), tiles_indices.end(), gen);
-                for(int i = 0; i < connected_players.size(); ++i)
-                {
-                    int16_t x = tiles_indices[i] % game_board.get_width();
-                    int16_t y = tiles_indices[i] / game_board.get_width();
-                    connected_players[i].set_position(x, y);
-                    game_server.broadcast(
-                        PlayerMovePacket(x, y, connected_players[i].get_player_id(), false));
+                    std::vector<int> room_tiles;
+                    for(int i = 0; i < tiles.size(); ++i)
+                    {
+                        if(tiles[i] == player.get_alibi()[ALIBI_LENGTH - 1])
+                            room_tiles.push_back(i);
+                    }
+
+                    std::uniform_int_distribution<> rand_tile(0, room_tiles.size() - 1);
+                    int16_t x = room_tiles[rand_tile(gen)] % game_board.get_width();
+                    int16_t y = room_tiles[rand_tile(gen)] / game_board.get_width();
+                    player.set_position(x, y);
+
+                    game_server.broadcast(PlayerMovePacket(x, y, player.get_player_id(), false));
                 }
 
                 game_stage = GameStage::NewTurn;

@@ -15,10 +15,6 @@ public:
 
     void run();
 
-    void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
-
-    void stop();
-
 private:
     // Server config
     const unsigned short SERVER_PORT = 2704;
@@ -27,7 +23,7 @@ private:
     const size_t MIN_PLAYERS_COUNT = 1;
     const int MOVES_PER_TURN = 6;
     const int ACTIONS_PER_TURN = 1;
-    const int ALIBI_LENGTH = 12;
+    const int ALIBI_LENGTH = 13;
     const int VISIBLE_ALIBIS = 3;
     const int TURNS_PER_GAME = 2;
     const std::vector<std::string> hours {
@@ -39,7 +35,6 @@ private:
 
     volatile bool enabled = false;
     Server game_server;
-
     ConsoleInterfrace console_interfrace;
 
     enum class GameStage
@@ -54,17 +49,19 @@ private:
         Results
     } game_stage = GameStage::Lobby;
 
-    int current_player_id = 0;
-
     std::mt19937 gen;
-    sf::Clock timer;
-
-    int turn = 0;
-    int moves_left;
-    int actions_left;
 
     GameBoard game_board;
 
+    sf::Clock timer;
+    int current_player_id = 0;
+    int turn = 0;
+    int moves_left;
+    int actions_left;
     int murderer_id;
     std::vector<int> votes;
+
+    void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
+
+    void stop();
 };
