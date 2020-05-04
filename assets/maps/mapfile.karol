@@ -1,24 +1,24 @@
 50 28
 rooms:
 Outside:
-Kitchen: Noz, Tasak, Trucizna
-Bedroom (North): Mydelniczka, Grabie, Poduszka 
-Bedroom (South): Poduszka, Ksiazka, Lina
-Bedroom (West): Poduszka, Lina, Puchar
-Library: Noz, Ksiazka, Wazon, 
-Hall: Puchar, Ksiazka, Ciezarek
-Bathroom (North): Tasak, Mydelniczka, Nozyczki
-Bathroom (South): Trucizna, Doniczka, Mydelniczka
-Bathroom (West): Wazon, Ciezarek, Nozyczki
-Terrace (West): Lopata, Grabie, Mlotek
-Terrace (East): Lopata, Worek, Doniczka
-Ballroom: Noz, Swiecznik, Puchar
-Dining Room: Puchar, Trucizna, Nozyczki
-Wardrobe: Wieszak, Szpilka, Ciezarek
-Closet (North): Lina, Swiecznik, Worek
-Closet (South): Tasak, Mlotek, Lina 
-Closet (West): Mlotek, Grabie, Worek
-Corridor: Swiecznik, Wazon, Doniczka
+Kitchen: Knife, Chopper, Poison
+Bedroom (North): Pollow, Soap Dish, Rake
+Bedroom (South): Pillow, Rope, Book
+Bedroom (West): Pillow, Rope, Statue
+Library: Knife, Book, Vase
+Hall: Statue, Book, Weight
+Bathroom (North): Chopper, Soap Dish, Scissors
+Bathroom (South): Poison, Vase, Soap Dish
+Bathroom (West): Vase, Weight, Scissors
+Terrace (West): Shovel, Rake, Hammer
+Terrace (East): Shovel, Bag, Flower Pot
+Ballroom: Knife, Candlestick, Statue
+Dining Room: Statue, Poison, Scissors
+Wardrobe: Coat Hanger, Needle, Weight
+Closet (North): Rope, Candlestick, Bag
+Closet (South): Chopper, Hammer, Rope
+Closet (West): Hammer, Rake, Bag
+Corridor: Candlestick, Vase, Flower Pot
 
 tiles:
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
