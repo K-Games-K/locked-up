@@ -44,7 +44,6 @@ void GameManager::run()
     if(!enabled)
         Log::error() << "Failed to initialize game manager!" << std::endl;
 
-
     while(enabled)
     {
         game_server.update();
@@ -55,6 +54,7 @@ void GameManager::run()
         {
             case GameStage::Lobby:
             {
+                // Wait for all players to get ready.
                 bool ready = connected_players.size() >= MIN_PLAYERS_COUNT;
                 for(auto& player : connected_players)
                 {
@@ -85,82 +85,13 @@ void GameManager::run()
                     }
                 }
 
+                // Wait for countdown to finish.
                 if(timer.getElapsedTime().asSeconds() < COUNTDOWN_INTERVAL)
                     break;
 
                 game_server.set_allow_new_connections(false);
 
-                // Setting up new game.
-                std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
-                for(auto& player : connected_players)
-                {
-                    player.generate_alibi(game_board, rand_room(gen), ALIBI_LENGTH);
-                    auto& alibi = player.get_alibi();
-                    for(int i = 0; i < alibi.size(); ++i)
-                    {
-                        auto& room = game_board.get_room(alibi[i]);
-                        room.get_visitors().push_back({i, player.get_nickname()});
-                    }
-                }
-
-                std::uniform_int_distribution<> rand_player(0, connected_players.size() - 1);
-                auto& murderer = connected_players[rand_player(gen)];
-                murderer_id = murderer.get_player_id();
-                std::vector<Item> items;
-                for(int room_id : murderer.get_alibi())
-                {
-                    auto& room = game_board.get_room(room_id);
-                    items.insert(items.end(), room.get_items().begin(), room.get_items().end());
-                }
-                std::uniform_int_distribution<> rand_tool(0, items.size() - 1);
-                auto& crime_item = items[rand_tool(gen)];
-                int crime_room = murderer.get_alibi()[ALIBI_LENGTH - 1];
-
-                for(int i = 0; i < connected_players.size(); ++i)
-                {
-                    std::vector<std::vector<int>> alibis(connected_players.size());
-                    for(int j = 0; j < connected_players.size(); ++j)
-                    {
-                        if(i == j)
-                        {
-                            alibis[j] = connected_players[i].get_alibi();
-                        }
-                        else
-                        {
-                            std::vector<int> alibi = connected_players[j].get_alibi();
-                            std::vector<int> indices(alibi.size() - 1);
-                            std::iota(indices.begin(), indices.end(), 0);
-                            std::shuffle(indices.begin(), indices.end(), gen);
-                            alibis[j].resize(alibi.size(), -1);
-                            for(int k = 0; k < VISIBLE_ALIBIS; ++k)
-                                alibis[j][indices[k]] = alibi[indices[k]];
-                        }
-                    }
-
-                    connected_players[i].get_connection().send(
-                        GameStartPacket(i, i, alibis, crime_room, crime_item)
-                    );
-                }
-
-                murderer.get_connection().send(MurdererPacket());
-
-                auto& tiles = game_board.get_tiles();
-                for(auto& player : connected_players)
-                {
-                    std::vector<int> room_tiles;
-                    for(int i = 0; i < tiles.size(); ++i)
-                    {
-                        if(tiles[i] == player.get_alibi()[ALIBI_LENGTH - 1])
-                            room_tiles.push_back(i);
-                    }
-
-                    std::uniform_int_distribution<> rand_tile(0, room_tiles.size() - 1);
-                    int16_t x = room_tiles[rand_tile(gen)] % game_board.get_width();
-                    int16_t y = room_tiles[rand_tile(gen)] / game_board.get_width();
-                    player.set_position(x, y);
-
-                    game_server.broadcast(PlayerMovePacket(x, y, player.get_player_id(), false));
-                }
+                prepare_new_game();
 
                 game_stage = GameStage::NewTurn;
 
@@ -201,7 +132,7 @@ void GameManager::run()
                     break;
                 }
 
-                votes.clear();
+                // Game ends.
                 votes.resize(connected_players.size(), -1);
 
                 game_server.broadcast(VotePacket());
@@ -220,6 +151,7 @@ void GameManager::run()
                     }
                 }
 
+                // Votig finished.
                 if(voting_done)
                 {
                     std::vector<int> results(connected_players.size(), 0);
@@ -244,6 +176,7 @@ void GameManager::run()
             }
             case GameStage::Results:
             {
+                game_server.set_allow_new_connections(true);
                 break;
             }
         }
@@ -251,6 +184,92 @@ void GameManager::run()
 
     console_interfrace.shutdown();
     Log::info() << "Goodbye!" << std::endl;
+}
+
+void GameManager::prepare_new_game()
+{
+    auto& connected_players = game_server.get_connected_players();
+
+    // Reset server.
+    current_player_id = 0;
+    turn = 0;
+    votes.clear();
+
+    // Generate alibis.
+    std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
+    for(auto& player : connected_players)
+    {
+        player.generate_alibi(game_board, rand_room(gen), ALIBI_LENGTH);
+        auto& alibi = player.get_alibi();
+        for(int i = 0; i < alibi.size(); ++i)
+        {
+            auto& room = game_board.get_room(alibi[i]);
+            room.get_visitors().push_back({i, player.get_nickname()});
+        }
+    }
+
+    // Select murderer and crime tool.
+    std::uniform_int_distribution<> rand_player(0, connected_players.size() - 1);
+    auto& murderer = connected_players[rand_player(gen)];
+    murderer_id = murderer.get_player_id();
+    std::vector<Item> items;
+    for(int room_id : murderer.get_alibi())
+    {
+        auto& room = game_board.get_room(room_id);
+        items.insert(items.end(), room.get_items().begin(), room.get_items().end());
+    }
+    std::uniform_int_distribution<> rand_tool(0, items.size() - 1);
+    auto& crime_item = items[rand_tool(gen)];
+    int crime_room = murderer.get_alibi()[ALIBI_LENGTH - 1];
+
+    // Prepare incomplete alibis and send them to players.
+    for(int i = 0; i < connected_players.size(); ++i)
+    {
+        std::vector<std::vector<int>> alibis(connected_players.size());
+        for(int j = 0; j < connected_players.size(); ++j)
+        {
+            if(i == j)
+            {
+                alibis[j] = connected_players[i].get_alibi();
+            }
+            else
+            {
+                std::vector<int> alibi = connected_players[j].get_alibi();
+                std::vector<int> indices(alibi.size() - 1);
+                std::iota(indices.begin(), indices.end(), 0);
+                std::shuffle(indices.begin(), indices.end(), gen);
+                alibis[j].resize(alibi.size(), -1);
+                for(int k = 0; k < VISIBLE_ALIBIS; ++k)
+                    alibis[j][indices[k]] = alibi[indices[k]];
+            }
+        }
+
+        connected_players[i].get_connection().send(
+            GameStartPacket(i, i, alibis, crime_room, crime_item)
+        );
+    }
+
+    // Notify murderer.
+    murderer.get_connection().send(MurdererPacket());
+
+    // Randomize players starting positions.
+    auto& tiles = game_board.get_tiles();
+    for(auto& player : connected_players)
+    {
+        std::vector<int> room_tiles;
+        for(int i = 0; i < tiles.size(); ++i)
+        {
+            if(tiles[i] == player.get_alibi()[ALIBI_LENGTH - 1])
+                room_tiles.push_back(i);
+        }
+
+        std::uniform_int_distribution<> rand_tile(0, room_tiles.size() - 1);
+        int16_t x = room_tiles[rand_tile(gen)] % game_board.get_width();
+        int16_t y = room_tiles[rand_tile(gen)] / game_board.get_width();
+        player.set_position(x, y);
+
+        game_server.broadcast(PlayerMovePacket(x, y, player.get_player_id(), false));
+    }
 }
 
 void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet)
@@ -394,35 +413,46 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
 
 void GameManager::set(const std::vector<std::string>& args)
 {
-    if(args[1] == "countdown_interval")
+    try
     {
-        this->COUNTDOWN_INTERVAL = std::stof(args[2]);
+        if(args[1] == "countdown_interval")
+        {
+            this->COUNTDOWN_INTERVAL = std::stof(args[2]);
+        }
+        else if(args[1] == "min_players")
+        {
+            this->MIN_PLAYERS_COUNT = std::stoi(args[2]);
+        }
+        else if(args[1] == "moves")
+        {
+            this->MOVES_PER_TURN = std::stoi(args[2]);
+        }
+        else if(args[1] == "actions")
+        {
+            this->ACTIONS_PER_TURN = std::stoi(args[2]);
+        }
+        else if(args[1] == "turns")
+        {
+            this->TURNS_PER_GAME = std::stoi(args[2]);
+        }
+        else if(args[1] == "visible_alibis")
+        {
+            this->VISIBLE_ALIBIS = std::stoi(args[2]);
+        }
+        else
+        {
+            Log::warn()
+                << "Usage: set countdown_interval/min_players/moves/actions/turns/visible_alibis <value>"
+                << std::endl;
+        }
     }
-    else if(args[1] == "min_players")
+    catch(std::invalid_argument e)
     {
-        this->MIN_PLAYERS_COUNT = std::stoi(args[2]);
+        Log::warn() << "Invalid value." << std::endl;
     }
-    else if(args[1] == "moves")
+    catch(std::out_of_range e)
     {
-        this->MOVES_PER_TURN = std::stoi(args[2]);
-    }
-    else if(args[1] == "actions")
-    {
-        this->ACTIONS_PER_TURN = std::stoi(args[2]);
-    }
-    else if(args[1] == "turns")
-    {
-        this->TURNS_PER_GAME = std::stoi(args[2]);
-    }
-    else if(args[1] == "visible_alibis")
-    {
-        this->VISIBLE_ALIBIS = std::stoi(args[2]);
-    }
-    else
-    {
-        Log::warn()
-            << "Usage: set countdown_interval/min_players/moves/actions/turns/visible_alibis <value>"
-            << std::endl;
+        Log::warn() << "Value out of range." << std::endl;
     }
 }
 

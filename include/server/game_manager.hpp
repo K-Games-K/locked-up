@@ -61,6 +61,8 @@ private:
     int murderer_id;
     std::vector<int> votes;
 
+    void prepare_new_game();
+
     void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
 
     void set(const std::vector<std::string>& args);
