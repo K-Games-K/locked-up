@@ -176,7 +176,7 @@ void GameManager::run()
             }
             case GameStage::Results:
             {
-                game_server.set_allow_new_connections(true);
+                game_server.reset();
                 game_stage = GameStage::Lobby;
                 break;
             }

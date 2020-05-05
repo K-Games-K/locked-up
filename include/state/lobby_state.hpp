@@ -41,7 +41,8 @@ private:
 
 public:
     LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-        Connection&& server_connection);
+        Connection&& server_connection, const std::string& nickname,
+        const std::string& avatar_name);
 
     void handle_input(sf::Event event) override;
 

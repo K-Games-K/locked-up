@@ -56,9 +56,22 @@ namespace Ui
         set_enabled(true);
     }
 
+    Popup& Popup::set_close_callback(CloseCallback close_callback)
+    {
+        this->close_callback = close_callback;
+
+        return *this;
+    }
+
     void Popup::close_clicked()
     {
-        set_enabled(false);
+        if(is_enabled())
+        {
+            if(close_callback)
+                close_callback(*this);
+
+            set_enabled(false);
+        }
     }
 
     Popup* Popup::clone() const

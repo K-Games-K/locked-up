@@ -26,6 +26,8 @@ public:
 
     std::vector<RemotePlayer>& get_connected_players();
 
+    void reset();
+
 private:
     bool enabled = false;
     bool allow_new_connections = true;
