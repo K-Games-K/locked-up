@@ -19,6 +19,13 @@ namespace Ui
         return Widget::handle_event(event, mouse_pos, widget_pos, widget_size);
     }
 
+    Checkbox& Checkbox::set_checked(bool checked)
+    {
+        this->checked = checked;
+
+        return *this;
+    }
+
     bool Checkbox::is_checked() const
     {
         return checked;

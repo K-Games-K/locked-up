@@ -68,6 +68,7 @@ namespace Ui
                 );
                 table_widget->add_widget(
                     2, j + 1, Checkbox()
+                        .set_checked(!notes[j].room_name.empty())
                         .set_background_color(Color::Transparent)
                         .set_outline_color(Color::Black)
                         .set_tick_color(Color::Black)

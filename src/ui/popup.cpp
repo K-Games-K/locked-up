@@ -17,7 +17,7 @@ namespace Ui
 
         description_text = (Ui::Text*) add_widget(
             Ui::Text(font)
-                .set_max_width(get_local_size().x)
+                .set_max_width(get_local_size().x - 20)
                 .set_position({0, 10})
         );
 

@@ -12,6 +12,8 @@ namespace Ui
         bool handle_event(const sf::Event& event, sf::Vector2f mouse_pos,
             sf::Vector2f parent_pos, sf::Vector2f parent_size) override;
 
+        Checkbox& set_checked(bool checked);
+
         bool is_checked() const;
 
         Checkbox& set_background_color(Color background_color);
