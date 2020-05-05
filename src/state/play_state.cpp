@@ -173,7 +173,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     exit_button->add_widget(Ui::Text(font, "Exit"));
 
     std::stringstream descr;
-    descr << "A dead body was found in\n" << game_board.get_room(crime_room).get_name() << ".\n";
+    descr << "A dead body was found in" << game_board.get_room(crime_room).get_name() << ".\n";
     descr << crime_item.get_name() << " was found by the side.";
     popup->show("Dead body found!", descr.str());
 }

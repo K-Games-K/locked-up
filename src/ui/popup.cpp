@@ -10,12 +10,14 @@ namespace Ui
         title_text = (Ui::Text*) add_widget(
             Ui::Text(font)
                 .set_font_size(32)
+                .set_max_width(get_local_size().x)
                 .set_position({0, 50})
                 .set_anchor(Anchor::CenterTop)
         );
 
         description_text = (Ui::Text*) add_widget(
             Ui::Text(font)
+                .set_max_width(get_local_size().x)
                 .set_position({0, 10})
         );
 

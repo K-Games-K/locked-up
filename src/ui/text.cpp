@@ -1,3 +1,4 @@
+#include <sstream>
 #include <SFML/Graphics/Text.hpp>
 
 #include "ui/text.hpp"
@@ -114,17 +115,24 @@ namespace Ui
     {
         if(max_width > 0)
         {
+            std::stringstream in(string);
             std::string str;
-            str.reserve(string.size());
+            std::string word;
             sf::Text sf_text("", *font, font_size);
-            for(char ch : string)
+            while(!in.eof())
             {
-                sf_text.setString(str += ch);
+                in >> word;
+                str += ' ' + word;
+                sf_text.setString(str);
+
                 sf::FloatRect bounds = sf_text.getLocalBounds();
                 sf::Vector2f size = {bounds.width + bounds.left, bounds.height + bounds.top};
 
                 if(size.x > max_width)
-                    str.insert(str.size() - 2, 1, '\n');
+                {
+                    auto pos = str.rfind(' ');
+                    str.at(pos) = '\n';
+                }
             }
 
             string = str;
