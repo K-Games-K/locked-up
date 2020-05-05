@@ -101,11 +101,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         .set_font_size(30)
         .set_outline_thickness(1);
 
-    popup = (Ui::Popup*) user_interface.add_widget(
-        Ui::Popup(textures.get("paper_small"), font)
-            .set_position({-100, 0})
-    );
-
     voting_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 200))
@@ -135,6 +130,11 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         );
         button->add_widget(Ui::Text(font, player.get_nickname()));
     }
+
+    popup = (Ui::Popup*) user_interface.add_widget(
+        Ui::Popup(textures.get("paper_small"), font)
+            .set_position({-100, 0})
+    );
 
     pause_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
@@ -393,7 +393,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
                             std::move(server_connection),
                             players_list[player_id].get_nickname(),
                             players_list[player_id].get_avatar_name()
-                        )
+                        ), true
                     );
                 }
             );
