@@ -43,9 +43,9 @@ namespace Ui
     Popup::Popup(const Popup& other)
         : TexturedPanel(other)
     {
-        title_text = &get_child<Ui::Text>(0);
-        description_text = &get_child<Ui::Text>(1);
-        close_button = &get_child<Ui::Button>(2);
+        title_text = get_child<Ui::Text>(0);
+        description_text = get_child<Ui::Text>(1);
+        close_button = get_child<Ui::Button>(2);
         close_button->set_callback(std::bind(&Popup::close_clicked, this));
     }
 

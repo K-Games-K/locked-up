@@ -30,6 +30,8 @@ namespace Ui
         int current_note = 0;
         std::vector<Panel*> note_panels;
 
+        void switch_note(int note);
+
         NotepadWidget* clone() const override;
     };
 }

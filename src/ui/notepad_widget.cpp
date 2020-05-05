@@ -16,13 +16,7 @@ namespace Ui
         {
             auto button = add_widget(
                 Button()
-                    .set_callback(
-                        [this, i](Button&) {
-                            note_panels[current_note]->set_enabled(false);
-                            current_note = i;
-                            note_panels[current_note]->set_enabled(true);
-                        }
-                    )
+                    .set_callback(std::bind(&NotepadWidget::switch_note, this, i))
                     .set_hover_color(Color(0, 0, 0, 100))
                     .set_active_color(Color(0, 0, 0, 200))
                     .set_position({(i + 1) * button_width, 50})
@@ -91,23 +85,11 @@ namespace Ui
         : TexturedPanel(other), notepad(other.notepad), current_note(other.current_note)
     {
         auto& children = get_children();
-        for(int i = 0; i < children.size(); ++i)
-        {
-            if(i % 2 == 0)
-            {
-                ((Button*) children[i].get())->set_callback(
-                    [this, i](Button&) {
-                        note_panels[current_note]->set_enabled(false);
-                        current_note = i / 2;
-                        note_panels[current_note]->set_enabled(true);
-                    }
-                );
-            }
-            else
-            {
-                note_panels.push_back((Panel*) children[i].get());
-            }
-        }
+        note_panels = get_children<Panel>();
+
+        auto buttons = get_children<Button>();
+        for(int i = 0; i < buttons.size(); ++i)
+            buttons[i]->set_callback(std::bind(&NotepadWidget::switch_note, this, i));
     }
 
     Notepad& NotepadWidget::get_notepad()
@@ -118,6 +100,13 @@ namespace Ui
     const Notepad& NotepadWidget::get_notepad() const
     {
         return notepad;
+    }
+
+    void NotepadWidget::switch_note(int note)
+    {
+        note_panels[current_note]->set_enabled(false);
+        current_note = note;
+        note_panels[current_note]->set_enabled(true);
     }
 
     NotepadWidget* NotepadWidget::clone() const

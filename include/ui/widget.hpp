@@ -38,27 +38,42 @@ namespace Ui
 
         void remove_widget(const Widget& widget);
 
+        /// Returns pointer to first child of type T.
         template <typename T>
-        T& get_child()
+        T* get_child()
         {
             for(auto& child : children)
-            {
-                if(auto found = dynamic_cast<T*>(child.get()))
-                    return *found;
-            }
+                return dynamic_cast<T*>(child.get());
 
-            return dynamic_cast<T&>(*children[0]);
+            return nullptr;
         }
 
+        /// Returns pointer to nth child and casts it to type T.
+        /// Returns nullptr if there is no such child.
         template <typename T>
-        T& get_child(size_t n)
+        T* get_child(size_t n)
         {
-            return dynamic_cast<T&>(*children[n]);
+            if(n >= children.size())
+                return nullptr;
+
+            return dynamic_cast<T*>(children[n].get());
         }
 
         std::vector<std::unique_ptr<Widget>>& get_children();
 
         const std::vector<std::unique_ptr<Widget>>& get_children() const;
+
+        /// Returns vector of pointers to all children of type T.
+        template <typename T>
+        std::vector<T*> get_children() const
+        {
+            std::vector<T*> result;
+            for(auto& child : children)
+                if(auto ptr = dynamic_cast<T*>(child.get()))
+                    result.push_back(ptr);
+
+            return std::move(result);
+        }
 
         Widget& set_enabled(bool enabled);
 

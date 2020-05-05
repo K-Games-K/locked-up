@@ -420,7 +420,7 @@ void PlayState::vote_clicked(Ui::Button& button)
     if(voted)
         return;
 
-    std::string nickname = button.get_child<Ui::Text>().get_string();
+    std::string nickname = button.get_child<Ui::Text>()->get_string();
     int vote_id = std::distance(
         players_list.begin(),
         std::find(players_list.begin(), players_list.end(), Player(nickname))

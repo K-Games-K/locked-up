@@ -201,9 +201,9 @@ void LobbyState::ready_clicked(Ui::Button& button)
 
     ready = !ready;
     time = 0;
-    button.get_child<Ui::Text>().set_string(ready ? "I'm ready!" : "Not ready");
+    button.get_child<Ui::Text>()->set_string(ready ? "I'm ready!" : "Not ready");
     server_connection.send(PlayerReadyPacket(player_id, ready));
-    button.get_child<Ui::Text>().set_color(ready ? Ui::Color::Green : Ui::Color::Red);
+    button.get_child<Ui::Text>()->set_color(ready ? Ui::Color::Green : Ui::Color::Red);
 }
 
 void LobbyState::exit_clicked(Ui::Button& button)
