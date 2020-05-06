@@ -368,7 +368,7 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
 
             break;
         }
-        case ActionPacket::PACKET_ID:
+        case FakeCluePacket::PACKET_ID:
         {
             if(game_stage != GameStage::Action && game_stage != GameStage::Movement ||
                 current_player_id != sender.get_player_id())
@@ -376,35 +376,20 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
 
             game_stage = GameStage::Action;
 
-            auto action_packet = dynamic_cast<ActionPacket&>(*packet);
-            ActionType action_type = action_packet.get_action_type();
             actions_left--;
 
-            switch(action_type)
-            {
-                case ActionType::SearchRoom:
-                {
-                    
-                }
-                case ActionType::PlaceFalseClue:
-                {
-                    std::uniform_int_distribution<> rand_player(0, connected_players.size() - 1);
-                    int player_id = sender.get_player_id();
-                    while(player_id == sender.get_player_id())
-                        player_id = rand_player(gen);
+            auto fake_clue_packet = dynamic_cast<FakeCluePacket&>(*packet);
 
-                    auto& player_room = game_board.get_room(
-                        sender.get_position().x, sender.get_position().y
-                    );
+            auto& player_room = game_board.get_room(
+                sender.get_position().x, sender.get_position().y
+            );
 
-                    std::uniform_int_distribution<> rand_hour(0, hours.size() - 1);
-                    player_room.get_visitors().push_back(
-                        {rand_hour(gen), connected_players[player_id].get_nickname()}
-                    );
+            Log::debug() << fake_clue_packet.get_time() << ":" << connected_players[fake_clue_packet.get_player_id()].get_nickname();
 
-                    break;
-                }
-            }
+            player_room.get_visitors().push_back(
+                { fake_clue_packet.get_time(), connected_players[fake_clue_packet.get_player_id()].get_nickname()}
+            );
+
 
             break;
         }

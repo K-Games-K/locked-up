@@ -54,6 +54,7 @@ private:
     Ui::Panel* voting_menu;
     Ui::Panel* pause_menu;
     Ui::Panel* minimap_panel;
+    Ui::Panel* fake_clue_panel;
 
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
@@ -71,7 +72,9 @@ private:
 
     void exit_clicked(Ui::Button& button);
 
-    void action_clicked(Ui::Button& button);
+    void search_action_clicked(Ui::Button& button);
+
+    void  place_clue_clicked(Ui::Button& button);
 
     void vote_clicked(Ui::Button& button);
 

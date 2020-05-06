@@ -11,7 +11,7 @@
 #include "countdown_packet.hpp"
 #include "game_start_packet.hpp"
 #include "new_turn_packet.hpp"
-#include "action_packet.hpp"
+#include "fake_clue_packet.hpp"
 #include "clue_found_packet.hpp"
 #include "murderer_packet.hpp"
 #include "vote_packet.hpp"

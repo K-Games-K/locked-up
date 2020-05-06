@@ -3,19 +3,23 @@
 #include "action.hpp"
 #include "packet.hpp"
 
-class ActionPacket : public Packet
+class FakeCluePacket : public Packet
 {
 private:
     ActionType action_type;
+    uint32_t time;
+    uint32_t player_id;
 
 public:
     static constexpr uint16_t PACKET_ID = 0xa;
 
-    ActionPacket();
+    FakeCluePacket();
 
-    explicit ActionPacket(ActionType action_type);
+    FakeCluePacket(uint32_t time, uint32_t player_id);
 
-    ActionType get_action_type() const;
+    uint32_t get_time() const;
+
+    uint32_t get_player_id() const;
 
     void serialize(sf::Packet& data) const override;
 

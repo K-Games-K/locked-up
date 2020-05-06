@@ -53,7 +53,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 
     search_action_button = (Ui::Button*) action_panel->add_widget(
         Ui::Button()
-            .set_callback(std::bind(&PlayState::action_clicked, this, std::placeholders::_1))
+            .set_callback(std::bind(&PlayState::search_action_clicked, this, std::placeholders::_1))
             .set_default_color(default_color)
             .set_hover_color(hover_color)
             .set_active_color(active_color)
@@ -67,7 +67,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 
     place_clue_action_button = (Ui::Button*) action_panel->add_widget(
         Ui::Button()
-            .set_callback(std::bind(&PlayState::action_clicked, this, std::placeholders::_1))
+            .set_callback(std::bind(&PlayState::place_clue_clicked, this, std::placeholders::_1))
             .set_default_color(default_color)
             .set_hover_color(hover_color)
             .set_active_color(active_color)
@@ -196,6 +196,17 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         .set_origin(Ui::Origin::CenterRight)
     );
 
+    fake_clue_panel = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel()
+        .set_background_color(Ui::Color(0, 0, 0, 180))
+        .set_size({ 1, 1 }, true)
+        .set_enabled(false)
+    );
+
+    auto fake_clue_panel_list = fake_clue_panel->add_widget(
+        Ui::TexturedPanel(textures.get("paper"))
+        .set_origin(Ui::Origin::Center)
+    );
 }
 
 void PlayState::handle_input(sf::Event event)
@@ -440,16 +451,15 @@ void PlayState::exit_clicked(Ui::Button& button)
     game_state_manager.pop_state();
 }
 
-void PlayState::action_clicked(Ui::Button& button)
+void PlayState::search_action_clicked(Ui::Button& button)
 {
-    if(button == *search_action_button)
-    {
-        server_connection.send(ClueFoundPacket());
-    }
-    else if(button == *place_clue_action_button)
-    {
-        server_connection.send(ActionPacket(ActionType::PlaceFalseClue));
-    }
+    server_connection.send(ClueFoundPacket());
+}
+
+void PlayState::place_clue_clicked(Ui::Button& button)
+{
+
+    server_connection.send(FakeCluePacket(3, 1));
 }
 
 void PlayState::vote_clicked(Ui::Button& button)

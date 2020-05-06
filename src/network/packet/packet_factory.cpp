@@ -25,8 +25,8 @@ std::unique_ptr<Packet> PacketFactory::create(uint16_t packet_id)
             return std::make_unique<GameStartPacket>();
         case NewTurnPacket::PACKET_ID:
             return std::make_unique<NewTurnPacket>();
-        case ActionPacket::PACKET_ID:
-            return std::make_unique<ActionPacket>();
+        case FakeCluePacket::PACKET_ID:
+            return std::make_unique<FakeCluePacket>();
         case ClueFoundPacket::PACKET_ID:
             return std::make_unique<ClueFoundPacket>();
         case MurdererPacket::PACKET_ID:
