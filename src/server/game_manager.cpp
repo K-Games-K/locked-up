@@ -1,5 +1,6 @@
 #include <ctime>
 
+#include <numeric>
 #include "game_board_loader.hpp"
 #include "utils.hpp"
 #include "logging.hpp"
@@ -106,7 +107,7 @@ void GameManager::run()
                     current_player_id = 0;
                 }
 
-                game_server.broadcast(NewTurnPacket(current_player_id));
+                game_server.broadcast(NewTurnPacket(current_player_id, turn));
                 moves_left = MOVES_PER_TURN;
                 actions_left = ACTIONS_PER_TURN;
                 game_stage = GameStage::Movement;

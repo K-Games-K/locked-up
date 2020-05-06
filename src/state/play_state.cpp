@@ -141,6 +141,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             .set_size({1, 1}, true)
             .set_enabled(false)
     );
+
     auto pause_menu_panel = pause_menu->add_widget(Ui::TexturedPanel(textures.get("paper")));
     pause_menu_panel->add_widget(
         Ui::Text(font, "Game Paused")
@@ -176,6 +177,24 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     descr << "A dead body was found in" << game_board.get_room(crime_room).get_name() << ".\n";
     descr << crime_item.get_name() << " was found by the side.";
     popup->show("Dead body found!", descr.str());
+
+    minimap_panel = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel()
+        .set_background_color(Ui::Color(0, 0, 0, 180))
+        .set_size({ 1, 1 }, true)
+        .set_enabled(false)
+    );
+    
+    auto minimap_panel_list = minimap_panel->add_widget(
+        Ui::TexturedPanel(textures.get("paper"))
+        .set_origin(Ui::Origin::CenterLeft)
+    );
+
+    auto minimap_panel_map = minimap_panel->add_widget(
+        Ui::TexturedPanel(textures.get("minimap"))
+        .set_origin(Ui::Origin::CenterRight)
+    );
+
 }
 
 void PlayState::handle_input(sf::Event event)
@@ -231,6 +250,10 @@ void PlayState::handle_input(sf::Event event)
             case sf::Keyboard::Tilde:
                 debug_render = !debug_render;
                 break;
+            case sf::Keyboard::F3:
+                paused = !paused;
+                minimap_panel->set_enabled(paused);
+                break;
             case sf::Keyboard::Escape:
                 paused = !paused;
                 pause_menu->set_enabled(paused);
@@ -257,7 +280,7 @@ void PlayState::update(float dt)
 
     current_room_text->set_string(
         "Current player: " + players_list[current_player_id].get_nickname() + "    Current room: " +
-            current_room.get_name()
+            current_room.get_name() + "  turn: " + std::to_string(current_turn) + "/50"
     );
 
     user_interface.update(dt);
@@ -335,6 +358,7 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
         {
             auto new_turn_packet = dynamic_cast<NewTurnPacket&>(*packet);
             current_player_id = new_turn_packet.get_current_player_id();
+            current_turn = new_turn_packet.get_current_turn();
 
             // std::stringstream ss;
             // ss << "New turn!\n";

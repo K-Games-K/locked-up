@@ -38,6 +38,7 @@ private:
 
     int player_id;
     int current_player_id = 0;
+    int current_turn = 0;
     std::vector<Player> players_list;
 
     Connection server_connection;
@@ -52,6 +53,7 @@ private:
     Ui::Popup* popup;
     Ui::Panel* voting_menu;
     Ui::Panel* pause_menu;
+    Ui::Panel* minimap_panel;
 
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
