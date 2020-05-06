@@ -4,6 +4,7 @@
 #include "logging.hpp"
 #include "utils.hpp"
 #include "state/play_state.hpp"
+#include "state/lobby_state.hpp"
 #include "network/packet/packets.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
@@ -100,11 +101,6 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         .set_font_size(30)
         .set_outline_thickness(1);
 
-    popup = (Ui::Popup*) user_interface.add_widget(
-        Ui::Popup(textures.get("paper_small"), font)
-            .set_position({-100, 0})
-    );
-
     voting_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 200))
@@ -134,6 +130,11 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         );
         button->add_widget(Ui::Text(font, player.get_nickname()));
     }
+
+    popup = (Ui::Popup*) user_interface.add_widget(
+        Ui::Popup(textures.get("paper_small"), font)
+            .set_position({-100, 0})
+    );
 
     pause_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
@@ -174,7 +175,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     exit_button->add_widget(Ui::Text(font, "Exit"));
 
     std::stringstream descr;
-    descr << "A dead body was found in" << game_board.get_room(crime_room).get_name() << ".\n";
+    descr << "A dead body was found in " << game_board.get_room(crime_room).get_name() << ".\n";
     descr << crime_item.get_name() << " was found by the side.";
     popup->show("Dead body found!", descr.str());
 
@@ -406,8 +407,20 @@ void PlayState::packet_received(std::unique_ptr<Packet> packet)
             std::string voting_result = game_results_packet.get_voting_result();
 
             std::stringstream descr;
-            descr << murderer << " was the murderer.\n";
-            descr << "And you accused: " << voting_result << ".";
+            descr << murderer << " was the murderer and you accused: ";
+            descr << voting_result << ".";
+            popup->set_close_callback(
+                [this](Ui::Popup&) {
+                    game_state_manager.push_state(
+                        new LobbyState(
+                            window, game_state_manager,
+                            std::move(server_connection),
+                            players_list[player_id].get_nickname(),
+                            players_list[player_id].get_avatar_name()
+                        ), true
+                    );
+                }
+            );
             popup->show("Game results:", descr.str());
         }
         default:

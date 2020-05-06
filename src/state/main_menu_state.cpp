@@ -155,9 +155,10 @@ void MainMenuState::update(float dt)
 {
     if(server_connection.is_connected())
     {
-        server_connection.send(JoinGamePacket(nickname, avatar));
         game_state_manager.push_state(
-            new LobbyState(window, game_state_manager, std::move(server_connection)),
+            new LobbyState(
+                window, game_state_manager, std::move(server_connection), nickname, avatar_name
+            ),
             true
         );
     }
@@ -214,5 +215,5 @@ void MainMenuState::connect_to_server(sf::IpAddress addr, unsigned short port)
 
 void MainMenuState::avatar_clicked(std::string avatar_name)
 {
-    this->avatar = avatar_name;
+    this->avatar_name = avatar_name;
 }

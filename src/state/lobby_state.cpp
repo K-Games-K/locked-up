@@ -1,4 +1,3 @@
-#include <sstream>
 #include <iomanip>
 #include <iostream>
 
@@ -8,7 +7,7 @@
 #include "network/packet/packets.hpp"
 
 LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
-    Connection&& server_connection)
+    Connection&& server_connection, const std::string& nickname, const std::string& avatar_name)
     : GameState(window, game_state_manager), server_connection(std::move(server_connection)),
     master_widget_renderer(window),
     background_renderer(window, {textures, fonts})
@@ -76,6 +75,8 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
         Ui::Text(font, "Chat coming soonTM...")
             .set_font_size(50)
     );
+
+    this->server_connection.send(JoinGamePacket(nickname, avatar_name));
 }
 
 void LobbyState::handle_input(sf::Event event)

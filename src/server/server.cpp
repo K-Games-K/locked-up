@@ -152,11 +152,6 @@ void Server::set_allow_new_connections(bool allow_new_connections)
     pending_connections.clear();
 }
 
-std::vector<RemotePlayer>& Server::get_connected_players()
-{
-    return connected_players;
-}
-
 void Server::update_players_list()
 {
     std::vector<Player> players_list(connected_players.begin(), connected_players.end());
@@ -165,4 +160,18 @@ void Server::update_players_list()
         connected_players[i].set_player_id(i);
         connected_players[i].get_connection().send(PlayersListPacket(i, players_list));
     }
+}
+
+std::vector<RemotePlayer>& Server::get_connected_players()
+{
+    return connected_players;
+}
+
+void Server::reset()
+{
+    for(auto& player : connected_players)
+        pending_connections.push_back(std::move(player.get_connection()));
+
+    connected_players.clear();
+    allow_new_connections = true;
 }

@@ -27,7 +27,7 @@ private:
     AnimatedBackgroundRenderer background_renderer;
 
     std::string nickname;
-    std::string avatar = "mr1";
+    std::string avatar_name = "mr1";
     Connection server_connection;
     std::thread connection_thread;
 
