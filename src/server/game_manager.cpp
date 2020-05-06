@@ -338,6 +338,36 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
 
             break;
         }
+        case ClueFoundPacket::PACKET_ID:
+        {
+            if (game_stage != GameStage::Action && game_stage != GameStage::Movement ||
+                current_player_id != sender.get_player_id())
+                break;
+
+            game_stage = GameStage::Action;
+            actions_left--;
+
+            auto& player_room = game_board.get_room(
+                sender.get_position().x, sender.get_position().y
+            );
+            auto& visitors = player_room.get_visitors();
+            auto clues = visitors;
+
+            std::uniform_real_distribution<> rand_perc(0, 100);
+            if (!clues.empty() && rand_perc(gen) < 35)
+            {
+                std::shuffle(clues.begin(), clues.end(), gen);
+                auto clue = clues.front();
+                visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
+                connection.send(ClueFoundPacket(clue.second, hours.at(clue.first)));
+            }
+            else
+            {
+                connection.send(ClueFoundPacket());
+            }
+
+            break;
+        }
         case ActionPacket::PACKET_ID:
         {
             if(game_stage != GameStage::Action && game_stage != GameStage::Movement ||
@@ -354,26 +384,7 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
             {
                 case ActionType::SearchRoom:
                 {
-                    auto& player_room = game_board.get_room(
-                        sender.get_position().x, sender.get_position().y
-                    );
-                    auto& visitors = player_room.get_visitors();
-                    auto clues = visitors;
-
-                    std::uniform_real_distribution<> rand_perc(0, 100);
-                    if(!clues.empty() && rand_perc(gen) < 35)
-                    {
-                        std::shuffle(clues.begin(), clues.end(), gen);
-                        auto clue = clues.front();
-                        visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
-                        connection.send(ClueFoundPacket(clue.second, hours.at(clue.first)));
-                    }
-                    else
-                    {
-                        connection.send(ClueFoundPacket());
-                    }
-
-                    break;
+                    
                 }
                 case ActionType::PlaceFalseClue:
                 {
