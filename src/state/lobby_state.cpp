@@ -59,11 +59,8 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
     );
     exit_button->add_widget(Ui::Text(font, "Exit server"));
 
-    players_list_text = (Ui::Text*) left_panel->add_widget(
-        Ui::Text(font)
-            .set_position({0, 150})
-            .set_origin(Ui::Origin::CenterTop)
-            .set_anchor(Ui::Anchor::CenterTop)
+    players_list_layout = (Ui::Layout*) left_panel->add_widget(
+        Ui::Layout(Ui::LayoutType::Vertical, 30)
     );
 
     right_panel = (Ui::TexturedPanel*) user_interface.add_widget(
@@ -138,12 +135,11 @@ void LobbyState::packet_received(std::unique_ptr<Packet> packet)
             player_id = players_list_packet.get_player_id();
             players_list = players_list_packet.get_players_list();
 
-            std::stringstream ss;
+            players_list_layout->clear();
             for(auto& player : players_list)
-                ss << player.get_nickname() << std::endl;
-            std::string string = ss.str();
-            string.pop_back();
-            players_list_text->set_string(string);
+                players_list_layout->add_widget(
+                    Ui::Text(fonts.get("IndieFlower-Regular"), player.get_nickname())
+                );
 
             break;
         }

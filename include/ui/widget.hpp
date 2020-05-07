@@ -34,9 +34,9 @@ namespace Ui
         virtual void update(const float dt);
 
         /// Returns pointer to newly added child.
-        Widget* add_widget(const Widget& widget);
+        virtual Widget* add_widget(const Widget& widget);
 
-        void remove_widget(const Widget& widget);
+        virtual void remove_widget(const Widget& widget);
 
         /// Returns pointer to first child of type T.
         template <typename T>

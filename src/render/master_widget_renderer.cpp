@@ -6,7 +6,6 @@ MasterWidgetRenderer::MasterWidgetRenderer(sf::RenderWindow& window)
     panel_renderer(window),
     line_edit_renderer(window),
     checkbox_renderer(window),
-    notification_widget_renderer(window),
     table_widget_renderer(window) {}
 
 void MasterWidgetRenderer::render(const Ui::Widget& widget, const float dt, sf::Vector2f parent_pos,
@@ -43,10 +42,6 @@ void MasterWidgetRenderer::render(const Ui::Widget& widget, const float dt, sf::
     else if(auto checkbox = dynamic_cast<const Ui::Checkbox*>(&widget))
     {
         checkbox_renderer.render(*checkbox, dt, parent_pos, parent_size);
-    }
-    else if(auto notification_widget = dynamic_cast<const Ui::NotificationWidget*>(&widget))
-    {
-        notification_widget_renderer.render(*notification_widget, dt, parent_pos, parent_size);
     }
     else if(auto table_widget = dynamic_cast<const Ui::TableWidget*>(&widget))
     {

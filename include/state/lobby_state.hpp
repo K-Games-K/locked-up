@@ -21,7 +21,7 @@ private:
     Ui::TexturedPanel* left_panel;
     Ui::TexturedPanel* right_panel;
     Ui::Text* left_panel_title_text;
-    Ui::Text* players_list_text;
+    Ui::Layout* players_list_layout;
 
     MasterWidgetRenderer master_widget_renderer;
     AnimatedBackgroundRenderer background_renderer;

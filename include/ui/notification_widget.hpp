@@ -16,13 +16,7 @@ namespace Ui
 
         Text& get_text();
 
-        const Text& get_text() const;
-
-        float get_fadeout_time() const;
-
     private:
-        Text text;
-
         float fadeout_time = 0;
 
         NotificationWidget* clone() const override;

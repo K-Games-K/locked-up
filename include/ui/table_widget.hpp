@@ -9,8 +9,6 @@ namespace Ui
     public:
         TableWidget(int columns_count, int rows_count);
 
-        void add_widget(const Widget& widget) = delete;
-
         Widget* add_widget(unsigned int column, unsigned int row, const Widget& widget);
 
         int get_rows_count() const;

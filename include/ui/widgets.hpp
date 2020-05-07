@@ -12,3 +12,4 @@
 #include "table_widget.hpp"
 #include "notification_widget.hpp"
 #include "popup.hpp"
+#include "layout.hpp"

@@ -6,7 +6,6 @@
 #include "line_edit_renderer.hpp"
 #include "panel_renderer.hpp"
 #include "checkbox_renderer.hpp"
-#include "notification_widget_renderer.hpp"
 #include "ui/widget.hpp"
 
 class MasterWidgetRenderer
@@ -17,7 +16,6 @@ private:
     CheckboxRenderer checkbox_renderer;
     PanelRenderer panel_renderer;
     LineEditRenderer line_edit_renderer;
-    NotificationWidgetRenderer notification_widget_renderer;
     TableWidgetRenderer table_widget_renderer;
 
 public:
