@@ -106,7 +106,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
                     .set_active_color(active_color)
                     .set_size({80, 80})
             );
-            button->add_widget(Ui::TexturedPanel(textures.get(avatar_name)));
+            button->add_widget(Ui::Panel(textures.get(avatar_name)));
         }
     }
 

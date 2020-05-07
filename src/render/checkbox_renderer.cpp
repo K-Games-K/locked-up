@@ -33,13 +33,4 @@ void CheckboxRenderer::render(const Ui::Checkbox& checkbox, const float dt, sf::
     }
 }
 
-void CheckboxRenderer::render(const Ui::TexturedCheckbox& checkbox, const float dt,
-    sf::Vector2f parent_pos, sf::Vector2f parent_size)
-{
-    sf::Vector2f checkbox_pos = checkbox.get_global_position(parent_pos, parent_size);
-    sf::Sprite checkbox_sprite(checkbox.get_texture());
-    checkbox_sprite.setPosition(checkbox_pos);
-    window.draw(checkbox_sprite);
-}
-
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ui/button.hpp"
-#include "ui/textured_panel.hpp"
+#include "button.hpp"
+#include "panel.hpp"
 
 namespace Ui
 {
-    class Popup : public Ui::TexturedPanel
+    class Popup : public Ui::Panel
     {
     public:
         using CloseCallback = std::function<void(Popup&)>;

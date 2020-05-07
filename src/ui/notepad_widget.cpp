@@ -6,7 +6,7 @@
 namespace Ui
 {
     NotepadWidget::NotepadWidget(const Notepad& notepad, const sf::Texture& background_texture,
-        const sf::Font& font) : TexturedPanel(background_texture), notepad(notepad)
+        const sf::Font& font) : Panel(background_texture), notepad(notepad)
     {
         auto& players = notepad.get_players();
         const int alibi_length = notepad.get_notes(players[0]).size();
@@ -14,7 +14,7 @@ namespace Ui
         note_panels.reserve(players.size());
         for(int i = 0; i < players.size(); ++i)
         {
-            auto button = add_widget(
+            auto button = Widget::add_widget(
                 Button()
                     .set_callback(std::bind(&NotepadWidget::switch_note, this, i))
                     .set_hover_color(Color(0, 0, 0, 100))
@@ -26,7 +26,7 @@ namespace Ui
             );
             button->add_widget(Text(font, players[i].get_nickname()));
 
-            auto note_panel = (Panel*) add_widget(
+            auto note_panel = (Panel*) Widget::add_widget(
                 Panel()
                     .set_position({0, -30})
                     .set_size({0.9, 0.9}, true)
@@ -83,7 +83,7 @@ namespace Ui
     }
 
     NotepadWidget::NotepadWidget(const NotepadWidget& other)
-        : TexturedPanel(other), notepad(other.notepad), current_note(other.current_note)
+        : Panel(other), notepad(other.notepad), current_note(other.current_note)
     {
         auto& children = get_children();
         note_panels = get_children<Panel>();

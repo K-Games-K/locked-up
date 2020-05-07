@@ -3,7 +3,7 @@
 namespace Ui
 {
     Popup::Popup(const sf::Texture& background_texture, const sf::Font& font)
-        : TexturedPanel(background_texture)
+        : Panel(background_texture)
     {
         set_enabled(false);
 
@@ -41,7 +41,7 @@ namespace Ui
     }
 
     Popup::Popup(const Popup& other)
-        : TexturedPanel(other)
+        : Panel(other)
     {
         title_text = get_child<Ui::Text>(0);
         description_text = get_child<Ui::Text>(1);
