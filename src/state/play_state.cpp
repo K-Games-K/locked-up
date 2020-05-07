@@ -181,31 +181,31 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
 
     minimap_panel = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
-        .set_background_color(Ui::Color(0, 0, 0, 180))
-        .set_size({ 1, 1 }, true)
-        .set_enabled(false)
+            .set_background_color(Ui::Color(0, 0, 0, 180))
+            .set_size({1, 1}, true)
+            .set_enabled(false)
     );
-    
+
     auto minimap_panel_list = minimap_panel->add_widget(
         Ui::Panel(textures.get("paper"))
-        .set_origin(Ui::Origin::CenterLeft)
+            .set_origin(Ui::Origin::CenterLeft)
     );
 
     auto minimap_panel_map = minimap_panel->add_widget(
         Ui::Panel(textures.get("minimap"))
-        .set_origin(Ui::Origin::CenterRight)
+            .set_origin(Ui::Origin::CenterRight)
     );
 
     fake_clue_panel = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
-        .set_background_color(Ui::Color(0, 0, 0, 180))
-        .set_size({ 1, 1 }, true)
-        .set_enabled(false)
+            .set_background_color(Ui::Color(0, 0, 0, 180))
+            .set_size({1, 1}, true)
+            .set_enabled(false)
     );
 
     auto fake_clue_panel_list = fake_clue_panel->add_widget(
         Ui::Panel(textures.get("paper"))
-        .set_origin(Ui::Origin::Center)
+            .set_origin(Ui::Origin::Center)
     );
 }
 
