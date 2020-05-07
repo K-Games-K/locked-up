@@ -102,3 +102,12 @@ bool Player::operator<(const Player& other) const
 {
     return nickname < other.nickname;
 }
+
+std::vector<int> Player::get_pmove_pos() const
+{
+    return pmove_pos;
+}
+void Player::set_pmove_pos(std::vector<int> positions)
+{
+    pmove_pos = positions;
+}

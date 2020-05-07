@@ -68,4 +68,6 @@ private:
     void set(const std::vector<std::string>& args);
 
     void stop();
+
+    std::vector<int> gen_pmove_pos(int x, int y, int move_count, std::vector<int>& pmove_pos);
 };
