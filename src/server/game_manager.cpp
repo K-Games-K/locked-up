@@ -489,14 +489,10 @@ std::set<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::set<
 
     if (move_count > 0)
     {
-        gen_pmove_pos(x - 1, y, move_count - 1, pmove_pos);
-
-        gen_pmove_pos(x + 1, y, move_count - 1, pmove_pos);
-
-        gen_pmove_pos(x, y - 1, move_count - 1, pmove_pos);
-
-        gen_pmove_pos(x, y + 1, move_count - 1, pmove_pos);
-
+        if(game_board.can_move(x, y, - 1, 0))     gen_pmove_pos(x - 1, y, move_count - 1, pmove_pos);
+        if (game_board.can_move(x, y, + 1, 0))    gen_pmove_pos(x + 1, y, move_count - 1, pmove_pos);
+        if (game_board.can_move(x, y, 0, - 1))    gen_pmove_pos(x, y - 1, move_count - 1, pmove_pos);
+        if (game_board.can_move(x, y, 0, + 1))    gen_pmove_pos(x, y + 1, move_count - 1, pmove_pos);       
     }
 
     return pmove_pos;
