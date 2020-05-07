@@ -18,8 +18,8 @@ private:
     Connection server_connection;
 
     Ui::Panel user_interface;
-    Ui::TexturedPanel* left_panel;
-    Ui::TexturedPanel* right_panel;
+    Ui::Panel* left_panel;
+    Ui::Panel* right_panel;
     Ui::Text* left_panel_title_text;
     Ui::Layout* players_list_layout;
 

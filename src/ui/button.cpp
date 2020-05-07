@@ -33,6 +33,13 @@ namespace Ui
         return Widget::handle_event(event, mouse_pos, widget_pos, widget_size);
     }
 
+    Button& Button::set_callback(Button::Callback callback)
+    {
+        this->callback = callback;
+
+        return *this;
+    }
+
     Button& Button::set_default_color(Color default_color)
     {
         this->default_color = default_color;
@@ -64,9 +71,33 @@ namespace Ui
             return default_color;
     }
 
-    Button& Button::set_callback(Button::Callback callback)
+    const sf::Texture& Button::get_texture() const
     {
-        this->callback = callback;
+        if(activated)
+            return *active_texture;
+        else if(hovered)
+            return *hover_texture;
+        else
+            return *default_texture;
+    }
+
+    Button& Button::set_default_texture(const sf::Texture& default_texture)
+    {
+        this->default_texture = &default_texture;
+
+        return *this;
+    }
+
+    Button& Button::set_hover_texture(const sf::Texture& hover_texture)
+    {
+        this->hover_texture = &hover_texture;
+
+        return *this;
+    }
+
+    Button& Button::set_active_texture(const sf::Texture& active_texture)
+    {
+        this->active_texture = &active_texture;
 
         return *this;
     }
@@ -77,6 +108,13 @@ namespace Ui
         hovered = false;
 
         Widget::reset();
+    }
+
+    bool Button::has_texture() const
+    {
+        return default_texture != nullptr
+            && hover_texture != nullptr
+            && active_texture != nullptr;
     }
 
     Button* Button::clone() const

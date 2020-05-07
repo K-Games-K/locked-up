@@ -15,17 +15,9 @@ void MasterWidgetRenderer::render(const Ui::Widget& widget, const float dt, sf::
     {
         text_renderer.render(*text, dt, parent_pos, parent_size);
     }
-    else if(auto textured_button = dynamic_cast<const Ui::TexturedButton*>(&widget))
-    {
-        button_renderer.render(*textured_button, dt, parent_pos, parent_size);
-    }
     else if(auto button = dynamic_cast<const Ui::Button*>(&widget))
     {
         button_renderer.render(*button, dt, parent_pos, parent_size);
-    }
-    else if(auto textured_panel = dynamic_cast<const Ui::TexturedPanel*>(&widget))
-    {
-        panel_renderer.render(*textured_panel, dt, parent_pos, parent_size);
     }
     else if(auto panel = dynamic_cast<const Ui::Panel*>(&widget))
     {
@@ -34,10 +26,6 @@ void MasterWidgetRenderer::render(const Ui::Widget& widget, const float dt, sf::
     else if(auto line_edit = dynamic_cast<const Ui::LineEdit*>(&widget))
     {
         line_edit_renderer.render(*line_edit, dt, parent_pos, parent_size);
-    }
-    else if(auto textured_checkbox = dynamic_cast<const Ui::TexturedCheckbox*>(&widget))
-    {
-        checkbox_renderer.render(*textured_checkbox, dt, parent_pos, parent_size);
     }
     else if(auto checkbox = dynamic_cast<const Ui::Checkbox*>(&widget))
     {

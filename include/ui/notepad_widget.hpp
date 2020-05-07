@@ -2,12 +2,12 @@
 
 #include "notepad.hpp"
 #include "widget.hpp"
-#include "textured_panel.hpp"
+#include "panel.hpp"
 #include "checkbox.hpp"
 
 namespace Ui
 {
-    class NotepadWidget : public TexturedPanel
+    class NotepadWidget : public Panel
     {
     public:
         NotepadWidget(const Notepad& notepad, const sf::Texture& background_texture,

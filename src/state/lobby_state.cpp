@@ -24,8 +24,8 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
 
     user_interface.set_size({1, 1}, true);
 
-    left_panel = (Ui::TexturedPanel*) user_interface.add_widget(
-        Ui::TexturedPanel(textures.get("paper"))
+    left_panel = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel(textures.get("paper"))
             .set_position({-40, 0})
             .set_origin(Ui::Origin::CenterRight)
     );
@@ -63,8 +63,8 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
         Ui::Layout(Ui::LayoutType::Vertical, 30)
     );
 
-    right_panel = (Ui::TexturedPanel*) user_interface.add_widget(
-        Ui::TexturedPanel(textures.get("paper"))
+    right_panel = (Ui::Panel*) user_interface.add_widget(
+        Ui::Panel(textures.get("paper"))
             .set_position({40, 0})
             .set_origin(Ui::Origin::CenterLeft)
             .set_anchor(Ui::Anchor::Center)

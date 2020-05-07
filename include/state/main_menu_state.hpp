@@ -16,7 +16,7 @@ private:
         "mr1", "mr2", "mr3"
     };
 
-    Ui::TexturedPanel user_interface;
+    Ui::Panel user_interface;
     Ui::LineEdit* nickname_line_edit;
     Ui::LineEdit* address_line_edit;
     Ui::LineEdit* port_line_edit;

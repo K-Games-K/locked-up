@@ -25,11 +25,17 @@ namespace Ui
 
         Color get_color() const;
 
-        void reset() override;
+        Button& set_default_texture(const sf::Texture& default_texture);
 
-    protected:
-        bool activated = false;
-        bool hovered = false;
+        Button& set_hover_texture(const sf::Texture& hover_texture);
+
+        Button& set_active_texture(const sf::Texture& active_texture);
+
+        const sf::Texture& get_texture() const;
+
+        bool has_texture() const;
+
+        void reset() override;
 
     private:
         Callback callback;
@@ -37,6 +43,13 @@ namespace Ui
         Color default_color = Color::Transparent;
         Color hover_color = Color::Transparent;
         Color active_color = Color::Transparent;
+
+        const sf::Texture* default_texture;
+        const sf::Texture* hover_texture;
+        const sf::Texture* active_texture;
+
+        bool activated = false;
+        bool hovered = false;
 
         Button* clone() const override;
     };

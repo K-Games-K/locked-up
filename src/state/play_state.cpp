@@ -84,7 +84,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         Ui::Text(font)
             .set_color(Ui::Color::White)
             .set_font_size(30)
-            .set_position({-200, 20})
+            .set_position({-300, 20})
             .set_origin(Ui::Origin::CenterTop)
             .set_anchor(Ui::Anchor::CenterTop)
     );
@@ -107,7 +107,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             .set_size({1, 1}, true)
             .set_enabled(false)
     );
-    auto voting_menu_panel = voting_menu->add_widget(Ui::TexturedPanel(textures.get("paper")));
+    auto voting_menu_panel = voting_menu->add_widget(Ui::Panel(textures.get("paper")));
     voting_menu_panel->add_widget(
         Ui::Text(font, "Police has arrived!\nNow you'll need to vote\nwho are you going to accuse:")
             .set_font_size(28)
@@ -143,7 +143,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             .set_enabled(false)
     );
 
-    auto pause_menu_panel = pause_menu->add_widget(Ui::TexturedPanel(textures.get("paper")));
+    auto pause_menu_panel = pause_menu->add_widget(Ui::Panel(textures.get("paper")));
     pause_menu_panel->add_widget(
         Ui::Text(font, "Game Paused")
             .set_font_size(50)
@@ -187,12 +187,12 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     );
     
     auto minimap_panel_list = minimap_panel->add_widget(
-        Ui::TexturedPanel(textures.get("paper"))
+        Ui::Panel(textures.get("paper"))
         .set_origin(Ui::Origin::CenterLeft)
     );
 
     auto minimap_panel_map = minimap_panel->add_widget(
-        Ui::TexturedPanel(textures.get("minimap"))
+        Ui::Panel(textures.get("minimap"))
         .set_origin(Ui::Origin::CenterRight)
     );
 
@@ -204,7 +204,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     );
 
     auto fake_clue_panel_list = fake_clue_panel->add_widget(
-        Ui::TexturedPanel(textures.get("paper"))
+        Ui::Panel(textures.get("paper"))
         .set_origin(Ui::Origin::Center)
     );
 }
@@ -292,7 +292,7 @@ void PlayState::update(float dt)
 
     current_room_text->set_string(
         "Current player: " + players_list[current_player_id].get_nickname() + "    Current room: " +
-            current_room.get_name() + "  turn: " + std::to_string(current_turn) + "/50"
+            current_room.get_name() + "   Turn: " + std::to_string(current_turn) + "/50"
     );
 
     user_interface.update(dt);
