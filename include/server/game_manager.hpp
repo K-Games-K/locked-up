@@ -69,5 +69,5 @@ private:
 
     void stop();
 
-    std::vector<int> gen_pmove_pos(int x, int y, int move_count, std::vector<int>& pmove_pos);
+    std::set<int> gen_pmove_pos(int x, int y, int move_count, std::set<int>& pmove_pos);
 };

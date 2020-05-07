@@ -1,5 +1,6 @@
 #include <ctime>
 
+#include "set"
 #include <numeric>
 #include "game_board_loader.hpp"
 #include "utils.hpp"
@@ -313,7 +314,7 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
                 int posy = sender.get_position().y;
                 int newx = posx + x;
                 int newy = posy + y;
-                std::vector<int> pmove_pos = sender.get_pmove_pos();
+                std::set<int> pmove_pos = sender.get_pmove_pos();
 
                 if(newx < 0 || newx >= game_board.get_width() ||
                     newy < 0 || newy >= game_board.get_height())
@@ -476,7 +477,7 @@ void GameManager::stop()
     enabled = false;
 }
 
-std::vector<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::vector<int> &pmove_pos)
+std::set<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::set<int> &pmove_pos)
 {
     if (move_count == 6)
     {
@@ -484,26 +485,18 @@ std::vector<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::v
         pmove_pos.clear();
     }
 
-    pmove_pos.push_back(x + y * 100);
+    pmove_pos.insert(x + y * 100);
 
     if (move_count > 0)
     {
-        if (std::find(pmove_pos.begin(), pmove_pos.end(), x - 1 + y * 100) == pmove_pos.end())
-        {
-            gen_pmove_pos(x - 1, y, move_count - 1, pmove_pos);
-        }
-        if (std::find(pmove_pos.begin(), pmove_pos.end(), x + 1 + y * 100) == pmove_pos.end())
-        {
-            gen_pmove_pos(x + 1, y, move_count - 1, pmove_pos);
-        }
-        if (std::find(pmove_pos.begin(), pmove_pos.end(), x + (y - 1) * 100) == pmove_pos.end())
-        {
-            gen_pmove_pos(x, y - 1, move_count - 1, pmove_pos);
-        }
-        if (std::find(pmove_pos.begin(), pmove_pos.end(), x + (y + 1) * 100) == pmove_pos.end())
-        {
-            gen_pmove_pos(x, y + 1, move_count - 1, pmove_pos);
-        }
+        gen_pmove_pos(x - 1, y, move_count - 1, pmove_pos);
+
+        gen_pmove_pos(x + 1, y, move_count - 1, pmove_pos);
+
+        gen_pmove_pos(x, y - 1, move_count - 1, pmove_pos);
+
+        gen_pmove_pos(x, y + 1, move_count - 1, pmove_pos);
+
     }
 
     return pmove_pos;

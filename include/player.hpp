@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <SFML/System/Vector2.hpp>
 
 #include "game_board.hpp"
@@ -14,7 +15,7 @@ private:
     sf::Vector2i position;
 
     std::vector<int> alibi;
-    std::vector<int> pmove_pos;
+    std::set<int> pmove_pos;
 
 public:
     explicit Player(const std::string& nickname, const std::string& avatar_name = "mr1");
@@ -43,7 +44,7 @@ public:
 
     bool operator<(const Player& other) const;
 
-    std::vector<int> get_pmove_pos() const;
+    std::set<int> get_pmove_pos() const;
 
-    void set_pmove_pos(std::vector<int> positions);
+    void set_pmove_pos(std::set<int> positions);
 };
