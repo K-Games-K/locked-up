@@ -76,6 +76,8 @@ private:
 
     void  place_clue_clicked(Ui::Button& button);
 
+    void  place_clue_send_clicked(Ui::Button& button);
+
     void vote_clicked(Ui::Button& button);
 
     sf::Vector2f window_to_board_coords(sf::Vector2f window_coords);

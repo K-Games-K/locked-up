@@ -454,12 +454,19 @@ void PlayState::exit_clicked(Ui::Button& button)
 void PlayState::search_action_clicked(Ui::Button& button)
 {
     server_connection.send(ClueFoundPacket());
+    
 }
 
 void PlayState::place_clue_clicked(Ui::Button& button)
 {
+    fake_clue_panel->set_enabled(true);
+    
+    //server_connection.send(FakeCluePacket(3, 1));
+}
 
-    server_connection.send(FakeCluePacket(3, 1));
+void PlayState::place_clue_send_clicked(Ui::Button& button)
+{
+    //server_connection.send(FakeCluePacket(3, 1));
 }
 
 void PlayState::vote_clicked(Ui::Button& button)
