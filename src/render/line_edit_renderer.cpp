@@ -14,8 +14,8 @@ void LineEditRenderer::render(const Ui::LineEdit& text_edit, const float dt,
         time -= 2;
 
     sf::Vector2f text_edit_pos = text_edit.get_global_position(parent_pos, parent_size);
-    sf::Vector2f text_edit_size = text_edit.get_global_size(parent_size);
-    sf::RectangleShape text_edit_rect(text_edit.get_global_size(parent_size));
+    sf::Vector2f text_edit_size = text_edit.get_size();
+    sf::RectangleShape text_edit_rect(text_edit.get_size());
     text_edit_rect.setPosition(text_edit_pos);
     text_edit_rect.setFillColor(text_edit.get_background_color());
     text_edit_rect.setOutlineColor(text_edit.get_border_color());
@@ -23,7 +23,7 @@ void LineEditRenderer::render(const Ui::LineEdit& text_edit, const float dt,
     window.draw(text_edit_rect);
 
     const Ui::Text& text = text_edit.get_text();
-    float text_width = text.get_local_size().x;
+    float text_width = text.get_size().x;
     float margin = text_edit.get_margin();
     if(text_edit.is_active() && time <= 1)
     {

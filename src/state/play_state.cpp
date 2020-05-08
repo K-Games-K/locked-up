@@ -30,7 +30,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     walk_sound.setBuffer(sound_buffers.get("walk_sound"));
     walk_sound.setVolume(40);
 
-    user_interface.set_size({1, 1}, true);
+    user_interface.set_size((sf::Vector2f) window.getSize());
 
     notepad_widget = (Ui::NotepadWidget*) user_interface.add_widget(
         Ui::NotepadWidget(
@@ -104,7 +104,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     voting_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 200))
-            .set_size({1, 1}, true)
+            .set_size((sf::Vector2f) window.getSize())
             .set_enabled(false)
     );
     auto voting_menu_panel = voting_menu->add_widget(Ui::Panel(textures.get("paper")));
@@ -139,7 +139,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     pause_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 180))
-            .set_size({1, 1}, true)
+            .set_size((sf::Vector2f) window.getSize())
             .set_enabled(false)
     );
 
@@ -182,7 +182,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     minimap_panel = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 180))
-            .set_size({1, 1}, true)
+            .set_size((sf::Vector2f) window.getSize())
             .set_enabled(false)
     );
 
@@ -199,7 +199,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     fake_clue_panel = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 180))
-            .set_size({1, 1}, true)
+            .set_size((sf::Vector2f) window.getSize())
             .set_enabled(false)
     );
 

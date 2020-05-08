@@ -14,7 +14,7 @@ namespace Ui
         sf::Vector2f parent_pos, sf::Vector2f parent_size)
     {
         sf::Vector2f widget_pos = get_global_position(parent_pos, parent_size);
-        sf::Vector2f widget_size = get_global_size(parent_size);
+        sf::Vector2f widget_size = get_size();
         sf::FloatRect widget_box(widget_pos, widget_size);
 
         if(event.type == sf::Event::MouseButtonPressed)

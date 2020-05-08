@@ -8,7 +8,7 @@ void CheckboxRenderer::render(const Ui::Checkbox& checkbox, const float dt, sf::
     sf::Vector2f parent_size)
 {
     sf::Vector2f checkbox_pos = checkbox.get_global_position(parent_pos, parent_size);
-    sf::RectangleShape checkbox_rect(checkbox.get_global_size(parent_size));
+    sf::RectangleShape checkbox_rect(checkbox.get_size());
     checkbox_rect.setPosition(checkbox_pos);
     checkbox_rect.setFillColor(checkbox.get_background_color());
     checkbox_rect.setOutlineColor(checkbox.get_outline_color());

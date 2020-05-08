@@ -11,6 +11,8 @@
 class MasterWidgetRenderer
 {
 private:
+    sf::RenderWindow& window;
+
     TextRenderer text_renderer;
     ButtonRenderer button_renderer;
     CheckboxRenderer checkbox_renderer;

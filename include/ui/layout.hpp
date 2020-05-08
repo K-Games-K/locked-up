@@ -13,7 +13,7 @@ namespace Ui
     class Layout : public Widget
     {
     public:
-        Layout(LayoutType type, float spacing);
+        Layout(LayoutType type, float margin = 0);
 
         Widget* add_widget(const Widget& widget) override;
 
@@ -25,18 +25,18 @@ namespace Ui
 
         void clear();
 
+        void update_size();
+
     private:
         const LayoutType type;
+
+        float margin;
 
         class Item : public Widget
         {
         private:
             Item* clone() const override;
         };
-
-        float spacing;
-
-        void update_size();
 
         Layout* clone() const override;
     };

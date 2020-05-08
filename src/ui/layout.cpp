@@ -3,8 +3,8 @@
 
 namespace Ui
 {
-    Layout::Layout(LayoutType type, float spacing)
-        : type(type), spacing(spacing) {}
+    Layout::Layout(LayoutType type, float margin)
+        : type(type), margin(margin) {}
 
     Widget* Layout::add_widget(const Widget& widget)
     {
@@ -59,27 +59,37 @@ namespace Ui
         {
             case LayoutType::Horizontal:
             {
-                auto& children = get_children();
-                for(int i = 0; i < children.size(); ++i)
+                float layout_width = 0;
+                float layout_height = 0;
+                for(auto& child : get_children())
                 {
-                    children[i]->set_position({spacing * (i + 0.5f), 0})
-                        .set_size({spacing, 0})
+                    auto item = child->get_child<>(0);
+                    child->set_position({layout_width, 0})
+                        .set_size(item->get_size())
+                        .set_origin(Origin::CenterLeft)
                         .set_anchor(Anchor::CenterLeft);
+                    layout_width += child->get_size().x + margin;
+                    layout_height = Utils::max(layout_height, child->get_size().y);
                 }
-                set_size({children.size() * spacing, 0});
+                set_size({layout_width, layout_height});
 
                 break;
             }
             case LayoutType::Vertical:
             {
-                auto& children = get_children();
-                for(int i = 0; i < children.size(); ++i)
+                float layout_width = 0;
+                float layout_height = 0;
+                for(auto& child : get_children())
                 {
-                    children[i]->set_position({0, spacing * (i + 0.5f)})
-                        .set_size({0, spacing})
+                    auto item = child->get_child<>(0);
+                    child->set_position({0, layout_height})
+                        .set_size(item->get_size())
+                        .set_origin(Origin::CenterTop)
                         .set_anchor(Anchor::CenterTop);
+                    layout_width = Utils::max(layout_width, child->get_size().x);
+                    layout_height += child->get_size().y + margin;
                 }
-                set_size({0, children.size() * spacing});
+                set_size({layout_width, layout_height});
 
                 break;
             }

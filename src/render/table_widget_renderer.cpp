@@ -7,8 +7,8 @@ void TableWidgetRenderer::render(const Ui::TableWidget& table_widget, const floa
     sf::Vector2f parent_pos, sf::Vector2f parent_size)
 {
     sf::Vector2f table_pos = table_widget.get_global_position(parent_pos, parent_size);
-    float table_width = table_widget.get_global_size(parent_size).x;
-    float table_height = table_widget.get_global_size(parent_size).y;
+    float table_width = table_widget.get_size().x;
+    float table_height = table_widget.get_size().y;
     sf::RectangleShape grid_rect_vert({table_widget.get_grid_thickness(), table_height});
     grid_rect_vert.setFillColor(table_widget.get_grid_color());
     sf::RectangleShape grid_rect_hori({table_width, table_widget.get_grid_thickness()});

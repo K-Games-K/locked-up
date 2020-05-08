@@ -10,7 +10,7 @@ namespace Ui
     {
         auto& players = notepad.get_players();
         const int alibi_length = notepad.get_notes(players[0]).size();
-        float button_width = get_local_size().x / (players.size() + 1);
+        float button_width = get_size().x / (players.size() + 1);
         note_panels.reserve(players.size());
         for(int i = 0; i < players.size(); ++i)
         {
@@ -29,7 +29,7 @@ namespace Ui
             auto note_panel = (Panel*) Widget::add_widget(
                 Panel()
                     .set_position({0, -30})
-                    .set_size({0.9, 0.9}, true)
+                    .set_size(0.9f * get_size())
                     .set_enabled(false)
             );
 

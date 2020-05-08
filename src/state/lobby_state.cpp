@@ -22,7 +22,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
         .set_hover_color(Ui::Color(0, 0, 0, 190))
         .set_active_color(Ui::Color(0, 0, 0, 210));
 
-    user_interface.set_size({1, 1}, true);
+    user_interface.set_size((sf::Vector2f) window.getSize());
 
     left_panel = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel(textures.get("paper"))
@@ -60,7 +60,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
     exit_button->add_widget(Ui::Text(font, "Exit server"));
 
     players_list_layout = (Ui::Layout*) left_panel->add_widget(
-        Ui::Layout(Ui::LayoutType::Vertical, 30)
+        Ui::Layout(Ui::LayoutType::Vertical, 5)
     );
 
     right_panel = (Ui::Panel*) user_interface.add_widget(
@@ -137,9 +137,19 @@ void LobbyState::packet_received(std::unique_ptr<Packet> packet)
 
             players_list_layout->clear();
             for(auto& player : players_list)
-                players_list_layout->add_widget(
+            {
+                auto layout = (Ui::Layout*) players_list_layout->add_widget(
+                    Ui::Layout(Ui::LayoutType::Horizontal, 10)
+                );
+                layout->add_widget(
+                    Ui::Panel(textures.get(player.get_avatar_name()))
+                        .set_size({33, 50})
+                );
+                layout->add_widget(
                     Ui::Text(fonts.get("IndieFlower-Regular"), player.get_nickname())
                 );
+                players_list_layout->update_size();
+            }
 
             break;
         }

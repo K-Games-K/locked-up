@@ -1,7 +1,8 @@
 #include "render/master_widget_renderer.hpp"
 
 MasterWidgetRenderer::MasterWidgetRenderer(sf::RenderWindow& window)
-    : text_renderer(window),
+    : window(window),
+    text_renderer(window),
     button_renderer(window),
     panel_renderer(window),
     line_edit_renderer(window),
@@ -36,8 +37,16 @@ void MasterWidgetRenderer::render(const Ui::Widget& widget, const float dt, sf::
         table_widget_renderer.render(*table_widget, dt, parent_pos, parent_size);
     }
 
+    // Debug rendering.
+    // sf::RectangleShape rect(widget.get_size());
+    // rect.setOutlineColor(sf::Color::Red);
+    // rect.setOutlineThickness(1);
+    // rect.setFillColor(sf::Color::Transparent);
+    // rect.setPosition(widget.get_global_position(parent_pos, parent_size));
+    // window.draw(rect);
+
     sf::Vector2f widget_pos = widget.get_global_position(parent_pos, parent_size);
-    sf::Vector2f widget_size = widget.get_global_size(parent_size);
+    sf::Vector2f widget_size = widget.get_size();
     for(const auto& child : widget.get_children())
         if(child != nullptr && child->is_enabled())
             render(*child, dt, widget_pos, widget_size);

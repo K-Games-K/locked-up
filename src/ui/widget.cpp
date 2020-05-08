@@ -5,7 +5,7 @@ namespace Ui
     Widget::Widget(const Widget& other)
         : enabled(other.enabled), position(other.position),
         position_relative(other.position_relative), size(other.size),
-        size_relative(other.size_relative), origin(other.origin), anchor(other.anchor)
+        origin(other.origin), anchor(other.anchor)
     {
         children.reserve(other.children.size());
         for(auto& child : other.children)
@@ -23,7 +23,7 @@ namespace Ui
                 if(child->handle_event(
                     event, mouse_pos,
                     get_global_position(parent_pos, parent_size),
-                    get_global_size(parent_size)
+                    get_size()
                 ))
                     return true;
             }
@@ -109,10 +109,6 @@ namespace Ui
             position.x * parent_size.x,
             position.y * parent_size.y
         ) : position;
-        sf::Vector2f widget_size = size_relative ? sf::Vector2f(
-            size.x * parent_size.x,
-            size.y * parent_size.y
-        ) : size;
 
         sf::Vector2f result = parent_pos + widget_pos;
         switch(origin)
@@ -120,28 +116,28 @@ namespace Ui
             case Origin::TopLeft:
                 break;
             case Origin::TopRight:
-                result -= sf::Vector2f(widget_size.x, 0);
+                result -= sf::Vector2f(size.x, 0);
                 break;
             case Origin::BottomRight:
-                result -= widget_size;
+                result -= size;
                 break;
             case Origin::BottomLeft:
-                result -= sf::Vector2f(0, widget_size.y);
+                result -= sf::Vector2f(0, size.y);
                 break;
             case Origin::Center:
-                result -= widget_size / 2.0f;
+                result -= size / 2.0f;
                 break;
             case Origin::CenterTop:
-                result -= sf::Vector2f(widget_size.x / 2, 0);
+                result -= sf::Vector2f(size.x / 2, 0);
                 break;
             case Origin::CenterRight:
-                result -= sf::Vector2f(widget_size.x, widget_size.y / 2);
+                result -= sf::Vector2f(size.x, size.y / 2);
                 break;
             case Origin::CenterBottom:
-                result -= sf::Vector2f(widget_size.x / 2, widget_size.y);
+                result -= sf::Vector2f(size.x / 2, size.y);
                 break;
             case Origin::CenterLeft:
-                result -= sf::Vector2f(0, widget_size.y / 2);
+                result -= sf::Vector2f(0, size.y / 2);
                 break;
             default:
                 break;
@@ -182,25 +178,16 @@ namespace Ui
         return result;
     }
 
-    Widget& Widget::set_size(sf::Vector2f size, bool size_relative)
+    Widget& Widget::set_size(sf::Vector2f size)
     {
         this->size = size;
-        this->size_relative = size_relative;
 
         return *this;
     }
 
-    sf::Vector2f Widget::get_local_size() const
+    sf::Vector2f Widget::get_size() const
     {
         return size;
-    }
-
-    sf::Vector2f Widget::get_global_size(sf::Vector2f parent_size) const
-    {
-        return size_relative ? sf::Vector2f(
-            size.x * parent_size.x,
-            size.y * parent_size.y
-        ) : size;
     }
 
     Widget& Widget::set_origin(Anchor origin)
@@ -245,7 +232,6 @@ namespace Ui
         position = other.position;
         position_relative = other.position_relative;
         size = other.size;
-        size_relative = other.size_relative;
         origin = other.origin;
         anchor = other.anchor;
 

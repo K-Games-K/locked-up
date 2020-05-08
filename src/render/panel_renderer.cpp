@@ -12,8 +12,8 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt, sf::Vector2f 
     {
         auto& texture = panel.get_background_texture();
         sf::Vector2f factors = {
-            panel.get_global_size(parent_size).x / texture.getSize().x,
-            panel.get_global_size(parent_size).y / texture.getSize().y
+            panel.get_size().x / texture.getSize().x,
+            panel.get_size().y / texture.getSize().y
         };
         sf::Sprite panel_sprite(texture);
         panel_sprite.setPosition(panel_position);
@@ -21,7 +21,7 @@ void PanelRenderer::render(const Ui::Panel& panel, const float dt, sf::Vector2f 
         window.draw(panel_sprite);
     }
 
-    sf::RectangleShape panel_rect(panel.get_global_size(parent_size));
+    sf::RectangleShape panel_rect(panel.get_size());
     panel_rect.setPosition(panel_position);
     panel_rect.setFillColor(panel.get_background_color());
     window.draw(panel_rect);

@@ -39,7 +39,7 @@ namespace Ui
         virtual void remove_widget(const Widget& widget);
 
         /// Returns pointer to first child of type T.
-        template <typename T>
+        template <typename T = Widget>
         T* get_child()
         {
             for(auto& child : children)
@@ -50,7 +50,7 @@ namespace Ui
 
         /// Returns pointer to nth child and casts it to type T.
         /// Returns nullptr if there is no such child.
-        template <typename T>
+        template <typename T = Widget>
         T* get_child(size_t n)
         {
             if(n >= children.size())
@@ -88,11 +88,9 @@ namespace Ui
         sf::Vector2f
         get_global_position(sf::Vector2f parent_pos, sf::Vector2f parent_size) const;
 
-        Widget& set_size(sf::Vector2f size, bool size_relative = false);
+        Widget& set_size(sf::Vector2f size);
 
-        sf::Vector2f get_local_size() const;
-
-        sf::Vector2f get_global_size(sf::Vector2f parent_size) const;
+        sf::Vector2f get_size() const;
 
         Widget& set_origin(Origin origin);
 
@@ -116,7 +114,6 @@ namespace Ui
         sf::Vector2f position = {0, 0};
         bool position_relative = false;
         sf::Vector2f size = {0, 0};
-        bool size_relative = false;
 
         Origin origin = Origin::Center;
         Anchor anchor = Origin::Center;
