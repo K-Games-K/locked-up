@@ -60,6 +60,7 @@ private:
     int actions_left;
     int murderer_id;
     std::vector<int> votes;
+    std::set<int> pmove_pos;
 
     void prepare_new_game();
 
