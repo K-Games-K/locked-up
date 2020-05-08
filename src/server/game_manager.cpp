@@ -109,12 +109,12 @@ void GameManager::run()
                 }
                 for (auto& player : connected_players)
                 {
-                    player.set_pmove_pos(gen_pmove_pos(
+                    pmove_pos = gen_pmove_pos(
                         player.get_position().x,
                         player.get_position().y,
                         6,
-                        player.get_pmove_pos()
-                    ));
+                        pmove_pos
+                    );
                 }
                 
                 game_server.broadcast(NewTurnPacket(current_player_id, turn));
@@ -314,7 +314,6 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
                 int posy = sender.get_position().y;
                 int newx = posx + x;
                 int newy = posy + y;
-                std::set<int> pmove_pos = sender.get_pmove_pos();
 
                 if(newx < 0 || newx >= game_board.get_width() ||
                     newy < 0 || newy >= game_board.get_height())
