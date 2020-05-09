@@ -107,15 +107,14 @@ void GameManager::run()
                     turn++;
                     current_player_id = 0;
                 }
-                for (auto& player : connected_players)
-                {
-                    pmove_pos = gen_pmove_pos(
-                        player.get_position().x,
-                        player.get_position().y,
-                        6,
-                        pmove_pos
-                    );
-                }
+
+                pmove_pos = gen_pmove_pos(
+                    connected_players[current_player_id].get_position().x,
+                    connected_players[current_player_id].get_position().y,
+                    6,
+                    pmove_pos
+                );
+                
                 
                 game_server.broadcast(NewTurnPacket(current_player_id, turn));
                 moves_left = MOVES_PER_TURN;
@@ -319,13 +318,9 @@ void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> 
                     newy < 0 || newy >= game_board.get_height())
                     break;
 
-                Log::debug() << "*" << std::endl;
-
                 if (std::find(pmove_pos.begin(), pmove_pos.end(), newx + newy * 100)
                     == pmove_pos.end())
                     break;
-
-                Log::debug() << "*" << std::endl;
 
                 if(game_board.can_move(posx, posy, x, y))
                     sender.set_position(newx, newy);

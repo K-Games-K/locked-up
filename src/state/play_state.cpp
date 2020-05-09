@@ -79,6 +79,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         Ui::Text(font, "Place fake clue")
             .set_color(Ui::Color::White)
     );
+    
 
     current_room_text = (Ui::Text*) user_interface.add_widget(
         Ui::Text(font)
@@ -195,18 +196,71 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         Ui::Panel(textures.get("minimap"))
             .set_origin(Ui::Origin::CenterRight)
     );
-
-    fake_clue_panel = (Ui::Panel*) user_interface.add_widget(
+    ////////
+    fake_clue_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 180))
             .set_size((sf::Vector2f) window.getSize())
             .set_enabled(false)
     );
 
-    auto fake_clue_panel_list = fake_clue_panel->add_widget(
-        Ui::Panel(textures.get("paper"))
-            .set_origin(Ui::Origin::Center)
+    auto fake_clue_panel = fake_clue_menu->add_widget(Ui::Panel(textures.get("paper")));
+    fake_clue_panel->add_widget(
+        Ui::Text(font, "This is the fake clue!")
+        .set_font_size(28)
+        .set_position({ 0, 40 })
+        .set_origin(Ui::Origin::CenterTop)
+        .set_anchor(Ui::Anchor::CenterTop)
     );
+
+    for (int i = 0; i < this->hours.size(); ++i)
+    {
+        auto& hour = hours[i];
+        auto button = fake_clue_panel->add_widget(
+            Ui::Button()
+            .set_callback(
+                [this, i](Ui::Button& button) { hour_choice(i); }
+            )
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({ -150, (i * 35.0f) - ((this->players_list.size() - 1) * 20.0f) -200})
+            .set_size({ 150, 30 })
+        );
+        button->add_widget(Ui::Text(font, hour));
+    }
+
+    for (int i = 0; i < this->players_list.size(); ++i)
+    {
+        auto& player = players_list[i];
+        auto button = fake_clue_panel->add_widget(
+            Ui::Button()
+            .set_callback(
+                [this, i](Ui::Button& button) { fake_player_choice(i); }
+            )
+            .set_default_color(default_color)
+            .set_hover_color(hover_color)
+            .set_active_color(active_color)
+            .set_position({ 100, (i * 35.0f) - ((this->players_list.size() - 1) * 20.0f) -200})
+            .set_size({ 150, 30 })
+        );
+        button->add_widget(Ui::Text(font, player.get_nickname()));
+    }
+    auto button = fake_clue_menu->add_widget(
+        Ui::Button()
+        .set_callback(std::bind(&PlayState::place_clue_send_clicked, this, std::placeholders::_1))
+        .set_default_color(default_color)
+        .set_hover_color(hover_color)
+        .set_active_color(active_color)
+        .set_position({ 0, 300 })
+        .set_size({ 420, 40 })
+        .set_origin(Ui::Origin::CenterBottom)
+    );
+    button->add_widget(
+        Ui::Text(font, "Place fake clue!")
+        .set_color(Ui::Color::White)
+    );
+
 }
 
 void PlayState::handle_input(sf::Event event)
@@ -268,6 +322,7 @@ void PlayState::handle_input(sf::Event event)
                 break;
             case sf::Keyboard::Escape:
                 paused = !paused;
+                fake_clue_menu->set_enabled(false);
                 pause_menu->set_enabled(paused);
                 break;
             default:
@@ -459,14 +514,16 @@ void PlayState::search_action_clicked(Ui::Button& button)
 
 void PlayState::place_clue_clicked(Ui::Button& button)
 {
-    fake_clue_panel->set_enabled(true);
-    
-    //server_connection.send(FakeCluePacket(3, 1));
+    paused = true;
+    fake_clue_menu->set_enabled(paused);
 }
 
 void PlayState::place_clue_send_clicked(Ui::Button& button)
 {
-    //server_connection.send(FakeCluePacket(3, 1));
+    server_connection.send(FakeCluePacket(fake_hour, fake_player_id));
+
+    paused = false;
+    fake_clue_menu->set_enabled(paused);
 }
 
 void PlayState::vote_clicked(Ui::Button& button)
@@ -493,4 +550,14 @@ sf::Vector2f PlayState::window_to_board_coords(sf::Vector2f window_coords)
 sf::Vector2f PlayState::board_to_window_coords(sf::Vector2f window_coords)
 {
     return (window_coords - camera_pos) * (float) TILE_SIZE + game_board_pos;
+}
+
+void PlayState::hour_choice(int hour)
+{
+    this->fake_hour = hour;
+}
+
+void PlayState::fake_player_choice(int player_id)
+{
+    this->fake_player_id = player_id;
 }

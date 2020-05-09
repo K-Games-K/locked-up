@@ -40,6 +40,12 @@ private:
     int current_player_id = 0;
     int current_turn = 0;
     std::vector<Player> players_list;
+    const std::vector<std::string> hours{
+        "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00",
+        "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"
+    };
+    int fake_hour;
+    int fake_player_id;
 
     Connection server_connection;
 
@@ -54,7 +60,7 @@ private:
     Ui::Panel* voting_menu;
     Ui::Panel* pause_menu;
     Ui::Panel* minimap_panel;
-    Ui::Panel* fake_clue_panel;
+    Ui::Panel* fake_clue_menu;
 
     PlayerRenderer player_renderer;
     GameBoardRenderer game_board_renderer;
@@ -83,6 +89,10 @@ private:
     sf::Vector2f window_to_board_coords(sf::Vector2f window_coords);
 
     sf::Vector2f board_to_window_coords(sf::Vector2f window_coords);
+
+    void hour_choice(int hour);
+
+    void fake_player_choice(int player_id);
 
 public:
     PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
