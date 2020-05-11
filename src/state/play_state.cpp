@@ -186,15 +186,9 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             .set_size((sf::Vector2f) window.getSize())
             .set_enabled(false)
     );
-
-    auto minimap_panel_list = minimap_panel->add_widget(
-        Ui::Panel(textures.get("paper"))
-            .set_origin(Ui::Origin::CenterLeft)
-    );
-
     auto minimap_panel_map = minimap_panel->add_widget(
         Ui::Panel(textures.get("minimap"))
-            .set_origin(Ui::Origin::CenterRight)
+        .set_position({0,0})
     );
     ////////
     fake_clue_menu = (Ui::Panel*) user_interface.add_widget(

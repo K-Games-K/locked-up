@@ -3,7 +3,7 @@ rooms:
 Outside:
 Kitchen: Knife, Chopper, Poison
 Bedroom (North): Pollow, Soap Dish, Rake
-Bedroom (South): Pillow, Rope, Book
+Bedroom (South): Pillow, Book, Flower Pot
 Bedroom (West): Pillow, Rope, Statue
 Library: Knife, Book, Vase
 Hall: Statue, Book, Weight
@@ -14,11 +14,11 @@ Terrace (West): Shovel, Rake, Hammer
 Terrace (East): Shovel, Bag, Flower Pot
 Ballroom: Knife, Candlestick, Statue
 Dining Room: Statue, Poison, Scissors
-Wardrobe: Coat Hanger, Needle, Weight
+Wardrobe: Weight, Scissors, Book
 Closet (North): Rope, Candlestick, Bag
 Closet (South): Chopper, Hammer, Rope
 Closet (West): Hammer, Rake, Bag
-Corridor: Candlestick, Vase, Flower Pot
+Corridor: Candlestick, Flower Pot, Knife
 
 tiles:
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
