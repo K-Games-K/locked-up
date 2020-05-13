@@ -13,7 +13,8 @@ private:
     const sf::Color CLEAR_COLOR = sf::Color(242, 0, 0);
     const std::vector<std::string> avatars = {
         "mrs1", "mrs2", "mrs3",
-        "mr1", "mr2", "mr3"
+        "mr1", "mr2", "mr3",
+        "mr4", "mr5", "mr6"
     };
 
     Ui::Panel user_interface;

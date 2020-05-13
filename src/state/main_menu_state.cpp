@@ -37,37 +37,37 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
 
     join_game_panel->add_widget(
         Ui::Text(font, "Nickname:")
-            .set_position({-210, -80})
+            .set_position({-210, -130})
             .set_origin(Ui::Origin::CenterLeft)
     );
     nickname_line_edit = (Ui::LineEdit*) join_game_panel->add_widget(
         Ui::LineEdit(font)
-            .set_position({0, -40})
+            .set_position({0, -90})
             .set_size({420, 40})
     );
 
     join_game_panel->add_widget(
         Ui::Text(font, "Server address:")
-            .set_position({-210, 0})
+            .set_position({-210, -50})
             .set_origin(Ui::Origin::CenterLeft)
     );
     address_line_edit = (Ui::LineEdit*) join_game_panel->add_widget(
         Ui::LineEdit(font)
             .set_max_length(17)
-            .set_position({90, 40})
+            .set_position({90, -10})
             .set_size({300, 40})
             .set_origin(Ui::Origin::CenterRight)
     );
 
     join_game_panel->add_widget(
         Ui::Text(font, "Port:")
-            .set_position({110, 0})
+            .set_position({110, -50})
             .set_origin(Ui::Origin::CenterLeft)
     );
     port_line_edit = (Ui::LineEdit*) join_game_panel->add_widget(
         Ui::LineEdit(font)
             .set_max_length(5)
-            .set_position({110, 40})
+            .set_position({110, -10})
             .set_size({100, 40})
             .set_origin(Ui::Origin::CenterLeft)
     );
@@ -78,20 +78,20 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             .set_default_color(default_color)
             .set_hover_color(hover_color)
             .set_active_color(active_color)
-            .set_position({0, 100})
+            .set_position({0, 50})
             .set_size({420, 40})
     );
     join_button->add_widget(Ui::Text(font, "Join the game"));
 
     auto avatars_table = (Ui::TableWidget*) join_game_panel->add_widget(
-        Ui::TableWidget(3, 2)
+        Ui::TableWidget(3, 3)
             .set_column_widths({80, 80, 80})
-            .set_row_heights({80, 80})
+            .set_row_heights({80, 80, 80})
             .set_grid_thickness(0)
             .set_position({0, 210})
     );
 
-    for(int row = 0; row < 2; ++row)
+    for(int row = 0; row < 3; ++row)
     {
         for(int column = 0; column < 3; ++column)
         {
@@ -116,7 +116,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
             .set_default_color(default_color)
             .set_hover_color(hover_color)
             .set_active_color(active_color)
-            .set_position({0, -50})
+            .set_position({0, -20})
             .set_size({420, 40})
             .set_origin(Ui::Origin::CenterBottom)
             .set_anchor(Ui::Anchor::CenterBottom)
