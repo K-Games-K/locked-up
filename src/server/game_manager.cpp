@@ -283,7 +283,7 @@ void GameManager::prepare_new_game()
         std::vector<int> room_tiles;
         for(int i = 0; i < tiles.size(); ++i)
         {
-            if(tiles[i] == player.get_alibi()[ALIBI_LENGTH - 1])
+            if(tiles[i] == rand_room(gen))
                 room_tiles.push_back(i);
         }
 

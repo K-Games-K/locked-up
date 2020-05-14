@@ -13,6 +13,9 @@ private:
 
     TextRenderer text_renderer;
 
+    float speed = 2;
+    float time = 0;
+
 public:
     PlayerRenderer(sf::RenderWindow& window, ResourceManagers resources);
 

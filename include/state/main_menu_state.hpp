@@ -27,6 +27,8 @@ private:
     MasterWidgetRenderer master_widget_renderer;
     AnimatedBackgroundRenderer background_renderer;
 
+    sf::Sound click_sound;
+
     std::string nickname;
     std::string avatar_name = "mr1";
     Connection server_connection;
