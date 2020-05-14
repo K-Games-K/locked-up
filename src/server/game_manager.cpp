@@ -208,6 +208,7 @@ void GameManager::prepare_new_game()
 
     // Generate alibis.
     std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
+    std::uniform_int_distribution<> random_alibi(0, ALIBI_LENGTH - 1);
     for(auto& player : connected_players)
     {
         player.generate_alibi(game_board, rand_room(gen), ALIBI_LENGTH);
@@ -215,12 +216,12 @@ void GameManager::prepare_new_game()
         uint32_t hide_room1 = 0;
         uint32_t hide_room2 = 0;
         uint32_t hide_room3 = 0;
-        hide_room1 = rand() % alibi.size();
+        hide_room1 = random_alibi(gen);
 
         while ( hide_room2 == hide_room3 || hide_room1 == hide_room2 )
         {
-            hide_room2 = rand() % alibi.size();
-            hide_room3 = rand() % alibi.size();
+            hide_room2 = random_alibi(gen);
+            hide_room3 = random_alibi(gen);
         }
         
         for(int i = 0; i < alibi.size(); ++i)
