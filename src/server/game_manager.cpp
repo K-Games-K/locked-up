@@ -212,8 +212,21 @@ void GameManager::prepare_new_game()
     {
         player.generate_alibi(game_board, rand_room(gen), ALIBI_LENGTH);
         auto& alibi = player.get_alibi();
+        uint32_t hide_room1 = 0;
+        uint32_t hide_room2 = 0;
+        uint32_t hide_room3 = 0;
+        hide_room1 = rand() % alibi.size();
+
+        while ( hide_room2 == hide_room3 || hide_room1 == hide_room2 )
+        {
+            hide_room2 = rand() % alibi.size();
+            hide_room3 = rand() % alibi.size();
+        }
+        
         for(int i = 0; i < alibi.size(); ++i)
         {
+            if (i == hide_room1 || i == hide_room2 || i == hide_room3)
+                continue;
             auto& room = game_board.get_room(alibi[i]);
             room.get_visitors().push_back({i, player.get_nickname()});
         }
