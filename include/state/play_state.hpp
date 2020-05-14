@@ -29,6 +29,7 @@ private:
 
     sf::Sound walk_sound;
     sf::Sound paper_sound;
+    sf::Sound click_sound;
     sf::Vector2f camera_pos;
     sf::Vector2f window_viewport = {(float) window.getSize().x, (float) window.getSize().y};
     sf::Vector2f game_board_pos = {

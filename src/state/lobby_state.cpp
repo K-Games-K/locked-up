@@ -16,6 +16,9 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
     // Preload background texture.
     textures.get("map");
 
+    click_sound.setBuffer(sound_buffers.get("click_sound"));
+    click_sound.setVolume(40);
+
     auto& font = fonts.get("IndieFlower-Regular");
     auto base_button = Ui::Button()
         .set_default_color(Ui::Color(0, 0, 0, 140))
@@ -84,6 +87,9 @@ void LobbyState::handle_input(sf::Event event)
         server_connection.send(DisconnectPacket());
         game_state_manager.pop_state();
     }
+
+    if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+        click_sound.play();
 
     user_interface.handle_event(
         event, (sf::Vector2f) sf::Mouse::getPosition(window),

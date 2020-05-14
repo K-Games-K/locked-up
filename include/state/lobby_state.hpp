@@ -26,6 +26,8 @@ private:
     MasterWidgetRenderer master_widget_renderer;
     AnimatedBackgroundRenderer background_renderer;
 
+    sf::Sound click_sound;
+
     int player_id = -1;
     std::vector<Player> players_list;
     GameBoard game_board;

@@ -30,6 +30,9 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     walk_sound.setBuffer(sound_buffers.get("walk_sound"));
     walk_sound.setVolume(40);
 
+    click_sound.setBuffer(sound_buffers.get("click_sound"));
+    click_sound.setVolume(40);
+
     user_interface.set_size((sf::Vector2f) window.getSize());
 
     notepad_widget = (Ui::NotepadWidget*) user_interface.add_widget(
@@ -190,7 +193,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
         Ui::Panel(textures.get("minimap"))
         .set_position({0,0})
     );
-    ////////
+
     fake_clue_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 180))
@@ -264,6 +267,9 @@ void PlayState::handle_input(sf::Event event)
         server_connection.send(DisconnectPacket());
         game_state_manager.pop_state();
     }
+
+    if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+        click_sound.play();
 
     if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left &&
         !paused)
