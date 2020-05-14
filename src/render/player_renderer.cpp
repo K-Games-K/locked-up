@@ -1,3 +1,6 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "render/player_renderer.hpp"
 #include "ui/text.hpp"
 
@@ -7,6 +10,10 @@ PlayerRenderer::PlayerRenderer(sf::RenderWindow& window, ResourceManagers resour
 
 void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
 {
+    time += dt * speed;
+    if(time >= 2 * M_PI)
+        time -= 2 * M_PI;
+
     sf::FloatRect game_board_rect({0, 0}, game_board_size);
 
     for(auto& player : players)
@@ -23,6 +30,7 @@ void PlayerRenderer::render(const std::vector<Player>& players, const float dt)
         sf::Sprite player_sprite(texture);
         player_sprite.setOrigin(texture.getSize().x / 2, texture.getSize().y - TILE_SIZE / 2);
         player_sprite.setPosition(player_pos + game_board_pos);
+        player_sprite.setScale(1.0, 0.05 * sin(time) + 1.0);
         window.draw(player_sprite);
     }
 
