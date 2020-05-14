@@ -17,7 +17,7 @@ MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_st
     textures.get("map");
 
     click_sound.setBuffer(sound_buffers.get("click_sound"));
-    click_sound.setVolume(40);
+    click_sound.setVolume(20);
 
     auto& font = fonts.get("IndieFlower-Regular");
     auto default_color = Ui::Color(0, 0, 0, 140);
