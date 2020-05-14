@@ -31,7 +31,7 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     walk_sound.setVolume(40);
 
     click_sound.setBuffer(sound_buffers.get("click_sound"));
-    click_sound.setVolume(40);
+    click_sound.setVolume(20);
 
     user_interface.set_size((sf::Vector2f) window.getSize());
 

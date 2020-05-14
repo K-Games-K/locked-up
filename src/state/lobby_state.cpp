@@ -17,7 +17,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
     textures.get("map");
 
     click_sound.setBuffer(sound_buffers.get("click_sound"));
-    click_sound.setVolume(40);
+    click_sound.setVolume(20);
 
     auto& font = fonts.get("IndieFlower-Regular");
     auto base_button = Ui::Button()
