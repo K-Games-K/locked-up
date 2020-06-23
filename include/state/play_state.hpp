@@ -27,6 +27,8 @@ private:
 
     GameBoard game_board;
 
+    int turns_per_game;
+
     sf::Sound walk_sound;
     sf::Sound paper_sound;
     sf::Sound click_sound;
@@ -99,7 +101,7 @@ public:
     PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
         Connection&& server_connection, const GameBoard& game_board, int player_id,
         const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis,
-        int crime_room, Item crime_item);
+        int crime_room, Item crime_item, int turns_per_game);
 
     void handle_input(sf::Event event) override;
 

@@ -5,9 +5,9 @@ GameStartPacket::GameStartPacket()
 {}
 
 GameStartPacket::GameStartPacket(int16_t start_x, int16_t start_y,
-    std::vector<std::vector<int32_t>>& alibis, uint32_t crime_room, Item crime_item)
+    std::vector<std::vector<int32_t>>& alibis, uint32_t crime_room, Item crime_item, uint32_t turns_per_game)
     : Packet(PACKET_ID), start_x(start_x), start_y(start_y), alibis(std::move(alibis)),
-    crime_room(crime_room), crime_item(crime_item)
+    crime_room(crime_room), crime_item(crime_item), turns_per_game(turns_per_game)
 {}
 
 int16_t GameStartPacket::get_start_x() const
@@ -49,6 +49,12 @@ void GameStartPacket::serialize(sf::Packet& data) const
     data << crime_room;
     data << static_cast<uint8_t>(crime_item.get_type());
     data << crime_item.get_name() << crime_item.get_description();
+    data << turns_per_game;
+}
+
+uint32_t GameStartPacket::get_turns_per_game() const
+{
+    return turns_per_game;
 }
 
 void GameStartPacket::deserialize(sf::Packet& data)
@@ -81,9 +87,10 @@ void GameStartPacket::deserialize(sf::Packet& data)
     crime_item = Item(
         crime_item_name, crime_item_description, static_cast<Item::Type>(type)
     );
+    data >> turns_per_game;
+
+    
 }
-
-
 
 
 

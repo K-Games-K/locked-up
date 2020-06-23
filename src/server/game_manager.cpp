@@ -270,7 +270,7 @@ void GameManager::prepare_new_game()
         }
 
         connected_players[i].get_connection().send(
-            GameStartPacket(i, i, alibis, crime_room, crime_item)
+            GameStartPacket(i, i, alibis, crime_room, crime_item, TURNS_PER_GAME)
         );
     }
 

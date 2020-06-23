@@ -10,7 +10,7 @@
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
     Connection&& server_connection, const GameBoard& game_board, int player_id,
     const std::vector<Player>& players_list, const std::vector<std::vector<int>>& alibis,
-    int crime_room, Item crime_item)
+    int crime_room, Item crime_item, int turns_per_game)
     : GameState(window, game_state_manager),
     server_connection(std::move(server_connection)),
     game_board(std::move(game_board)),
@@ -20,7 +20,8 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
     player_renderer(window, {textures, fonts}),
     game_board_renderer(window, {textures, fonts}),
     debug_renderer(window, {textures, fonts}),
-    master_widget_renderer(window)
+    master_widget_renderer(window),
+    turns_per_game(turns_per_game)
 {
     auto& font = fonts.get("IndieFlower-Regular");
     auto default_color = Ui::Color(0, 0, 0, 140);
@@ -347,7 +348,7 @@ void PlayState::update(float dt)
 
     current_room_text->set_string(
         "Current player: " + players_list[current_player_id].get_nickname() + "    Current room: " +
-            current_room.get_name() + "   Turn: " + std::to_string(current_turn) + "/50"
+        current_room.get_name() + "   Turn: " + std::to_string(current_turn) + "/" + std::to_string(turns_per_game)
     );
 
     user_interface.update(dt);
