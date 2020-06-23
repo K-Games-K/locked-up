@@ -282,15 +282,17 @@ void GameManager::prepare_new_game()
     for(auto& player : connected_players)
     {
         std::vector<int> room_tiles;
+        int room = rand_room(gen);
         for(int i = 0; i < tiles.size(); ++i)
         {
-            if(tiles[i] == rand_room(gen))
+            if(tiles[i] == room)
                 room_tiles.push_back(i);
         }
 
         std::uniform_int_distribution<> rand_tile(0, room_tiles.size() - 1);
-        int16_t x = room_tiles[rand_tile(gen)] % game_board.get_width();
-        int16_t y = room_tiles[rand_tile(gen)] / game_board.get_width();
+        int room_tile = room_tiles[rand_tile(gen)];
+        int16_t x = room_tile % game_board.get_width();
+        int16_t y = room_tile / game_board.get_width();
         player.set_position(x, y);
 
         game_server.broadcast(PlayerMovePacket(x, y, player.get_player_id(), false));

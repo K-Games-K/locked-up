@@ -20,3 +20,8 @@ add_executable(locked-up ${SOURCES} ${HEADERS})
 target_link_libraries(locked-up sfml-window sfml-graphics sfml-network sfml-audio)
 
 set_property(TARGET locked-up PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Release/ DESTINATION ${CMAKE_SOURCE_DIR}/deploy
+        CONFIGURATIONS Release)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_SOURCE_DIR}/deploy
+        CONFIGURATIONS Release)
