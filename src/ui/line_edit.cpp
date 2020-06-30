@@ -1,4 +1,4 @@
-#include "ui/line_edit.hpp"
+#include "line_edit.hpp"
 
 namespace Ui
 {

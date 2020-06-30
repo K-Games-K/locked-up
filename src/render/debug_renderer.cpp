@@ -1,4 +1,4 @@
-#include "render/debug_renderer.hpp"
+#include "debug_renderer.hpp"
 
 DebugRenderer::DebugRenderer(sf::RenderWindow& window, ResourceManagers resources)
         : CameraRenderer(window, resources)

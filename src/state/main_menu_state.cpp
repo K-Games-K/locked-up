@@ -1,11 +1,11 @@
 #include <functional>
 #include <iostream>
 
-#include "utils.hpp"
-#include "network/connection.hpp"
-#include "state/main_menu_state.hpp"
-#include "state/lobby_state.hpp"
-#include "network/packet/join_game_packet.hpp"
+#include "main_menu_state.hpp"
+#include "lobby_state.hpp"
+#include "../utils.hpp"
+#include "../network/connection.hpp"
+#include "../network/packet/join_game_packet.hpp"
 
 MainMenuState::MainMenuState(sf::RenderWindow& window, GameStateManager& game_state_manager)
     : GameState(window, game_state_manager),

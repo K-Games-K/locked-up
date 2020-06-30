@@ -1,7 +1,7 @@
 #pragma once
 
 #include "widget_renderer.hpp"
-#include "ui/checkbox.hpp"
+#include "../ui/checkbox.hpp"
 
 class CheckboxRenderer : public WidgetRenderer<Ui::Checkbox>
 {

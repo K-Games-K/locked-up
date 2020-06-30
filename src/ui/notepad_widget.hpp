@@ -1,9 +1,9 @@
 #pragma once
 
-#include "notepad.hpp"
 #include "widget.hpp"
 #include "panel.hpp"
 #include "checkbox.hpp"
+#include "../notepad.hpp"
 
 namespace Ui
 {

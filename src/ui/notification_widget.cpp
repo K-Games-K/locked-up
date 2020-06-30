@@ -1,5 +1,5 @@
-#include "utils.hpp"
-#include "ui/notification_widget.hpp"
+#include "../utils.hpp"
+#include "../ui/notification_widget.hpp"
 
 namespace Ui
 {

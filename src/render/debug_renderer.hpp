@@ -1,8 +1,8 @@
 #pragma once
 
-#include "player.hpp"
-#include "game_board.hpp"
 #include "camera_renderer.hpp"
+#include "../player.hpp"
+#include "../game_board.hpp"
 
 struct DebugContext
 {

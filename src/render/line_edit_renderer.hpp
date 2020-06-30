@@ -2,7 +2,7 @@
 
 #include "widget_renderer.hpp"
 #include "text_renderer.hpp"
-#include "ui/line_edit.hpp"
+#include "../ui/line_edit.hpp"
 
 class LineEditRenderer : public WidgetRenderer<Ui::LineEdit>
 {

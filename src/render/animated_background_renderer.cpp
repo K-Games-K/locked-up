@@ -1,8 +1,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "utils.hpp"
-#include "render/animated_background_renderer.hpp"
+#include "animated_background_renderer.hpp"
+#include "../utils.hpp"
 
 AnimatedBackgroundRenderer::AnimatedBackgroundRenderer(sf::RenderWindow& window,
     ResourceManagers resources) : Renderer(window, resources)

@@ -1,4 +1,4 @@
-#include "network/packet/disconnect_packet.hpp"
+#include "disconnect_packet.hpp"
 
 DisconnectPacket::DisconnectPacket(const std::string& reason)
         : Packet(PACKET_ID), reason(reason)

@@ -1,4 +1,4 @@
-#include "render/button_renderer.hpp"
+#include "button_renderer.hpp"
 
 ButtonRenderer::ButtonRenderer(sf::RenderWindow& window)
     : WidgetRenderer(window) {}

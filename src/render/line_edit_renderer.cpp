@@ -1,4 +1,4 @@
-#include "render/line_edit_renderer.hpp"
+#include "line_edit_renderer.hpp"
 
 LineEditRenderer::LineEditRenderer(sf::RenderWindow& window)
     : WidgetRenderer(window), text_renderer(window) {}

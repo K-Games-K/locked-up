@@ -1,7 +1,7 @@
 #include <sstream>
 #include <SFML/Graphics/Text.hpp>
 
-#include "ui/text.hpp"
+#include "text.hpp"
 
 namespace Ui
 {

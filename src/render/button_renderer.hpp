@@ -2,7 +2,7 @@
 
 #include "widget_renderer.hpp"
 #include "text_renderer.hpp"
-#include "ui/button.hpp"
+#include "../ui/button.hpp"
 
 class ButtonRenderer : public WidgetRenderer<Ui::Button>
 {

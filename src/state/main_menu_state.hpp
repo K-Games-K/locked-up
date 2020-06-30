@@ -3,9 +3,10 @@
 #include <thread>
 
 #include "game_state.hpp"
-#include "ui/widgets.hpp"
-#include "render/master_widget_renderer.hpp"
-#include "render/animated_background_renderer.hpp"
+#include "../network/connection.hpp"
+#include "../ui/widgets.hpp"
+#include "../render/master_widget_renderer.hpp"
+#include "../render/animated_background_renderer.hpp"
 
 class MainMenuState : public GameState
 {

@@ -1,7 +1,7 @@
 #include <array>
 
-#include "game_board_loader.hpp"
-#include "network/packet/game_board_packet.hpp"
+#include "game_board_packet.hpp"
+#include "../../game_board_loader.hpp"
 
 GameBoardPacket::GameBoardPacket()
     : Packet(PACKET_ID)

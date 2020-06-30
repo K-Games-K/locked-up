@@ -1,4 +1,4 @@
-#include "network/packet/new_turn_packet.hpp"
+#include "new_turn_packet.hpp"
 
 NewTurnPacket::NewTurnPacket()
     : Packet(PACKET_ID)

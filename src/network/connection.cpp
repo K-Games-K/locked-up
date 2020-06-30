@@ -1,5 +1,5 @@
-#include "network/connection.hpp"
-#include "network/packet/packet_factory.hpp"
+#include "connection.hpp"
+#include "packet/packet_factory.hpp"
 
 Connection::Connection(std::unique_ptr<sf::TcpSocket>&& socket)
     : socket(std::move(socket))

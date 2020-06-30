@@ -1,4 +1,4 @@
-#include "render/table_widget_renderer.hpp"
+#include "table_widget_renderer.hpp"
 
 TableWidgetRenderer::TableWidgetRenderer(sf::RenderWindow& window)
     : WidgetRenderer(window) {}

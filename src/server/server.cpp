@@ -1,6 +1,6 @@
-#include "logging.hpp"
-#include "server/server.hpp"
-#include "network/packet/packets.hpp"
+#include "server.hpp"
+#include "../logging.hpp"
+#include "../network/packet/packets.hpp"
 
 Server::Server(sf::IpAddress bind_addr, unsigned short bind_port,
     PacketReceivedCallback packet_received_callback)

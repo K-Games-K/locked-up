@@ -1,5 +1,4 @@
-#include "network/packet/game_results_packet.hpp"
-
+#include "game_results_packet.hpp"
 
 GameResultsPacket::GameResultsPacket()
     : Packet(PACKET_ID)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "camera_renderer.hpp"
-#include "game_board.hpp"
+#include "../game_board.hpp"
 
 class GameBoardRenderer : public CameraRenderer<GameBoard>
 {

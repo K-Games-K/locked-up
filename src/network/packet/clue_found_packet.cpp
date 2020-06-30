@@ -1,4 +1,4 @@
-#include "network/packet/clue_found_packet.hpp"
+#include "clue_found_packet.hpp"
 
 ClueFoundPacket::ClueFoundPacket()
     : Packet(PACKET_ID)

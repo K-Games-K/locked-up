@@ -1,12 +1,12 @@
 #include <ctime>
-
-#include "set"
+#include <set>
 #include <numeric>
-#include "game_board_loader.hpp"
-#include "utils.hpp"
-#include "logging.hpp"
-#include "server/game_manager.hpp"
-#include "network/packet/packets.hpp"
+
+#include "../game_board_loader.hpp"
+#include "../utils.hpp"
+#include "../logging.hpp"
+#include "../server/game_manager.hpp"
+#include "../network/packet/packets.hpp"
 
 GameManager::GameManager()
     : game_server(

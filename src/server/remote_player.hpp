@@ -1,7 +1,7 @@
 #pragma once
 
-#include "player.hpp"
-#include "network/connection.hpp"
+#include "../network/connection.hpp"
+#include "../player.hpp"
 
 class RemotePlayer : public Player
 {

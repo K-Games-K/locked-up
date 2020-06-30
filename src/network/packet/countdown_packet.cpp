@@ -1,4 +1,4 @@
-#include "network/packet/countdown_packet.hpp"
+#include "countdown_packet.hpp"
 
 CountdownPacket::CountdownPacket()
     : Packet(PACKET_ID)

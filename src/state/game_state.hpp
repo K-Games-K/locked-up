@@ -4,7 +4,7 @@
 #include <SFML/Audio.hpp>
 
 #include "game_state_manager.hpp"
-#include "resource_manager.hpp"
+#include "../resource_manager.hpp"
 
 class GameState
 {

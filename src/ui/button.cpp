@@ -1,5 +1,4 @@
-#include "ui/button.hpp"
-#include <iostream>
+#include "button.hpp"
 
 namespace Ui
 {

@@ -1,4 +1,4 @@
-#include "ui/panel.hpp"
+#include "panel.hpp"
 
 namespace Ui
 {
