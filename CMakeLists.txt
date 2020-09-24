@@ -7,24 +7,21 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
-file(GLOB_RECURSE SOURCES src/*.cpp)
-file(GLOB_RECURSE HEADERS src/*.hpp)
+file(GLOB_RECURSE SOURCE src/*.cpp)
+file(GLOB_RECURSE HEADERS include/*.hpp)
+file(GLOB_RECURSE PROTO_FILES proto/*.proto)
 
-find_package(SFML 2.5 COMPONENTS window graphics network audio REQUIRED)
+find_package(SFML 2.5 COMPONENTS graphics network audio REQUIRED)
+find_package(Protobuf REQUIRED)
 
-add_executable(locked-up ${SOURCES} ${HEADERS})
-target_include_directories(locked-up PUBLIC ${SFML_INCLUDE})
-target_link_libraries(locked-up sfml-window sfml-graphics sfml-network sfml-audio)
+include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
 
-set_property(TARGET locked-up PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Release/ DESTINATION ${CMAKE_SOURCE_DIR}/deploy
-        CONFIGURATIONS Release)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_SOURCE_DIR}/deploy
-        CONFIGURATIONS Release)
+add_executable(locked-up ${SOURCE} ${HEADERS} ${PROTO_SRCS} ${PROTO_HDRS})
+target_link_libraries(locked-up sfml-graphics sfml-network sfml-audio ${Protobuf_LIBRARIES})
 
-file(GLOB_RECURSE PROTO_FILES src/*.proto)
-add_custom_target(protobufs COMMAND protoc -I=${CMAKE_SOURCE_DIR}/src --cpp_out=${CMAKE_SOURCE_DIR}/src ${PROTO_FILES})
-add_dependencies(locked-up protobufs)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/deploy)
+install(TARGETS locked-up RUNTIME DESTINATION . CONFIGURATIONS Release)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION . CONFIGURATIONS Release)
