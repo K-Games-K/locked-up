@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package packet;
+package Packet;
 
 message GameBoardPacket {
 	uint32 game_board_width = 1;

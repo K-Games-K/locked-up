@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package packet;
+package Packet;
 
 message JoinGamePacket {
   string nickname = 1;

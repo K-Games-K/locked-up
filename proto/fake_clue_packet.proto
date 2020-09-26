@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package packet;
+package Packet;
 
 message FakeCluePacket {
 	uint32 time = 1;

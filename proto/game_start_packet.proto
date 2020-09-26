@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package packet;
+package Packet;
 
 message GameStartPacket {
 	uint32 start_x = 1;
