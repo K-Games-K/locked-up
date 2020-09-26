@@ -6,7 +6,7 @@
 #include "line_edit_renderer.hpp"
 #include "panel_renderer.hpp"
 #include "checkbox_renderer.hpp"
-#include "../ui/widget.hpp"
+#include "ui/widget.hpp"
 
 class MasterWidgetRenderer
 {

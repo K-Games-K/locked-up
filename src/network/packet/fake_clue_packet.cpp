@@ -1,4 +1,4 @@
-#include "fake_clue_packet.hpp"
+#include "network/packet/fake_clue_packet.hpp"
 
 FakeCluePacket::FakeCluePacket()
     : Packet(PACKET_ID)

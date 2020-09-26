@@ -1,4 +1,4 @@
-#include "players_list_packet.hpp"
+#include "network/packet/players_list_packet.hpp"
 
 PlayersListPacket::PlayersListPacket()
         : Packet(PACKET_ID)

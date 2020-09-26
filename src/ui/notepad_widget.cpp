@@ -1,7 +1,7 @@
 #include <iostream>
+#include <ui/notepad_widget.hpp>
 
-#include "notepad_widget.hpp"
-#include "widgets.hpp"
+#include "ui/widgets.hpp"
 
 namespace Ui
 {

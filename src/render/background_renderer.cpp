@@ -1,5 +1,5 @@
-#include "background_renderer.hpp"
-#include "../utils.hpp"
+#include "utils.hpp"
+#include "render/background_renderer.hpp"
 
 BackgroundRenderer::BackgroundRenderer(sf::RenderWindow& window, ResourceManagers resources)
     : Renderer(window, resources)

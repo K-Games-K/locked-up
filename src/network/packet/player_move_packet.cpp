@@ -1,4 +1,4 @@
-#include "player_move_packet.hpp"
+#include "network/packet/player_move_packet.hpp"
 
 PlayerMovePacket::PlayerMovePacket()
         : Packet(PACKET_ID)

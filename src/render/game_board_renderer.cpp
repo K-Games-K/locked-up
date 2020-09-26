@@ -1,4 +1,4 @@
-#include "game_board_renderer.hpp"
+#include "render/game_board_renderer.hpp"
 
 GameBoardRenderer::GameBoardRenderer(sf::RenderWindow& window, ResourceManagers resources)
     : CameraRenderer(window, resources)

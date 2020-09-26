@@ -1,4 +1,4 @@
-#include "game_start_packet.hpp"
+#include "network/packet/game_start_packet.hpp"
 
 GameStartPacket::GameStartPacket()
     : Packet(PACKET_ID)

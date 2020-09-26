@@ -1,4 +1,4 @@
-#include "text_renderer.hpp"
+#include "render/text_renderer.hpp"
 
 TextRenderer::TextRenderer(sf::RenderWindow& window)
     : WidgetRenderer(window) {}

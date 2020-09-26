@@ -1,4 +1,4 @@
-#include "master_widget_renderer.hpp"
+#include "render/master_widget_renderer.hpp"
 
 MasterWidgetRenderer::MasterWidgetRenderer(sf::RenderWindow& window)
     : window(window),

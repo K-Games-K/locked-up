@@ -2,9 +2,9 @@
 
 #include <SFML/Network.hpp>
 
+#include "game_board.hpp"
 #include "remote_player.hpp"
-#include "../game_board.hpp"
-#include "../network/packet/packet.hpp"
+#include "network/packet/packet.hpp"
 
 class Server
 {

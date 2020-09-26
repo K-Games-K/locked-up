@@ -1,4 +1,4 @@
-#include "vote_packet.hpp"
+#include "network/packet/vote_packet.hpp"
 
 VotePacket::VotePacket()
     : Packet(PACKET_ID)

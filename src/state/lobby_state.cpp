@@ -2,10 +2,10 @@
 #include <iostream>
 #include <sstream>
 
-#include "lobby_state.hpp"
-#include "play_state.hpp"
-#include "main_menu_state.hpp"
-#include "../network/packet/packets.hpp"
+#include "state/lobby_state.hpp"
+#include "state/play_state.hpp"
+#include "state/main_menu_state.hpp"
+#include "network/packet/packets.hpp"
 
 LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
     Connection&& server_connection, const std::string& nickname, const std::string& avatar_name)

@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../resource_manager.hpp"
+#include "resource_manager.hpp"
 
 struct ResourceManagers
 {

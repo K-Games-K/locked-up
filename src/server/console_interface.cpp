@@ -1,9 +1,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "../utils.hpp"
-#include "../logging.hpp"
-#include "../server/console_interface.hpp"
+#include "utils.hpp"
+#include "logging.hpp"
+#include "server/console_interface.hpp"
 
 ConsoleInterfrace::ConsoleInterfrace()
     : worker_thread(&ConsoleInterfrace::console_interface_worker, this) {}

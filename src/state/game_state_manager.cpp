@@ -1,5 +1,5 @@
-#include "game_state_manager.hpp"
-#include "game_state.hpp"
+#include "state/game_state_manager.hpp"
+#include "state/game_state.hpp"
 
 GameStateManager::~GameStateManager()
 {

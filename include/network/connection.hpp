@@ -4,7 +4,7 @@
 #include <memory>
 #include <SFML/Network.hpp>
 
-#include "packet/packet.hpp"
+#include "network/packet/packet.hpp"
 
 class Connection
 {

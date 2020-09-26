@@ -1,4 +1,4 @@
-#include "murderer_packet.hpp"
+#include "network/packet/murderer_packet.hpp"
 
 MurdererPacket::MurdererPacket()
     : Packet(PACKET_ID)

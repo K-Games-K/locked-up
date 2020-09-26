@@ -3,17 +3,18 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+#include "player.hpp"
 #include "game_state.hpp"
-#include "../game_board.hpp"
-#include "../player.hpp"
-#include "../resource_manager.hpp"
-#include "../network/connection.hpp"
-#include "../render/background_renderer.hpp"
-#include "../render/debug_renderer.hpp"
-#include "../render/player_renderer.hpp"
-#include "../render/game_board_renderer.hpp"
-#include "../render/master_widget_renderer.hpp"
-#include "../ui/widgets.hpp"
+#include "game_board.hpp"
+#include "player.hpp"
+#include "resource_manager.hpp"
+#include "network/connection.hpp"
+#include "render/background_renderer.hpp"
+#include "render/debug_renderer.hpp"
+#include "render/player_renderer.hpp"
+#include "render/game_board_renderer.hpp"
+#include "render/master_widget_renderer.hpp"
+#include "ui/widgets.hpp"
 
 class PlayState : public GameState
 {

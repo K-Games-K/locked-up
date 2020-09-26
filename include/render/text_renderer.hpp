@@ -1,8 +1,8 @@
 #pragma once
 
 #include "widget_renderer.hpp"
-#include "../ui/widget.hpp"
-#include "../ui/text.hpp"
+#include "ui/widget.hpp"
+#include "ui/text.hpp"
 
 class TextRenderer : public WidgetRenderer<Ui::Text>
 {

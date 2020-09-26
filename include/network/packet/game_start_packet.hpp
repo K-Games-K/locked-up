@@ -1,7 +1,7 @@
 #pragma once
 
 #include "packet.hpp"
-#include "../../item.hpp"
+#include "item.hpp"
 
 class GameStartPacket : public Packet
 {

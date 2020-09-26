@@ -1,4 +1,4 @@
-#include "player_ready_packet.hpp"
+#include "network/packet/player_ready_packet.hpp"
 
 PlayerReadyPacket::PlayerReadyPacket()
     : Packet(PACKET_ID)

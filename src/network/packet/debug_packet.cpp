@@ -1,4 +1,4 @@
-#include "debug_packet.hpp"
+#include "network/packet/debug_packet.hpp"
 
 DebugPacket::DebugPacket()
         : Packet(PACKET_ID)

@@ -2,9 +2,9 @@
 
 #include <vector>
 
+#include "player.hpp"
 #include "camera_renderer.hpp"
 #include "text_renderer.hpp"
-#include "../player.hpp"
 
 class PlayerRenderer : public CameraRenderer<std::vector<Player>>
 {

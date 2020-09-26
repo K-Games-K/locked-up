@@ -1,4 +1,4 @@
-#include "join_game_packet.hpp"
+#include "network/packet/join_game_packet.hpp"
 
 JoinGamePacket::JoinGamePacket()
         : Packet(PACKET_ID)

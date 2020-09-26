@@ -2,7 +2,7 @@
 
 #include "widget_renderer.hpp"
 #include "table_widget_renderer.hpp"
-#include "../ui/panel.hpp"
+#include "ui/panel.hpp"
 
 class PanelRenderer : public WidgetRenderer<Ui::Panel>
 {

@@ -1,4 +1,4 @@
-#include "panel_renderer.hpp"
+#include "render/panel_renderer.hpp"
 
 PanelRenderer::PanelRenderer(sf::RenderWindow& window)
     : WidgetRenderer(window) {}

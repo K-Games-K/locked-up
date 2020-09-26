@@ -1,4 +1,4 @@
-#include "table_widget.hpp"
+#include "ui/table_widget.hpp"
 
 namespace Ui
 {

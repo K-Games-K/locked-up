@@ -1,5 +1,5 @@
-#include "packet_factory.hpp"
-#include "packets.hpp"
+#include "network/packet/packet_factory.hpp"
+#include "network/packet/packets.hpp"
 
 std::unique_ptr<Packet> PacketFactory::create(uint16_t packet_id)
 {

@@ -1,7 +1,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "player_renderer.hpp"
+#include "render/player_renderer.hpp"
+#include "ui/text.hpp"
 
 PlayerRenderer::PlayerRenderer(sf::RenderWindow& window, ResourceManagers resources)
     : CameraRenderer(window, resources), text_renderer(window)

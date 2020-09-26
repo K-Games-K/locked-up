@@ -1,7 +1,7 @@
 #pragma once
 
+#include "item.hpp"
 #include "packet.hpp"
-#include "../../item.hpp"
 
 class ClueFoundPacket : public Packet
 {

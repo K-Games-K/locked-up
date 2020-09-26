@@ -1,4 +1,4 @@
-#include "remote_player.hpp"
+#include "server/remote_player.hpp"
 
 RemotePlayer::RemotePlayer(int player_id, const std::string& nickname,
     const std::string& avatar_name, Connection&& connection)

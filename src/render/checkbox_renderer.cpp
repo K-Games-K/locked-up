@@ -1,5 +1,5 @@
-#include "checkbox_renderer.hpp"
-#include "../utils.hpp"
+#include "utils.hpp"
+#include "render/checkbox_renderer.hpp"
 
 CheckboxRenderer::CheckboxRenderer(sf::RenderWindow& window)
     : WidgetRenderer(window) {}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "widget_renderer.hpp"
-#include "../ui/table_widget.hpp"
+#include "ui/table_widget.hpp"
 
 class TableWidgetRenderer : public WidgetRenderer<Ui::TableWidget>
 {

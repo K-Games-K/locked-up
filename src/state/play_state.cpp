@@ -1,11 +1,11 @@
 #include <functional>
 #include <sstream>
 
-#include "../logging.hpp"
-#include "../utils.hpp"
-#include "../state/play_state.hpp"
-#include "../state/lobby_state.hpp"
-#include "../network/packet/packets.hpp"
+#include "logging.hpp"
+#include "utils.hpp"
+#include "state/play_state.hpp"
+#include "state/lobby_state.hpp"
+#include "network/packet/packets.hpp"
 
 PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_manager,
     Connection&& server_connection, const GameBoard& game_board, int player_id,
