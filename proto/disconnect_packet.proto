@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package packet;
+
+message DisconnectPacket {
+	string reason = 1;
+}

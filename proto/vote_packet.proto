@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package packet;
+
+message VotePacket {
+	uint32 player_id = 1;
+}

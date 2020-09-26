@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package packet;
+
+message NewTurnPacket {
+	uint32 current_player_id = 1;
+	uint32 current_turn = 2;
+}

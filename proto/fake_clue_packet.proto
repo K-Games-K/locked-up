@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package packet;
+
+message FakeCluePacket {
+	uint32 time = 1;
+	uint32 player_id = 2;
+}

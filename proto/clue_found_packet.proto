@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package packet;
+
+message ClueFounPacket {
+	string clue = 1;
+	string time = 2;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package packet;
+
+message GameStartPacket {
+	uint32 start_x = 1;
+	uint32 start_y = 2;
+	repeated uint32 alibis = 3;
+	uint32 crime_room = 4;
+	string item_name = 5;
+	string item_description = 6;
+	uint32 turns_per_game = 7;
+
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package packet;
+
+message GameResultsPacket {
+	string murderer = 1;
+	string voting_results = 2;
+}

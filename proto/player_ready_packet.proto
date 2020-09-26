@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package packet;
+
+message PlayerReadyPacket {
+	uint32 player_id = 1;
+	bool ready = 2;
+}
