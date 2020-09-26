@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package packet;
+
+message JoinGamePacket {
+  string nickname = 1;
+  string avatar_name = 2;
+}
