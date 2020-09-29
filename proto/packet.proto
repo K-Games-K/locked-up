@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package Packet;
-
-message Packet {
-	uint32 packet_id = 1;
-}

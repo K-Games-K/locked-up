@@ -3,11 +3,11 @@ syntax = "proto3";
 package Packet;
 
 message PlayersListPacket {
-	message Player{
-		string players_nickname = 1;
-		uint32 players_position_x = 2;
-		uint32 players_position_y = 3;
-		string players_avatar_name = 4;
+	message Player {
+		string nickname = 1;
+		uint32 position_x = 2;
+		uint32 position_y = 3;
+		string avatar_name = 4;
 	}
 
 	uint32 player_id = 1;

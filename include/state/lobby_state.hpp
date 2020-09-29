@@ -35,7 +35,7 @@ private:
     bool ready = false;
     float time = 0;
 
-    void packet_received(std::unique_ptr<Packet> packet);
+    void packet_received(const Packet::Any& packet);
 
     void ready_clicked(Ui::Button& button);
 

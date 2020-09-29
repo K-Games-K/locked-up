@@ -4,12 +4,12 @@
 
 #include "game_board.hpp"
 #include "remote_player.hpp"
-#include "network/packet/packet.hpp"
+#include "network/packets.hpp"
 
 class Server
 {
 public:
-    using PacketReceivedCallback = std::function<void(RemotePlayer&, std::unique_ptr<Packet>)>;
+    using PacketReceivedCallback = std::function<void(RemotePlayer&, const Packet::Any&)>;
 
     Server(sf::IpAddress bind_addr, unsigned short bind_port,
         PacketReceivedCallback packet_received_callback);
@@ -18,7 +18,7 @@ public:
 
     void update();
 
-    void broadcast(const Packet& packet);
+    void broadcast(const Packet::Packet& packet);
 
     void update_players_list();
 

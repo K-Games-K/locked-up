@@ -98,3 +98,47 @@ bool GameBoardLoader::load_from_file(GameBoard& game_board, const std::string& f
     game_board.neighbours_map = std::move(neighbours_map);
     return true;
 }
+
+void GameBoardLoader::load_from_packet(GameBoard& game_board, const Packet::GameBoardPacket& game_board_packet)
+{
+    std::vector<Room> rooms(game_board_packet.room_names().begin(), game_board_packet.room_names().end());
+    std::vector<int> tiles(game_board_packet.tiles().begin(), game_board_packet.tiles().end());
+
+    std::vector<std::array<bool, 2>> collision_map;
+    collision_map.reserve(game_board_packet.collision_map_size() / 2);
+    for(int i = 0; i < game_board_packet.collision_map_size(); i += 2)
+    {
+        collision_map.push_back({
+            game_board_packet.collision_map(i),
+            game_board_packet.collision_map(i + 1)
+        });
+    }
+
+    game_board.width = game_board_packet.game_board_width();
+    game_board.height = game_board_packet.game_board_height();
+    game_board.rooms = std::move(rooms);
+    game_board.tiles = std::move(tiles);
+    game_board.collision_map = std::move(collision_map);
+    game_board.neighbours_map.clear();
+}
+
+void GameBoardLoader::save_to_packet(const GameBoard& game_board, Packet::GameBoardPacket& game_board_packet)
+{
+    game_board_packet.Clear();
+
+    game_board_packet.set_game_board_width(game_board.width);
+    game_board_packet.set_game_board_height(game_board.height);
+
+    for(auto& room : game_board.rooms)
+    {
+        game_board_packet.add_room_names(room.get_name());
+    }
+
+    *game_board_packet.mutable_tiles() = {game_board.tiles.begin(), game_board.tiles.end()};
+
+    for(auto& entry : game_board.collision_map)
+    {
+        game_board_packet.add_collision_map(entry[0]);
+        game_board_packet.add_collision_map(entry[1]);
+    }
+}

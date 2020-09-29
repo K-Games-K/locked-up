@@ -2,10 +2,11 @@
 #include <iostream>
 #include <sstream>
 
+#include "logging.hpp"
+#include "game_board_loader.hpp"
 #include "state/lobby_state.hpp"
 #include "state/play_state.hpp"
 #include "state/main_menu_state.hpp"
-#include "network/packet/packets.hpp"
 
 LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_manager,
     Connection&& server_connection, const std::string& nickname, const std::string& avatar_name)
@@ -43,7 +44,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
 
     auto ready_button = left_panel->add_widget(
         base_button
-            .set_callback(std::bind(&LobbyState::ready_clicked, this, std::placeholders::_1))
+            .set_callback([this] (Ui::Button& button) {ready_clicked(button);})
             .set_position({0, -100})
             .set_size({420, 40})
             .set_origin(Ui::Origin::CenterBottom)
@@ -56,7 +57,7 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
 
     auto exit_button = left_panel->add_widget(
         base_button
-            .set_callback(std::bind(&LobbyState::exit_clicked, this, std::placeholders::_1))
+            .set_callback([this] (Ui::Button& button) {exit_clicked(button);})
             .set_position({0, -40})
             .set_size({420, 40})
     );
@@ -77,14 +78,17 @@ LobbyState::LobbyState(sf::RenderWindow& window, GameStateManager& game_state_ma
             .set_font_size(50)
     );
 
-    this->server_connection.send(JoinGamePacket(nickname, avatar_name));
+    Packet::JoinGamePacket join_game_packet;
+    join_game_packet.set_nickname(nickname);
+    join_game_packet.set_avatar_name(avatar_name);
+    this->server_connection.send(join_game_packet);
 }
 
 void LobbyState::handle_input(sf::Event event)
 {
     if(event.type == sf::Event::Closed)
     {
-        server_connection.send(DisconnectPacket());
+        server_connection.send(Packet::DisconnectPacket());
         game_state_manager.pop_state();
     }
 
@@ -102,8 +106,8 @@ void LobbyState::update(float dt)
     if(server_connection.is_connected())
     {
         auto packet = server_connection.recv();
-        if(packet != nullptr)
-            packet_received(std::move(packet));
+        if(packet.has_value())
+            packet_received(*packet);
     }
 
     time -= dt;
@@ -131,81 +135,94 @@ void LobbyState::render(float dt)
     master_widget_renderer.render(user_interface, dt, {0, 0}, (sf::Vector2f) window.getSize());
 }
 
-void LobbyState::packet_received(std::unique_ptr<Packet> packet)
+void LobbyState::packet_received(const Packet::Any& packet)
 {
-    switch(packet->get_id())
+    Log::debug() << "Received packet: " << packet.type_url() << std::endl;
+
+    if(packet.Is<Packet::PlayersListPacket>())
     {
-        case PlayersListPacket::PACKET_ID:
-        {
-            auto players_list_packet = dynamic_cast<PlayersListPacket&>(*packet);
-            player_id = players_list_packet.get_player_id();
-            players_list = players_list_packet.get_players_list();
+        Packet::PlayersListPacket players_list_packet;
+        packet.UnpackTo(&players_list_packet);
 
-            players_list_layout->clear();
-            for(auto& player : players_list)
-            {
-                auto layout = (Ui::Layout*) players_list_layout->add_widget(
+        player_id = players_list_packet.player_id();
+        players_list.clear();
+        for(auto& entry : players_list_packet.players())
+        {
+            players_list.emplace_back(entry.nickname(), entry.avatar_name());
+            players_list[players_list.size() - 1].set_position(entry.position_x(), entry.position_y());
+        }
+
+        players_list_layout->clear();
+        for(auto& player : players_list)
+        {
+            auto layout = (Ui::Layout*) players_list_layout->add_widget(
                     Ui::Layout(Ui::LayoutType::Horizontal, 10)
-                );
-                layout->add_widget(
+            );
+            layout->add_widget(
                     Ui::Panel(textures.get(player.get_avatar_name()))
-                        .set_size({33, 50})
-                );
-                layout->add_widget(
+                            .set_size({33, 50})
+            );
+            layout->add_widget(
                     Ui::Text(fonts.get("IndieFlower-Regular"), player.get_nickname())
-                );
-                players_list_layout->update_size();
-            }
-
-            break;
-        }
-        case GameBoardPacket::PACKET_ID:
-        {
-            auto game_board_packet = dynamic_cast<GameBoardPacket&>(*packet);
-            game_board = game_board_packet.get_game_board();
-
-            break;
-        }
-        case PlayerReadyPacket::PACKET_ID:
-        {
-            auto player_ready_packet = dynamic_cast<PlayerReadyPacket&>(*packet);
-            uint16_t player_id = player_ready_packet.get_player_id();
-            bool ready = player_ready_packet.is_ready();
-
-            // TODO: Show which players are ready.
-
-            break;
-        }
-        case CountdownPacket::PACKET_ID:
-        {
-            auto countdown_packet = dynamic_cast<CountdownPacket&>(*packet);
-            time = countdown_packet.get_interval();
-
-            break;
-        }
-        case GameStartPacket::PACKET_ID:
-        {
-            auto game_start_packet = dynamic_cast<GameStartPacket&>(*packet);
-            sf::Vector2i start_pos(
-                game_start_packet.get_start_x(), game_start_packet.get_start_y()
             );
-            players_list.at(player_id).set_position(start_pos);
+            // players_list_layout->update_size();
+        }
+    }
+    else if(packet.Is<Packet::GameBoardPacket>())
+    {
+        Packet::GameBoardPacket game_board_packet;
+        packet.UnpackTo(&game_board_packet);
 
-            auto& alibis = game_start_packet.get_alibis();
-            int crime_room = game_start_packet.get_crime_room();
-            Item crime_item = game_start_packet.get_crime_item();
-            int turns_per_game = game_start_packet.get_turns_per_game();
+        GameBoardLoader::load_from_packet(game_board, game_board_packet);
+    }
+    else if(packet.Is<Packet::PlayerReadyPacket>())
+    {
+        Packet::PlayerReadyPacket player_ready_packet;
+        packet.UnpackTo(&player_ready_packet);
 
-            left_panel_title_text->set_string("Loading...");
-            game_state_manager.push_state(
+        uint16_t player_id = player_ready_packet.player_id();
+        bool ready = player_ready_packet.ready();
+
+        // TODO: Show which players are ready.
+    }
+    else if(packet.Is<Packet::CountdownPacket>())
+    {
+        Packet::CountdownPacket countdown_packet;
+        packet.UnpackTo(&countdown_packet);
+        time = countdown_packet.interval();
+    }
+    else if(packet.Is<Packet::GameStartPacket>())
+    {
+        Packet::GameStartPacket game_start_packet;
+        packet.UnpackTo(&game_start_packet);
+
+        sf::Vector2i start_pos(
+                game_start_packet.start_x(), game_start_packet.start_y()
+        );
+        players_list.at(player_id).set_position(start_pos);
+
+        std::vector<std::vector<int>> alibis;
+        alibis.reserve(game_start_packet.alibis_size());
+        for(auto& alibi : game_start_packet.alibis())
+        {
+            alibis.emplace_back(alibi.rooms().begin(), alibi.rooms().end());
+        }
+
+        int crime_room = game_start_packet.crime_room();
+        Item crime_item(game_start_packet.crime_item_name(), game_start_packet.crime_item_description());
+        int turns_per_game = game_start_packet.turns_per_game();
+
+        left_panel_title_text->set_string("Loading...");
+        game_state_manager.push_state(
                 new PlayState(
-                    window, game_state_manager, std::move(server_connection), game_board,
-                    player_id, players_list, alibis, crime_room, crime_item, turns_per_game
+                        window, game_state_manager, std::move(server_connection), game_board,
+                        player_id, players_list, alibis, crime_room, crime_item, turns_per_game
                 ), true
-            );
-        }
-        default:
-            break;
+        );
+    }
+    else
+    {
+        Log::warn() << "Received unhandled packet: " << packet.type_url() << "!" << std::endl;
     }
 }
 
@@ -217,12 +234,16 @@ void LobbyState::ready_clicked(Ui::Button& button)
     ready = !ready;
     time = 0;
     button.get_child<Ui::Text>()->set_string(ready ? "I'm ready!" : "Not ready");
-    server_connection.send(PlayerReadyPacket(player_id, ready));
+
+    Packet::PlayerReadyPacket player_ready_packet;
+    player_ready_packet.set_player_id(player_id);
+    player_ready_packet.set_ready(ready);
+    server_connection.send(player_ready_packet);
     button.get_child<Ui::Text>()->set_color(ready ? Ui::Color::Green : Ui::Color::Red);
 }
 
 void LobbyState::exit_clicked(Ui::Button& button)
 {
-    server_connection.send(DisconnectPacket());
+    server_connection.send(Packet::DisconnectPacket());
     game_state_manager.push_state(new MainMenuState(window, game_state_manager), true);
 }

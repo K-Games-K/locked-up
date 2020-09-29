@@ -4,5 +4,5 @@ package Packet;
 
 message GameResultsPacket {
 	string murderer = 1;
-	string voting_results = 2;
+	string voting_result = 2;
 }

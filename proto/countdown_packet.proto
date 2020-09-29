@@ -2,6 +2,6 @@ syntax = "proto3";
 
 package Packet;
 
-message CountDownPacket {
+message CountdownPacket {
 	float interval = 1;
 }

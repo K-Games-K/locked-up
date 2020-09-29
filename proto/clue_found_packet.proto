@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package Packet;
 
-message ClueFounPacket {
+message ClueFoundPacket {
 	string clue = 1;
 	string time = 2;
 }

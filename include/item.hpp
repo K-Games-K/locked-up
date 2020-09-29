@@ -13,7 +13,7 @@ public:
 
     Item() = default;
 
-    Item(std::string name, std::string destription, Type type);
+    Item(std::string name, std::string description, Type type = Type::Clue);
 
     std::string get_name() const;
 

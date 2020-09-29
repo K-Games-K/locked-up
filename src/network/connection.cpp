@@ -1,15 +1,7 @@
 #include "network/connection.hpp"
-#include "network/packet/packet_factory.hpp"
-
-Connection::Connection(std::unique_ptr<sf::TcpSocket>&& socket)
-    : socket(std::move(socket))
-{
-    this->socket->setBlocking(false);
-    connected = true;
-}
 
 Connection::Connection(sf::IpAddress remote_addr, unsigned short remote_port)
-    : socket(std::make_unique<sf::TcpSocket>())
+        : socket(std::make_unique<sf::TcpSocket>())
 {
     auto result = socket->connect(remote_addr, remote_port);
     if(result != sf::Socket::Done)
@@ -19,10 +11,11 @@ Connection::Connection(sf::IpAddress remote_addr, unsigned short remote_port)
     connected = true;
 }
 
-Connection::Connection(Connection&& other)
-    : socket(std::move(other.socket)), connected(other.connected)
+Connection::Connection(std::unique_ptr<sf::TcpSocket>&& socket)
+        : socket(std::move(socket))
 {
-    other.connected = false;
+    this->socket->setBlocking(false);
+    connected = true;
 }
 
 sf::IpAddress Connection::get_addr() const
@@ -41,56 +34,50 @@ void Connection::disconnect()
     connected = false;
 }
 
-bool Connection::send(const Packet& packet)
+bool Connection::send(const Packet::Packet& packet)
 {
     if(!connected)
         return false;
 
-    sf::Packet data;
-    data << packet.get_id();
-    packet.serialize(data);
+    Packet::Any any;
+    any.PackFrom(packet);
+    std::string data;
+    if(!any.SerializeToString(&data))
+        return false;
 
-    auto result = socket->send(data);
+    sf::Packet message;
+    message << data;
+    auto result = socket->send(message);
     if(result == sf::Socket::Disconnected)
         connected = false;
 
     return result == sf::Socket::Done;
 }
 
-std::unique_ptr<Packet> Connection::recv()
+std::optional<Packet::Any> Connection::recv()
 {
     if(!connected)
-        return nullptr;
+        return {};
 
-    sf::Packet data;
-    auto result = socket->receive(data);
+    sf::Packet message;
+    auto result = socket->receive(message);
     if(result == sf::Socket::Disconnected)
         connected = false;
+
     if(result != sf::Socket::Done)
-        return nullptr;
+        return {};
 
-    uint16_t packet_id = 0;
-    data >> packet_id;
+    std::string data;
+    message >> data;
+    Packet::Any packet;
+    if(!packet.ParseFromString(data))
+        return {};
 
-    auto packet = PacketFactory::create(packet_id);
-    if(packet == nullptr)
-        return nullptr;
-
-    packet->deserialize(data);
     return packet;
 }
 
 bool Connection::operator==(const Connection& other) const
 {
     return socket == other.socket;
-}
-
-Connection& Connection::operator=(Connection&& other)
-{
-    socket = std::move(other.socket);
-    connected = other.connected;
-    other.connected = false;
-
-    return *this;
 }
 

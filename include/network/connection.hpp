@@ -1,10 +1,9 @@
 #pragma once
 
 #include <iostream>
-#include <memory>
 #include <SFML/Network.hpp>
 
-#include "network/packet/packet.hpp"
+#include "packets.hpp"
 
 class Connection
 {
@@ -16,11 +15,13 @@ private:
 public:
     Connection() = default;
 
-    Connection(std::unique_ptr<sf::TcpSocket>&& socket);
-
     Connection(sf::IpAddress remote_addr, unsigned short remote_port);
 
-    Connection(Connection&& other);
+    explicit Connection(std::unique_ptr<sf::TcpSocket>&& socket);
+
+    Connection(const Connection& other) = delete;
+
+    Connection(Connection&& other) = default;
 
     sf::IpAddress get_addr() const;
 
@@ -28,11 +29,13 @@ public:
 
     void disconnect();
 
-    bool send(const Packet& packet);
+    bool send(const Packet::Packet& packet);
 
-    std::unique_ptr<Packet> recv();
+    std::optional<Packet::Any> recv();
 
-    Connection& operator=(Connection&& other);
+    void operator=(const Connection& other) = delete;
+
+    Connection& operator=(Connection&& other) = default;
 
     bool operator==(const Connection& other) const;
 };

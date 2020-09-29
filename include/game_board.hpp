@@ -11,10 +11,9 @@ class GameBoard
 {
 private:
     friend class GameBoardLoader;
-    friend class GameBoardPacket;
 
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
 
     std::vector<Room> rooms;
     std::vector<int> tiles;

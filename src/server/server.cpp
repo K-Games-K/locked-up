@@ -1,6 +1,9 @@
 #include "logging.hpp"
 #include "server/server.hpp"
-#include "network/packet/packets.hpp"
+#include "join_game_packet.pb.h"
+#include "debug_packet.pb.h"
+#include "disconnect_packet.pb.h"
+#include "players_list_packet.pb.h"
 
 Server::Server(sf::IpAddress bind_addr, unsigned short bind_port,
     PacketReceivedCallback packet_received_callback)
@@ -61,29 +64,30 @@ void Server::update()
                 continue;
             }
 
-            if(packet == nullptr)
+            if(!packet.has_value())
                 continue;
 
-            if(packet->get_id() == JoinGamePacket::PACKET_ID)
+            if(packet->Is<Packet::JoinGamePacket>())
             {
-                auto join_game_packet = dynamic_cast<JoinGamePacket&>(*packet);
+                Packet::JoinGamePacket join_game_packet;
+                packet->UnpackTo(&join_game_packet);
 
-                Log::info() << "Player " << join_game_packet.get_nickname() << " ("
+                Log::info() << "Player " << join_game_packet.nickname() << " ("
                     << connection.get_addr() << ") joined the server!" << std::endl;
 
                 connected_players.emplace_back(
                     connected_players.size(),
-                    join_game_packet.get_nickname(),
-                    join_game_packet.get_avatar_name(),
+                    join_game_packet.nickname(),
+                    join_game_packet.avatar_name(),
                     std::move(connection)
                 );
                 it = --pending_connections.erase(it);
                 players_list_changed = true;
 
                 if(packet_received_callback)
-                    packet_received_callback(
-                        connected_players[connected_players.size() - 1], std::move(packet)
-                    );
+                {
+                    packet_received_callback(connected_players[connected_players.size() - 1], *packet);
+                }
             }
         }
     }
@@ -103,44 +107,42 @@ void Server::update()
             continue;
         }
 
-        if(packet == nullptr)
+        if(!packet.has_value())
             continue;
 
-        switch(packet->get_id())
+        if(packet->Is<Packet::DebugPacket>())
         {
-            case DebugPacket::PACKET_ID:
-            {
-                auto debug_packet = dynamic_cast<DebugPacket&>(*packet);
-                Log::debug() << player.get_nickname() << " (" << connection.get_addr() << "): "
-                    << debug_packet.get_message() << std::endl;
+            Packet::DebugPacket debug_packet;
+            packet->UnpackTo(&debug_packet);
 
-                continue;
-            }
-            case DisconnectPacket::PACKET_ID:
-            {
-                auto disconnect_packet = dynamic_cast<DisconnectPacket&>(*packet);
+            Log::debug() << player.get_nickname() << " (" << connection.get_addr() << "): "
+                << debug_packet.debug_msg() << std::endl;
 
-                Log::info() << "Player " << player.get_nickname() << " left the server. Reason: "
-                    << disconnect_packet.get_reason() << std::endl;
+            continue;
+        }
+        else if(packet->Is<Packet::DisconnectPacket>())
+        {
+            Packet::DisconnectPacket disconnect_packet;
+            packet->UnpackTo(&disconnect_packet);
 
-                it = --connected_players.erase(it);
-                players_list_changed = true;
+            Log::info() << "Player " << player.get_nickname() << " left the server. Reason: "
+                << disconnect_packet.reason() << std::endl;
 
-                continue;
-            }
-            default:
-                break;
+            it = --connected_players.erase(it);
+            players_list_changed = true;
+
+            continue;
         }
 
         if(packet_received_callback)
-            packet_received_callback(player, std::move(packet));
+            packet_received_callback(player, *packet);
     }
 
     if(players_list_changed)
         update_players_list();
 }
 
-void Server::broadcast(const Packet& packet)
+void Server::broadcast(const Packet::Packet& packet)
 {
     for(auto& player : connected_players)
         player.get_connection().send(packet);
@@ -158,7 +160,19 @@ void Server::update_players_list()
     for(int i = 0; i < connected_players.size(); ++i)
     {
         connected_players[i].set_player_id(i);
-        connected_players[i].get_connection().send(PlayersListPacket(i, players_list));
+
+        Packet::PlayersListPacket players_list_packet;
+        players_list_packet.set_player_id(i);
+        for(auto& player : players_list)
+        {
+            auto entry = players_list_packet.add_players();
+            entry->set_nickname(player.get_nickname());
+            entry->set_position_x(player.get_position().x);
+            entry->set_position_y(player.get_position().y);
+            entry->set_avatar_name(player.get_avatar_name());
+        }
+
+        connected_players[i].get_connection().send(players_list_packet);
     }
 }
 

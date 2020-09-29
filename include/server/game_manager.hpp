@@ -64,7 +64,7 @@ private:
 
     void prepare_new_game();
 
-    void packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet);
+    void packet_received(RemotePlayer& sender, const Packet::Any& packet);
 
     void set(const std::vector<std::string>& args);
 

@@ -6,13 +6,12 @@
 #include "utils.hpp"
 #include "logging.hpp"
 #include "server/game_manager.hpp"
-#include "network/packet/packets.hpp"
 
 GameManager::GameManager()
-    : game_server(
-    SERVER_ADDR, SERVER_PORT,
-    std::bind(&GameManager::packet_received, this, std::placeholders::_1, std::placeholders::_2)),
-    gen(time(nullptr))
+        : game_server(
+        SERVER_ADDR, SERVER_PORT,
+        std::bind(&GameManager::packet_received, this, std::placeholders::_1, std::placeholders::_2)),
+          gen(time(nullptr))
 {
     if(!game_server.is_enabled())
     {
@@ -32,7 +31,7 @@ GameManager::GameManager()
 
     Log::info() << "Registering console interface commands..." << std::endl;
     console_interfrace.register_command(
-        "set", std::bind(&GameManager::set, this, std::placeholders::_1)
+            "set", std::bind(&GameManager::set, this, std::placeholders::_1)
     );
     console_interfrace.register_command("stop", std::bind(&GameManager::stop, this));
     Log::info() << "Console interface ready!" << std::endl;
@@ -69,7 +68,9 @@ void GameManager::run()
 
                 if(ready)
                 {
-                    game_server.broadcast(CountdownPacket(COUNTDOWN_INTERVAL));
+                    Packet::CountdownPacket countdown_packet;
+                    countdown_packet.set_interval(COUNTDOWN_INTERVAL);
+                    game_server.broadcast(countdown_packet);
                     game_stage = GameStage::Countdown;
                     timer.restart();
                 }
@@ -109,14 +110,16 @@ void GameManager::run()
                 }
 
                 pmove_pos = gen_pmove_pos(
-                    connected_players[current_player_id].get_position().x,
-                    connected_players[current_player_id].get_position().y,
-                    6,
-                    pmove_pos
+                        connected_players[current_player_id].get_position().x,
+                        connected_players[current_player_id].get_position().y,
+                        6,
+                        pmove_pos
                 );
-                
-                
-                game_server.broadcast(NewTurnPacket(current_player_id, turn));
+
+                Packet::NewTurnPacket new_turn_packet;
+                new_turn_packet.set_current_player_id(current_player_id);
+                new_turn_packet.set_current_turn(turn);
+                game_server.broadcast(new_turn_packet);
                 moves_left = MOVES_PER_TURN;
                 actions_left = ACTIONS_PER_TURN;
                 game_stage = GameStage::Movement;
@@ -145,7 +148,7 @@ void GameManager::run()
                 // Game ends.
                 votes.resize(connected_players.size(), -1);
 
-                game_server.broadcast(VotePacket());
+                game_server.broadcast(Packet::VotePacket());
                 game_stage = GameStage::Voting;
                 break;
             }
@@ -169,15 +172,14 @@ void GameManager::run()
                         results.at(vote)++;
 
                     int voting_result = std::distance(
-                        results.begin(),
-                        std::max_element(results.begin(), results.end())
+                            results.begin(),
+                            std::max_element(results.begin(), results.end())
                     );
-                    game_server.broadcast(
-                        GameResultsPacket(
-                            connected_players.at(murderer_id).get_nickname(),
-                            connected_players.at(voting_result).get_nickname()
-                        )
-                    );
+
+                    Packet::GameResultsPacket game_results_packet;
+                    game_results_packet.set_murderer(connected_players.at(murderer_id).get_nickname());
+                    game_results_packet.set_voting_result(connected_players.at(voting_result).get_nickname());
+                    game_server.broadcast(game_results_packet);
 
                     game_stage = GameStage::Results;
                 }
@@ -218,15 +220,15 @@ void GameManager::prepare_new_game()
         uint32_t hide_room3 = 0;
         hide_room1 = random_alibi(gen);
 
-        while ( hide_room2 == hide_room3 || hide_room1 == hide_room2 )
+        while(hide_room2 == hide_room3 || hide_room1 == hide_room2)
         {
             hide_room2 = random_alibi(gen);
             hide_room3 = random_alibi(gen);
         }
-        
+
         for(int i = 0; i < alibi.size(); ++i)
         {
-            if (i == hide_room1 || i == hide_room2 || i == hide_room3)
+            if(i == hide_room1 || i == hide_room2 || i == hide_room3)
                 continue;
             auto& room = game_board.get_room(alibi[i]);
             room.get_visitors().push_back({i, player.get_nickname()});
@@ -269,13 +271,21 @@ void GameManager::prepare_new_game()
             }
         }
 
-        connected_players[i].get_connection().send(
-            GameStartPacket(i, i, alibis, crime_room, crime_item, TURNS_PER_GAME)
-        );
+        Packet::GameStartPacket game_start_packet;
+        game_start_packet.set_crime_room(crime_room);
+        game_start_packet.set_crime_item_name(crime_item.get_name());
+        game_start_packet.set_crime_item_description(crime_item.get_description());
+        game_start_packet.set_turns_per_game(TURNS_PER_GAME);
+        for(auto& alibi : alibis)
+        {
+            *game_start_packet.add_alibis()->mutable_rooms() = {alibi.begin(), alibi.end()};
+        }
+
+        connected_players[i].get_connection().send(game_start_packet);
     }
 
     // Notify murderer.
-    murderer.get_connection().send(MurdererPacket());
+    murderer.get_connection().send(Packet::MurdererPacket());
 
     // Randomize players starting positions.
     auto& tiles = game_board.get_tiles();
@@ -295,145 +305,147 @@ void GameManager::prepare_new_game()
         int16_t y = room_tile / game_board.get_width();
         player.set_position(x, y);
 
-        game_server.broadcast(PlayerMovePacket(x, y, player.get_player_id(), false));
+        Packet::PlayerMovePacket player_move_packet;
+        player_move_packet.set_x(x);
+        player_move_packet.set_y(y);
+        player_move_packet.set_player_id(player.get_player_id());
+        game_server.broadcast(player_move_packet);
     }
 }
 
-void GameManager::packet_received(RemotePlayer& sender, std::unique_ptr<Packet> packet)
+void GameManager::packet_received(RemotePlayer& sender, const Packet::Any& packet)
 {
     auto& connection = sender.get_connection();
     auto& connected_players = game_server.get_connected_players();
 
-    switch(packet->get_id())
+    if(packet.Is<Packet::JoinGamePacket>() && game_stage == GameStage::Lobby)
     {
-        case JoinGamePacket::PACKET_ID:
+        Packet::JoinGamePacket join_game_packet;
+        packet.UnpackTo(&join_game_packet);
+
+        Packet::GameBoardPacket game_board_packet;
+        GameBoardLoader::save_to_packet(game_board, game_board_packet);
+        connection.send(game_board_packet);
+    }
+    else if(packet.Is<Packet::PlayerMovePacket>() && game_stage == GameStage::Movement)
+    {
+        if(current_player_id != sender.get_player_id())
+            return;
+
+        Packet::PlayerMovePacket player_move_packet;
+        packet.UnpackTo(&player_move_packet);
+
+        int x = player_move_packet.x();
+        int y = player_move_packet.y();
+
+        if(player_move_packet.relative())
         {
-            if(game_stage != GameStage::Lobby)
-                break;
+            int posx = sender.get_position().x;
+            int posy = sender.get_position().y;
+            int newx = posx + x;
+            int newy = posy + y;
 
-            connection.send(GameBoardPacket(game_board));
-        }
-        case PlayerMovePacket::PACKET_ID:
-        {
-            if(game_stage != GameStage::Movement || current_player_id != sender.get_player_id())
-                break;
+            if(newx < 0 || newx >= game_board.get_width() ||
+               newy < 0 || newy >= game_board.get_height())
+                return;
 
-            auto player_move_packet = dynamic_cast<PlayerMovePacket&>(*packet);
+            if(std::find(pmove_pos.begin(), pmove_pos.end(), newx + newy * 100)
+               == pmove_pos.end())
+                return;
 
-            int x = player_move_packet.get_x();
-            int y = player_move_packet.get_y();
-
-            if(player_move_packet.is_relative())
-            {
-                int posx = sender.get_position().x;
-                int posy = sender.get_position().y;
-                int newx = posx + x;
-                int newy = posy + y;
-
-                if(newx < 0 || newx >= game_board.get_width() ||
-                    newy < 0 || newy >= game_board.get_height())
-                    break;
-
-                if (std::find(pmove_pos.begin(), pmove_pos.end(), newx + newy * 100)
-                    == pmove_pos.end())
-                    break;
-
-                if(game_board.can_move(posx, posy, x, y))
-                    sender.set_position(newx, newy);
-                else
-                    break;
-
-                game_server.broadcast(player_move_packet);
-            }
-            else if(teleport_allowed)
-            {
-                sender.set_position(x, y);
-                game_server.broadcast(player_move_packet);
-            }
-
-            break;
-        }
-        case PlayerReadyPacket::PACKET_ID:
-        {
-            if(game_stage != GameStage::Lobby)
-                break;
-
-            auto player_ready_packet = dynamic_cast<PlayerReadyPacket&>(*packet);
-            bool ready = player_ready_packet.is_ready();
-            sender.set_ready(ready);
-
-            game_server.broadcast(player_ready_packet);
-
-            break;
-        }
-        case ClueFoundPacket::PACKET_ID:
-        {
-            if (game_stage != GameStage::Action && game_stage != GameStage::Movement ||
-                current_player_id != sender.get_player_id())
-                break;
-
-            game_stage = GameStage::Action;
-            actions_left--;
-
-            auto& player_room = game_board.get_room(
-                sender.get_position().x, sender.get_position().y
-            );
-            auto& visitors = player_room.get_visitors();
-            auto clues = visitors;
-
-            std::uniform_real_distribution<> rand_perc(0, 100);
-            if (!clues.empty() && rand_perc(gen) < 35)
-            {
-                std::shuffle(clues.begin(), clues.end(), gen);
-                auto clue = clues.front();
-                visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
-                connection.send(ClueFoundPacket(clue.second, hours.at(clue.first)));
-            }
+            if(game_board.can_move(posx, posy, x, y))
+                sender.set_position(newx, newy);
             else
-            {
-                connection.send(ClueFoundPacket());
-            }
+                return;
 
-            break;
+            game_server.broadcast(player_move_packet);
         }
-        case FakeCluePacket::PACKET_ID:
+        else if(teleport_allowed)
         {
-            if(game_stage != GameStage::Action && game_stage != GameStage::Movement ||
-                current_player_id != sender.get_player_id())
-                break;
+            sender.set_position(x, y);
+            game_server.broadcast(player_move_packet);
+        }
+    }
+    else if(packet.Is<Packet::PlayerReadyPacket>() && game_stage == GameStage::Lobby)
+    {
+        Packet::PlayerReadyPacket player_ready_packet;
+        packet.UnpackTo(&player_ready_packet);
 
-            game_stage = GameStage::Action;
+        bool ready = player_ready_packet.ready();
+        sender.set_ready(ready);
 
-            actions_left--;
+        game_server.broadcast(player_ready_packet);
+    }
+    else if(packet.Is<Packet::ClueFoundPacket>() &&
+            (game_stage == GameStage::Action || game_stage == GameStage::Movement))
+    {
+        if(current_player_id != sender.get_player_id())
+            return;
 
-            auto fake_clue_packet = dynamic_cast<FakeCluePacket&>(*packet);
+        Packet::ClueFoundPacket clue_found_packet;
+        packet.UnpackTo(&clue_found_packet);
 
-            auto& player_room = game_board.get_room(
+        game_stage = GameStage::Action;
+        actions_left--;
+
+        auto& player_room = game_board.get_room(
                 sender.get_position().x, sender.get_position().y
-            );
+        );
+        auto& visitors = player_room.get_visitors();
+        auto clues = visitors;
 
-            Log::debug() << fake_clue_packet.get_time() << ":" << connected_players[fake_clue_packet.get_player_id()].get_nickname();
-
-            player_room.get_visitors().push_back(
-                { fake_clue_packet.get_time(), connected_players[fake_clue_packet.get_player_id()].get_nickname()}
-            );
-
-
-            break;
-        }
-        case VotePacket::PACKET_ID:
+        std::uniform_real_distribution<> rand_perc(0, 100);
+        if(!clues.empty() && rand_perc(gen) < 35)
         {
-            if(game_stage != GameStage::Voting)
-                break;
+            std::shuffle(clues.begin(), clues.end(), gen);
+            auto clue = clues.front();
+            visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
 
-            auto vote_packet = dynamic_cast<VotePacket&>(*packet);
-            int vote_id = vote_packet.get_player_id();
-            votes.at(sender.get_player_id()) = vote_id;
-
-            break;
+            clue_found_packet.Clear();
+            clue_found_packet.set_clue(clue.second);
+            clue_found_packet.set_time(hours.at(clue.first));
+            connection.send(clue_found_packet);
         }
-        default:
-            break;
+        else
+        {
+            clue_found_packet.Clear();
+            connection.send(clue_found_packet);
+        }
+    }
+    else if(packet.Is<Packet::FakeCluePacket>() &&
+            (game_stage == GameStage::Action || game_stage == GameStage::Movement))
+    {
+        if(current_player_id != sender.get_player_id())
+            return;
+
+        Packet::FakeCluePacket fake_clue_packet;
+        packet.UnpackTo(&fake_clue_packet);
+
+        game_stage = GameStage::Action;
+        actions_left--;
+
+        auto& player_room = game_board.get_room(
+                sender.get_position().x, sender.get_position().y
+        );
+
+        Log::debug() << fake_clue_packet.time() << ":"
+                     << connected_players.at(fake_clue_packet.player_id()).get_nickname();
+
+        player_room.get_visitors().emplace_back(
+                fake_clue_packet.time(), connected_players[fake_clue_packet.player_id()].get_nickname()
+        );
+    }
+    else if(packet.Is<Packet::VotePacket>() && game_stage == GameStage::Voting)
+    {
+        Packet::VotePacket vote_packet;
+        packet.UnpackTo(&vote_packet);
+
+        int vote_id = vote_packet.player_id();
+        votes.at(sender.get_player_id()) = vote_id;
+    }
+    else
+    {
+        Log::warn() << "Received unhandled packet: " << packet.type_url() << "!" << std::endl;
     }
 }
 
@@ -468,8 +480,8 @@ void GameManager::set(const std::vector<std::string>& args)
         else
         {
             Log::warn()
-                << "Usage: set countdown_interval/min_players/moves/actions/turns/visible_alibis <value>"
-                << std::endl;
+                    << "Usage: set countdown_interval/min_players/moves/actions/turns/visible_alibis <value>"
+                    << std::endl;
         }
     }
     catch(std::invalid_argument e)
@@ -487,9 +499,9 @@ void GameManager::stop()
     enabled = false;
 }
 
-std::set<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::set<int> &pmove_pos)
+std::set<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::set<int>& pmove_pos)
 {
-    if (move_count == 6)
+    if(move_count == 6)
     {
         std::cout << "pmove_cleared" << std::endl;
         pmove_pos.clear();
@@ -497,12 +509,12 @@ std::set<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::set<
 
     pmove_pos.insert(x + y * 100);
 
-    if (move_count > 0)
+    if(move_count > 0)
     {
-        if(game_board.can_move(x, y, - 1, 0))     gen_pmove_pos(x - 1, y, move_count - 1, pmove_pos);
-        if (game_board.can_move(x, y, + 1, 0))    gen_pmove_pos(x + 1, y, move_count - 1, pmove_pos);
-        if (game_board.can_move(x, y, 0, - 1))    gen_pmove_pos(x, y - 1, move_count - 1, pmove_pos);
-        if (game_board.can_move(x, y, 0, + 1))    gen_pmove_pos(x, y + 1, move_count - 1, pmove_pos);       
+        if(game_board.can_move(x, y, -1, 0)) gen_pmove_pos(x - 1, y, move_count - 1, pmove_pos);
+        if(game_board.can_move(x, y, +1, 0)) gen_pmove_pos(x + 1, y, move_count - 1, pmove_pos);
+        if(game_board.can_move(x, y, 0, -1)) gen_pmove_pos(x, y - 1, move_count - 1, pmove_pos);
+        if(game_board.can_move(x, y, 0, +1)) gen_pmove_pos(x, y + 1, move_count - 1, pmove_pos);
     }
 
     return pmove_pos;
