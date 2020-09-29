@@ -302,6 +302,7 @@ void PlayState::handle_input(sf::Event event)
             player_move_packet.set_x(x);
             player_move_packet.set_y(y);
             player_move_packet.set_player_id(player_id);
+            player_move_packet.set_relative(true);
             return player_move_packet;
         };
 

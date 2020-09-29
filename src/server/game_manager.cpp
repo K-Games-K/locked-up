@@ -503,7 +503,6 @@ std::set<int> GameManager::gen_pmove_pos(int x, int y, int move_count, std::set<
 {
     if(move_count == 6)
     {
-        std::cout << "pmove_cleared" << std::endl;
         pmove_pos.clear();
     }
 

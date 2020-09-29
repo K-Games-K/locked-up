@@ -137,8 +137,6 @@ void LobbyState::render(float dt)
 
 void LobbyState::packet_received(const Packet::Any& packet)
 {
-    Log::debug() << "Received packet: " << packet.type_url() << std::endl;
-
     if(packet.Is<Packet::PlayersListPacket>())
     {
         Packet::PlayersListPacket players_list_packet;
