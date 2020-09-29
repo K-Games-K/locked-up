@@ -411,7 +411,7 @@ void PlayState::packet_received(const Packet::Any& packet)
 
         Log::debug() << "Server: " << debug_packet.debug_msg() << std::endl;
     }
-    else if(packet.Is<Packet::DebugPacket>())
+    else if(packet.Is<Packet::PlayerMovePacket>())
     {
         Packet::PlayerMovePacket player_move_packet;
         packet.UnpackTo(&player_move_packet);

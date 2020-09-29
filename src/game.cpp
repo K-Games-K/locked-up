@@ -8,7 +8,7 @@ Game::Game()
         : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT),
                  WINDOW_NAME,
                  sf::Style::Close | sf::Style::Fullscreen,
-                 sf::ContextSettings(0, 0, 16))
+                 sf::ContextSettings(0, 0, 8))
 {}
 
 void Game::run()
