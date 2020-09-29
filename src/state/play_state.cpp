@@ -417,7 +417,7 @@ void PlayState::packet_received(const Packet::Any& packet)
         Packet::PlayerMovePacket player_move_packet;
         packet.UnpackTo(&player_move_packet);
 
-        Player& player = players_list.at(player_id);
+        Player& player = players_list.at(player_move_packet.player_id());
 
         walk_sound.play();
         if(player_move_packet.relative())
