@@ -176,15 +176,20 @@ void GameManager::run()
                             std::max_element(results.begin(), results.end())
                     );
 
-                    std::string accused = "";
-                    for (int i = 0; i < votes.size(); ++i)
+                    std::string accused = " ";
+                    std::vector<int> ac_ids;
+                    for (int i = 0; i < results.size(); ++i)
                     {
-                        if (results.at(votes[i]) == voting_result)
+                        if (results.at(i) == voting_result)
                         {
-                            accused += connected_players.at(i).get_nickname() + " ";
+                            ac_ids.push_back(i);
                         }
                     }
-                    accused[accused.size() - 1] = '\n';
+                    for (int id : ac_ids)
+                    {
+                        accused = accused + connected_players.at(murderer_id).get_nickname() + " and ";
+                    }
+                    accused[accused.size() - 5] = '\n';
 
                     Packet::GameResultsPacket game_results_packet;
                     game_results_packet.set_murderer(connected_players.at(murderer_id).get_nickname());
