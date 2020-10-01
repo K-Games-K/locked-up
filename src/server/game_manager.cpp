@@ -198,6 +198,7 @@ void GameManager::run()
                     Packet::GameResultsPacket game_results_packet;
                     game_results_packet.set_murderer(connected_players.at(murderer_id).get_nickname());
                     game_results_packet.set_voting_result(accused);
+                    *game_results_packet.mutable_voting_result_points() = { results.begin(), results.end() };
                     game_results_packet.set_winner(winner);
                     game_server.broadcast(game_results_packet);
                     game_stage = GameStage::Results;

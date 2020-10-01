@@ -5,5 +5,6 @@ package Packet;
 message GameResultsPacket {
 	string murderer = 1;
 	string voting_result = 2;
-	string winner = 3;
+	repeated uint32 voting_result_points = 3;
+	string winner = 4;
 }

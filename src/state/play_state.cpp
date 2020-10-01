@@ -480,12 +480,20 @@ void PlayState::packet_received(const Packet::Any& packet)
 
         std::string murderer = game_results_packet.murderer();
         std::string voting_result = game_results_packet.voting_result();
+        std::vector<int> voting_points(
+            game_results_packet.voting_result_points().begin(),
+            game_results_packet.voting_result_points().end());
         std::string winner = game_results_packet.winner();
 
+
         std::stringstream descr;
-        descr << murderer << " was the murderer and you accused: ";
-        descr << voting_result << ". The game wins " << winner << ".";
-        Log::debug() << "descr: " << descr.str() << "; winner: " << winner;
+        descr << murderer << " was the murderer and you accused: " << std::endl;
+        for (int i = 0; i < voting_points.size(); ++i)
+        {
+            descr << players_list[i].get_nickname() << " : " << voting_points[i] << std::endl;
+        }
+        descr << "The game wins " << winner << ".";
+ 
         popup->set_close_callback(
                 [this](Ui::Popup&) {
                     game_state_manager.push_state(
