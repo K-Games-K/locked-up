@@ -7,6 +7,7 @@
 #include "console_interface.hpp"
 #include "remote_player.hpp"
 #include "server.hpp"
+#include "clue.hpp"
 
 class GameManager
 {

@@ -444,13 +444,12 @@ void PlayState::packet_received(const Packet::Any& packet)
         packet.UnpackTo(&clue_found_packet);
 
         std::string clue = clue_found_packet.clue();
-        std::string time = clue_found_packet.time();
+        std::string name = clue_found_packet.name();
 
         if(!clue.empty())
         {
             std::stringstream descr;
-            descr << "You found a clue that\n";
-            descr << clue << " was here at " << time << "!";
+            descr << name << ".";
             popup->show("Found an item!", descr.str());
         }
         else

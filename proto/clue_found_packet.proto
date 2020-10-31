@@ -4,5 +4,5 @@ package Packet;
 
 message ClueFoundPacket {
 	string clue = 1;
-	string time = 2;
+	string name = 2;
 }

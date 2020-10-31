@@ -201,6 +201,9 @@ void GameManager::run()
 
 void GameManager::prepare_new_game()
 {
+    Clue clue;
+    clue.generateClue("17:00", "karol", "kitchen", "corridir");
+
     auto& connected_players = game_server.get_connected_players();
 
     // Reset server.
@@ -208,13 +211,14 @@ void GameManager::prepare_new_game()
     turn = 0;
     votes.clear();
 
-    // Generate alibis.
+    // Generate alibis and clues.
     std::uniform_int_distribution<> rand_room(1, game_board.rooms_count() - 1);
     std::uniform_int_distribution<> random_alibi(0, ALIBI_LENGTH - 1);
     for(auto& player : connected_players)
     {
-        player.generate_alibi(game_board, rand_room(gen), ALIBI_LENGTH);
-        auto& alibi = player.get_alibi();
+        player.generate_alibi(game_board, rand_room(gen), ALIBI_LENGTH);  //generate alibies
+        
+        auto& alibi = player.get_alibi(); //hide 3 times
         uint32_t hide_room1 = 0;
         uint32_t hide_room2 = 0;
         uint32_t hide_room3 = 0;
@@ -228,11 +232,27 @@ void GameManager::prepare_new_game()
 
         for(int i = 0; i < alibi.size(); ++i)
         {
-            if(i == hide_room1 || i == hide_room2 || i == hide_room3)
+            if(i == hide_room1 || i == hide_room2 || i == hide_room3) //hiding
                 continue;
+
             auto& room = game_board.get_room(alibi[i]);
-            room.get_visitors().push_back({i, player.get_nickname()});
+            Clue newClue(room.get_name());
+            
+            if (i == 0 || i == alibi.size() - 1)
+            {
+                newClue.generateClue(hours[i], player.get_nickname());
+               
+            }
+            else
+            {
+                newClue.generateClue(hours[i], player.get_nickname(),
+                    game_board.get_room(alibi[i - 1]).get_name(), game_board.get_room(alibi[i + 1]).get_name());
+            }
+                                 
+
+            room.get_clues().push_back(newClue);
         }
+        
     }
 
     // Select murderer and crime tool.
@@ -389,21 +409,23 @@ void GameManager::packet_received(RemotePlayer& sender, const Packet::Any& packe
         actions_left--;
 
         auto& player_room = game_board.get_room(
-                sender.get_position().x, sender.get_position().y
+            sender.get_position().x, sender.get_position().y
         );
-        auto& visitors = player_room.get_visitors();
+        std::vector<Clue>& visitors = player_room.get_clues();
         auto clues = visitors;
 
         std::uniform_real_distribution<> rand_perc(0, 100);
-        if(!clues.empty() && rand_perc(gen) < 35)
+        if (!clues.empty() && rand_perc(gen) < 90)
         {
             std::shuffle(clues.begin(), clues.end(), gen);
             auto clue = clues.front();
-            visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
+
+            //visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
+
 
             clue_found_packet.Clear();
-            clue_found_packet.set_clue(clue.second);
-            clue_found_packet.set_time(hours.at(clue.first));
+            clue_found_packet.set_clue(clue.get_description());
+            clue_found_packet.set_name(clue.get_description());
             connection.send(clue_found_packet);
         }
         else
