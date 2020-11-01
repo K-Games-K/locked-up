@@ -232,8 +232,8 @@ void GameManager::prepare_new_game()
 
         for(int i = 0; i < alibi.size(); ++i)
         {
-            if(i == hide_room1 || i == hide_room2 || i == hide_room3) //hiding
-                continue;
+            //if(i == hide_room1 || i == hide_room2 || i == hide_room3) //hiding
+                //continue;
 
             auto& room = game_board.get_room(alibi[i]);
             Clue newClue(room.get_name());
@@ -415,17 +415,17 @@ void GameManager::packet_received(RemotePlayer& sender, const Packet::Any& packe
         auto clues = visitors;
 
         std::uniform_real_distribution<> rand_perc(0, 100);
-        if (!clues.empty() && rand_perc(gen) < 90)
+        if (!clues.empty() && rand_perc(gen) < 101)
         {
             std::shuffle(clues.begin(), clues.end(), gen);
             auto clue = clues.front();
 
-            //visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
+            visitors.erase(std::find(visitors.begin(), visitors.end(), clue));
 
 
             clue_found_packet.Clear();
             clue_found_packet.set_clue(clue.get_description());
-            clue_found_packet.set_name(clue.get_description());
+            clue_found_packet.set_name(clue.get_name());
             connection.send(clue_found_packet);
         }
         else

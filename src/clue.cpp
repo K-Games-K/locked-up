@@ -113,5 +113,5 @@ void Clue::generateClue(std::string time, std::string player)
 
 bool Clue::operator==(const Clue& other) const
 {
-    return this == &other;
+    return this->name == other.name && this->description == other.description;
 }

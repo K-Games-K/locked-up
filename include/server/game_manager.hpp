@@ -32,7 +32,7 @@ private:
         "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"
     };
 
-    bool teleport_allowed = false;
+    bool teleport_allowed = true;
 
     volatile bool enabled = false;
     Server game_server;

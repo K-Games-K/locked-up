@@ -449,7 +449,7 @@ void PlayState::packet_received(const Packet::Any& packet)
         if(!clue.empty())
         {
             std::stringstream descr;
-            descr << name << ".";
+            descr << clue << ".";
             popup->show("Found an item!", descr.str());
         }
         else
