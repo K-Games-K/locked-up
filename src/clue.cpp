@@ -1,16 +1,23 @@
 #include "clue.hpp"
+#include <game_board.hpp>
 
 Clue::Clue()
-    : name(""), description(""), gen(time(nullptr))
-{}
+    : name(""), description(""), gen(time(NULL)), time_mod(0), place_mod(0), nr("")
+{
+    conditions.clear();
+}
 
 Clue::Clue(std::string name)
-    : name(name), description(""), gen(time(nullptr))
-{}
+    : name(name), description(""), gen(time(NULL)), time_mod(0), place_mod(0), nr("")
+{
+    conditions.clear();
+}
 
-Clue::Clue(std::string name, std::string destription)
-    : name(name), description(destription), gen(time(nullptr))
-{}
+Clue::Clue(std::string name, std::string description)
+    : name(name), description(description), gen(time(NULL)), time_mod(0), place_mod(0), nr("")
+{
+    conditions.clear();
+}
 
 std::string Clue::get_name() const
 {
@@ -22,31 +29,45 @@ std::string Clue::get_description() const
     return this->description;
 }
 
+int Clue::get_time_mod() const
+{
+    return this->time_mod;
+}
+
+int Clue::get_place_mod() const
+{
+    return this->place_mod;
+}
+
+void Clue::set_info(std::string info)
+{
+    if (info == "first") conditions.push_back("-notFirstPlace");
+    if (info == "last") conditions.push_back("-notLastPlace");
+}
+
 void Clue::set_name(std::string name)
 {
     this->name = name;
 }
 
-void Clue::generateClue(std::string time, std::string player, std::string preroom, std::string nextroom)
+void Clue::generateClue(std::string player, std::string time, std::string room)
 {
-
     std::ifstream file("assets/clues/cluespack.CLS");
 
     int options, winner;
     file >> options;
-    std::uniform_int_distribution<int> random_clue(1, options);
-
-    winner = random_clue(this->gen);
 
     std::string line_str;
     for (std::getline(file >> std::ws, line_str); !file.eof();
         std::getline(file >> std::ws, line_str))
     {
         std::stringstream line(line_str);
-        std::string room_name;
-        std::getline(line >> std::ws, room_name, ':');
+        std::string clue_id;
+        std::getline(line >> std::ws, clue_id, ':');
 
-        if (room_name != std::to_string(winner)) continue;
+        if (clue_id != nr) continue;
+
+        std::getline(line >> std::ws, clue_id, ':');  //flag rem
 
         std::stringstream ss;
         std::string word;
@@ -54,9 +75,10 @@ void Clue::generateClue(std::string time, std::string player, std::string preroo
         {
             std::getline(line >> std::ws, word, ' ');
             if (word == "$player") word = player;
-            if (word == "$time") word = time;
-            if (word == "$preroom") word = preroom;
-            if (word == "$nextroom") word = nextroom;
+            if (word == "$next_time") word = time;
+            if (word == "$pre_time") word = time;
+            if (word == "$pre_room") word = room;
+            if (word == "$next_room") word = room;
             if (word == "$name") word = name;
 
             ss << word << " ";
@@ -70,45 +92,69 @@ void Clue::generateClue(std::string time, std::string player, std::string preroo
     file.close();
 }
 
-void Clue::generateClue(std::string time, std::string player)
+void Clue::generateOptions()
 {
+    std::random_device rd;
+    std::mt19937 generator(rd());
 
+    int max_mod = 4;
     std::ifstream file("assets/clues/cluespack.CLS");
 
+
     int options, winner;
+    bool ok = false;
     file >> options;
-    std::uniform_int_distribution<int> random_clue(3, options);
+    std::uniform_int_distribution<int> random_clue(1, options);
 
-    winner = random_clue(this->gen);
+    std::uniform_int_distribution<int> mod_val(1, max_mod);
 
-    std::string line_str;
-    for (std::getline(file >> std::ws, line_str); !file.eof();
-        std::getline(file >> std::ws, line_str))
+    while (!ok)
     {
-        std::stringstream line(line_str);
-        std::string room_name;
-        std::getline(line >> std::ws, room_name, ':');
+        ok = true;
+        winner = random_clue(generator);
+        winner = random_clue(generator);
 
-        if (room_name != std::to_string(winner)) continue;
 
-        std::stringstream ss;
-        std::string word;
-        while (!line.eof())
+        std::string line_str;
+        for (std::getline(file >> std::ws, line_str); !file.eof();
+            std::getline(file >> std::ws, line_str))
         {
-            std::getline(line >> std::ws, word, ' ');
-            if (word == "$player") word = player;
-            if (word == "$time") word = time;
-            if (word == "$name") word = name;
+            std::stringstream line(line_str);
+            std::string condition;
+            std::getline(line >> std::ws, nr, ':');
 
-            ss << word << " ";
+            if (nr != std::to_string(winner)) continue;
+
+            std::getline(line >> std::ws, condition, ':');
+            if (std::find(conditions.begin(), conditions.end(), condition) != conditions.end())
+            {
+                ok = false;
+                break;
+            }
+
+            std::string word;
+            while (!line.eof())
+            {
+                std::getline(line >> std::ws, word, ' ');
+                if (word == "$pre_time") time_mod = -mod_val(generator);
+                if (word == "next_time") time_mod = mod_val(generator);
+                if (word == "$pre_room") place_mod = -1;
+                if (word == "$after_room") place_mod = 1;
+
+            }
+
+            return;
+
+
         }
-
-        this->description = ss.str();
-        return;
-
     }
-
     file.close();
+
+}
+
+void Clue::debug()
+{
+    time_mod = 1;
 }
 
 bool Clue::operator==(const Clue& other) const

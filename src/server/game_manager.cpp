@@ -201,9 +201,6 @@ void GameManager::run()
 
 void GameManager::prepare_new_game()
 {
-    Clue clue;
-    clue.generateClue("17:00", "karol", "kitchen", "corridir");
-
     auto& connected_players = game_server.get_connected_players();
 
     // Reset server.
@@ -234,21 +231,62 @@ void GameManager::prepare_new_game()
         {
             //if(i == hide_room1 || i == hide_room2 || i == hide_room3) //hiding
                 //continue;
-
-            auto& room = game_board.get_room(alibi[i]);
-            Clue newClue(room.get_name());
             
-            if (i == 0 || i == alibi.size() - 1)
+            auto& room = game_board.get_room(alibi[i]);
+
+            Clue newClue(room.get_name());
+
+            if (i == 0) newClue.set_info("first");
+            if (i == alibi.size()-1) newClue.set_info("last");
+            
+            newClue.generateOptions();
+            //newClue.debug();
+
+            
+            if (newClue.get_time_mod() <= 0)
             {
-                newClue.generateClue(hours[i], player.get_nickname());
-               
+                if (newClue.get_place_mod() <= 0)
+                {
+                    int k = std::min(newClue.get_place_mod(), i);
+                    newClue.generateClue(
+                        player.get_nickname(),
+                        hours[i + std::min(newClue.get_time_mod(), i)],
+                        game_board.get_room((int)alibi[i + k]).get_name()
+                    );
+                }
+                else
+                {
+                    int k = std::min(newClue.get_place_mod(), (int)alibi.size() - i - 1);
+                    newClue.generateClue(
+                        player.get_nickname(),
+                        hours[i + std::min(newClue.get_time_mod(), i)],
+                        game_board.get_room((int)alibi[i + k]).get_name()
+                    );
+                }
             }
             else
             {
-                newClue.generateClue(hours[i], player.get_nickname(),
-                    game_board.get_room(alibi[i - 1]).get_name(), game_board.get_room(alibi[i + 1]).get_name());
+                if (newClue.get_place_mod() <= 0)
+                {
+                    int k = std::min(newClue.get_place_mod(), i);
+                    newClue.generateClue(
+                        player.get_nickname(),
+                        hours[i + std::min(newClue.get_time_mod(), (int)alibi.size() - i - 1)],
+                        game_board.get_room((int)alibi[i + k]).get_name()
+                    );
+                }
+                else
+                {
+                    int k = std::min(newClue.get_place_mod(), (int)alibi.size() - i - 1);
+                    newClue.generateClue(
+                        player.get_nickname(),
+                        hours[i + std::min(newClue.get_time_mod(), (int)alibi.size() - i - 1)],
+                        game_board.get_room((int)alibi[i + k]).get_name()
+                    );
+                }
             }
-                                 
+            
+                              
 
             room.get_clues().push_back(newClue);
         }
