@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+#include <map>
 #include <string>
 #include <vector>
 #include <set>
@@ -38,6 +40,10 @@ public:
     const std::vector<int>& get_alibi() const;
 
     void generate_alibi(const GameBoard& game_board, int starting_room, int alibi_length);
+
+    void generate_alibi_2(const GameBoard& game_board, int starting_room, int alibi_length);
+
+    void generate_path(const GameBoard& game_board, int level,std::vector<int> local_path, bool& breaker);
 
     bool operator==(const Player& other) const;
 
