@@ -176,11 +176,31 @@ void GameManager::run()
                             std::max_element(results.begin(), results.end())
                     );
 
+                    std::string accused;
+                    std::string winner;
+                    std::vector<int> ac_ids;
+                    for (int i = 0; i < results.size(); ++i)
+                    {
+                        if (results.at(i) == results.at(voting_result))
+                        {
+                            ac_ids.push_back(i);
+                        }
+                    }
+                    accused = connected_players.at(ac_ids.at(0)).get_nickname();
+                    for (int i = 1; i < ac_ids.size(); ++i)
+                    {
+                        accused += ", " + connected_players.at(ac_ids.at(i)).get_nickname();
+                    }
+                    
+                    if (ac_ids.size() == 1 && ac_ids.at(0) == murderer_id) winner = "guests";
+                    else winner = connected_players.at(murderer_id).get_nickname();
+
                     Packet::GameResultsPacket game_results_packet;
                     game_results_packet.set_murderer(connected_players.at(murderer_id).get_nickname());
-                    game_results_packet.set_voting_result(connected_players.at(voting_result).get_nickname());
+                    game_results_packet.set_voting_result(accused);
+                    *game_results_packet.mutable_voting_result_points() = { results.begin(), results.end() };
+                    game_results_packet.set_winner(winner);
                     game_server.broadcast(game_results_packet);
-
                     game_stage = GameStage::Results;
                 }
 
