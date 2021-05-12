@@ -53,9 +53,9 @@ void Clue::set_name(std::string name)
 void Clue::generateClue(std::string player, std::string time, std::string room)
 {
     std::ifstream file("assets/clues/cluespack.CLS");
-
+    int buf;
     int options, winner;
-    file >> options;
+    file >> options >> buf >> buf;
 
     std::string line_str;
     for (std::getline(file >> std::ws, line_str); !file.eof();
@@ -100,10 +100,10 @@ void Clue::generateOptions()
     int max_mod = 4;
     std::ifstream file("assets/clues/cluespack.CLS");
 
-
+    int buf;
     int options, winner;
     bool ok = false;
-    file >> options;
+    file >> options >> buf >> buf;
     std::uniform_int_distribution<int> random_clue(1, options);
 
     std::uniform_int_distribution<int> mod_val(1, max_mod);
