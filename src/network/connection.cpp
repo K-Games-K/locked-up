@@ -18,6 +18,13 @@ Connection::Connection(std::unique_ptr<sf::TcpSocket>&& socket)
     connected = true;
 }
 
+Connection::Connection(Connection&& other)
+    : socket(std::move(other.socket)), connected(other.connected)
+{
+    other.socket = nullptr;
+    other.connected = false;
+}
+
 sf::IpAddress Connection::get_addr() const
 {
     return socket->getRemoteAddress();

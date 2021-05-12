@@ -22,7 +22,7 @@ public:
 
     Connection(const Connection& other) = delete;
 
-    Connection(Connection&& other) = default;
+    Connection(Connection&& other);
 
     sf::IpAddress get_addr() const;
 
