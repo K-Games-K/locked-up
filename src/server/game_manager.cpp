@@ -190,6 +190,7 @@ void GameManager::run()
                     for (int i = 1; i < ac_ids.size(); ++i)
                     {
                         accused += ", " + connected_players.at(ac_ids.at(i)).get_nickname();
+
                     }
                     
                     if (ac_ids.size() == 1 && ac_ids.at(0) == murderer_id) winner = "guests";

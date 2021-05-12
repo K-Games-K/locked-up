@@ -60,6 +60,7 @@ private:
     Ui::NotepadWidget* notepad_widget;
     Ui::NotificationWidget* notification_widget;
     Ui::Popup* popup;
+    Ui::BigPopup* big_popup;
     Ui::Panel* voting_menu;
     Ui::Panel* pause_menu;
     Ui::Panel* minimap_panel;

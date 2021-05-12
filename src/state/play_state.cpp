@@ -140,6 +140,11 @@ PlayState::PlayState(sf::RenderWindow& window, GameStateManager& game_state_mana
             .set_position({-100, 0})
     );
 
+    big_popup = (Ui::BigPopup*) user_interface.add_widget(
+        Ui::BigPopup(textures.get("paper"), font)
+        .set_position({ -100, 0 })
+    );
+
     pause_menu = (Ui::Panel*) user_interface.add_widget(
         Ui::Panel()
             .set_background_color(Ui::Color(0, 0, 0, 180))
@@ -487,10 +492,10 @@ void PlayState::packet_received(const Packet::Any& packet)
 
 
         std::stringstream descr;
-        descr << murderer << " was the murderer and you accused: " << std::endl;
+        descr << murderer << " was the murderer and you accused:" << std::endl;
         for (int i = 0; i < voting_points.size(); ++i)
         {
-            descr << players_list[i].get_nickname() << " : " << voting_points[i] << std::endl;
+            descr << players_list[i].get_nickname() << " : " << voting_points[i] << "\n";
         }
         descr << "The game wins " << winner << ".";
  
@@ -506,6 +511,7 @@ void PlayState::packet_received(const Packet::Any& packet)
                     );
                 }
         );
+        Log::debug() << descr.str();
         popup->show("Game results:", descr.str());
     }
     else
